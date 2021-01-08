@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
+
+<plugin name="Eigen" author="federico.ferri.it@gmail.com">
+    <description></description>
+    <command name="svd">
+        <description>SVD decomposition. See https://eigen.tuxfamily.org/dox/classEigen_1_1JacobiSVD.html for details.</description>
+        <params>
+            <param name="m" type="grid" item-type="float" size="*,*">
+                <description>input matrix</description>
+            </param>
+            <param name="computeThinU" type="bool" default="true">
+                <description></description>
+            </param>
+            <param name="computeThinV" type="bool" default="true">
+                <description></description>
+            </param>
+            <param name="v" type="grid" item-type="float" size="*,*" nullable="true">
+                <description>an optional vector to solve for x the system m*x=v</description>
+            </param>
+        </params>
+        <return>
+            <param name="s" type="grid" item-type="float" size="*,1">
+                <description>singular values as a m-by-1 matrix</description>
+            </param>
+            <param name="u" type="grid" item-type="float" size="*,*">
+                <description>U matrix (left singular vectors)</description>
+            </param>
+            <param name="v" type="grid" item-type="float" size="*,*">
+                <description>V matrix (right singular vectors)</description>
+            </param>
+            <param name="x" type="grid" item-type="float" size="*,1" nullable="true">
+                <description>the x solution if v has been specified</description>
+            </param>
+        </return>
+    </command>
+</plugin>
