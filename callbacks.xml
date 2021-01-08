@@ -15,7 +15,7 @@
             <param name="computeThinV" type="bool" default="true">
                 <description></description>
             </param>
-            <param name="v" type="grid" item-type="float" size="*,*" nullable="true">
+            <param name="v" type="grid" item-type="float" size="*,*" nullable="true" default="nil">
                 <description>an optional vector to solve for x the system m*x=v</description>
             </param>
         </params>
