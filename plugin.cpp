@@ -27,6 +27,7 @@ public:
     {
         if(g.dims.size() != 2)
             throw sim::exception("grid must be a matrix");
+        m.resize(g.dims[0], g.dims[1]);
         size_t k = 0;
         for(size_t i = 0; i < g.dims[0]; i++)
             for(size_t j = 0; j < g.dims[1]; j++)
