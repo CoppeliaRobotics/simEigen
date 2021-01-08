@@ -64,7 +64,7 @@ public:
         {
             MatrixXf v;
             toMatrix(*in->v, v);
-            out->x = {};
+            out->x = Grid<float>{};
             toGrid(svd.solve(v), *out->x);
         }
     }
