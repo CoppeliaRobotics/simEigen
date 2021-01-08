@@ -60,12 +60,12 @@ public:
         toGrid(svd.matrixU(), out->u);
         toGrid(svd.matrixV(), out->v);
 
-        if(in->v)
+        if(in->b)
         {
-            MatrixXf v;
-            toMatrix(*in->v, v);
+            MatrixXf b;
+            toMatrix(*in->b, b);
             out->x = Grid<float>{};
-            toGrid(svd.solve(v), *out->x);
+            toGrid(svd.solve(b), *out->x);
         }
     }
 };

@@ -15,8 +15,8 @@
             <param name="computeThinV" type="bool" default="true">
                 <description></description>
             </param>
-            <param name="v" type="grid" item-type="float" size="*,*" nullable="true" default="nil">
-                <description>an optional vector to solve for x the system m*x=v</description>
+            <param name="b" type="grid" item-type="float" size="*,*" nullable="true" default="nil">
+                <description>an optional vector to solve for x the system m*x=b</description>
             </param>
         </params>
         <return>
@@ -30,7 +30,7 @@
                 <description>V matrix (right singular vectors)</description>
             </param>
             <param name="x" type="grid" item-type="float" size="*,1" nullable="true">
-                <description>the x solution if v has been specified</description>
+                <description>the x solution if b has been specified</description>
             </param>
         </return>
     </command>
