@@ -19,7 +19,7 @@ public:
         if(!registerScriptStuff())
             throw sim::exception("failed to register script stuff");
 
-        setExtVersion("Bezier");
+        setExtVersion("Eigen");
         setBuildDate(BUILD_DATE);
     }
 
