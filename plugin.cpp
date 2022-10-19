@@ -7,6 +7,7 @@
 #include "stubs.h"
 #include "config.h"
 #include <Eigen/Dense>
+#include <Eigen/QR>
 
 using namespace std;
 using namespace Eigen;
@@ -66,6 +67,25 @@ public:
             toMatrix(*in->b, b);
             out->x = Grid<float>{};
             toGrid(svd.solve(b), *out->x);
+        }
+    }
+
+    void pinv(pinv_in *in, pinv_out *out)
+    {
+        MatrixXf m;
+        toMatrix(in->m, m);
+
+        auto d = m.completeOrthogonalDecomposition();
+
+        Eigen::MatrixXf minv = d.pseudoInverse();
+        toGrid(minv, out->m);
+
+        if(in->b)
+        {
+            MatrixXf b;
+            toMatrix(*in->b, b);
+            out->x = Grid<float>{};
+            toGrid(d.solve(b), *out->x);
         }
     }
 };

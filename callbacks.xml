@@ -34,4 +34,23 @@
             </param>
         </return>
     </command>
+    <command name="pinv">
+        <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
+        <params>
+            <param name="m" type="grid" item-type="float" size="*,*">
+                <description>input matrix</description>
+            </param>
+            <param name="b" type="grid" item-type="float" size="*,1" nullable="true" default="nil">
+                <description>an optional vector to compute pinv(m)*b, which is more stable and efficient than right-multiplying the result by b</description>
+            </param>
+        </params>
+        <return>
+            <param name="m" type="grid" item-type="float" size="*,*">
+                <description>pseudo-inverse of input matrix</description>
+            </param>
+            <param name="x" type="grid" item-type="float" size="*,1" nullable="true">
+                <description>the result of pinv(m)*b if b has been specified</description>
+            </param>
+        </return>
+    </command>
 </plugin>
