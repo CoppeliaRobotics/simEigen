@@ -24,7 +24,7 @@ public:
         setBuildDate(BUILD_DATE);
     }
 
-    void toMatrix(const Grid<float> &g, MatrixXf &m)
+    void toMatrix(const Grid<double> &g, MatrixXd &m)
     {
         if(g.dims.size() != 2)
             throw sim::exception("grid must be a matrix");
@@ -35,7 +35,7 @@ public:
                 m(i, j) = g.data[k++];
     }
 
-    void toGrid(const MatrixXf &m, Grid<float> &g)
+    void toGrid(const MatrixXd &m, Grid<double> &g)
     {
         g.dims.clear();
         g.dims.push_back(m.rows());
@@ -49,13 +49,13 @@ public:
 
     void svd(svd_in *in, svd_out *out)
     {
-        MatrixXf m, v;
+        MatrixXd m, v;
         toMatrix(in->m, m);
 
         unsigned int computationOptions = 0;
         if(in->computeThinU) computationOptions |= ComputeThinU;
         if(in->computeThinV) computationOptions |= ComputeThinV;
-        JacobiSVD<MatrixXf> svd(m, ComputeThinU | ComputeThinV);
+        JacobiSVD<MatrixXd> svd(m, ComputeThinU | ComputeThinV);
 
         toGrid(svd.singularValues(), out->s);
         toGrid(svd.matrixU(), out->u);
@@ -63,28 +63,28 @@ public:
 
         if(in->b)
         {
-            MatrixXf b;
+            MatrixXd b;
             toMatrix(*in->b, b);
-            out->x = Grid<float>{};
+            out->x = Grid<double>{};
             toGrid(svd.solve(b), *out->x);
         }
     }
 
     void pinv(pinv_in *in, pinv_out *out)
     {
-        MatrixXf m;
+        MatrixXd m;
         toMatrix(in->m, m);
 
         auto d = m.completeOrthogonalDecomposition();
 
-        Eigen::MatrixXf minv = d.pseudoInverse();
+        Eigen::MatrixXd minv = d.pseudoInverse();
         toGrid(minv, out->m);
 
         if(in->b)
         {
-            MatrixXf b;
+            MatrixXd b;
             toMatrix(*in->b, b);
-            out->x = Grid<float>{};
+            out->x = Grid<double>{};
             toGrid(d.solve(b), *out->x);
         }
     }

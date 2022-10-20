@@ -6,7 +6,7 @@
     <command name="svd">
         <description>SVD decomposition. See https://eigen.tuxfamily.org/dox/classEigen_1_1JacobiSVD.html for details.</description>
         <params>
-            <param name="m" type="grid" item-type="float" size="*,*">
+            <param name="m" type="grid" item-type="double" size="*,*">
                 <description>input matrix</description>
             </param>
             <param name="computeThinU" type="bool" default="true">
@@ -15,21 +15,21 @@
             <param name="computeThinV" type="bool" default="true">
                 <description></description>
             </param>
-            <param name="b" type="grid" item-type="float" size="*,*" nullable="true" default="nil">
+            <param name="b" type="grid" item-type="double" size="*,*" nullable="true" default="nil">
                 <description>an optional vector to solve for x the system m*x=b</description>
             </param>
         </params>
         <return>
-            <param name="s" type="grid" item-type="float" size="*,1">
+            <param name="s" type="grid" item-type="double" size="*,1">
                 <description>singular values as a m-by-1 matrix</description>
             </param>
-            <param name="u" type="grid" item-type="float" size="*,*">
+            <param name="u" type="grid" item-type="double" size="*,*">
                 <description>U matrix (left singular vectors)</description>
             </param>
-            <param name="v" type="grid" item-type="float" size="*,*">
+            <param name="v" type="grid" item-type="double" size="*,*">
                 <description>V matrix (right singular vectors)</description>
             </param>
-            <param name="x" type="grid" item-type="float" size="*,1" nullable="true">
+            <param name="x" type="grid" item-type="double" size="*,1" nullable="true">
                 <description>the x solution if b has been specified</description>
             </param>
         </return>
@@ -37,18 +37,18 @@
     <command name="pinv">
         <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
         <params>
-            <param name="m" type="grid" item-type="float" size="*,*">
+            <param name="m" type="grid" item-type="double" size="*,*">
                 <description>input matrix</description>
             </param>
-            <param name="b" type="grid" item-type="float" size="*,1" nullable="true" default="nil">
+            <param name="b" type="grid" item-type="double" size="*,1" nullable="true" default="nil">
                 <description>an optional vector to compute pinv(m)*b, which is more stable and efficient than right-multiplying the result by b</description>
             </param>
         </params>
         <return>
-            <param name="m" type="grid" item-type="float" size="*,*">
+            <param name="m" type="grid" item-type="double" size="*,*">
                 <description>pseudo-inverse of input matrix</description>
             </param>
-            <param name="x" type="grid" item-type="float" size="*,1" nullable="true">
+            <param name="x" type="grid" item-type="double" size="*,1" nullable="true">
                 <description>the result of pinv(m)*b if b has been specified</description>
             </param>
         </return>
