@@ -14,7 +14,7 @@ endif()
 list(APPEND CMAKE_MODULE_PATH
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake
     ${LIBPLUGIN_DIR}/cmake)
-find_package(CoppeliaSim 4.1.0.0 REQUIRED)
+find_package(CoppeliaSim 4.5.0.0 REQUIRED)
 find_package(Eigen3 REQUIRED)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR}/generated)
