@@ -77,7 +77,7 @@ public:
         if(in->damping > 1e-10)
         {
             int n = m.rows();
-            Eigen::MatrixXd minv = m.transpose() * (m * m.transpose() + in->damping * MatrixXd::Identity(n, n)).inverse();
+            Eigen::MatrixXd minv = m.transpose() * (m * m.transpose() + in->damping * in->damping * MatrixXd::Identity(n, n)).inverse();
             toGrid(minv, out->m);
 
             if(in->b)
