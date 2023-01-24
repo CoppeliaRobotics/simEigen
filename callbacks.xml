@@ -43,6 +43,9 @@
             <param name="b" type="grid" item-type="double" size="*,1" nullable="true" default="nil">
                 <description>an optional vector to compute pinv(m)*b, which is more stable and efficient than right-multiplying the result by b</description>
             </param>
+            <param name="damping" type="double" default="0">
+                <description>damping factor. if > 0 then it will return m'*(m*m'+damping*I)^-1</description>
+            </param>
         </params>
         <return>
             <param name="m" type="grid" item-type="double" size="*,*">

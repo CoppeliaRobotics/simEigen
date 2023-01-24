@@ -74,17 +74,33 @@ public:
         MatrixXd m;
         toMatrix(in->m, m);
 
-        auto d = m.completeOrthogonalDecomposition();
-
-        Eigen::MatrixXd minv = d.pseudoInverse();
-        toGrid(minv, out->m);
-
-        if(in->b)
+        if(in->damping > 1e-10)
         {
-            MatrixXd b;
-            toMatrix(*in->b, b);
-            out->x = Grid<double>{};
-            toGrid(d.solve(b), *out->x);
+            int n = m.rows();
+            Eigen::MatrixXd minv = m.transpose() * (m * m.transpose() + in->damping * MatrixXd::Identity(n, n)).inverse();
+            toGrid(minv, out->m);
+
+            if(in->b)
+            {
+                MatrixXd b;
+                toMatrix(*in->b, b);
+                out->x = Grid<double>{};
+                toGrid(minv * b, *out->x);
+            }
+        }
+        else
+        {
+            auto d = m.completeOrthogonalDecomposition();
+            Eigen::MatrixXd minv = d.pseudoInverse();
+            toGrid(minv, out->m);
+
+            if(in->b)
+            {
+                MatrixXd b;
+                toMatrix(*in->b, b);
+                out->x = Grid<double>{};
+                toGrid(d.solve(b), *out->x);
+            }
         }
     }
 };
