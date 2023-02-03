@@ -1,7 +1,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
-#include "simPlusPlus/Plugin.h"
+#include <simPlusPlus/Plugin.h>
 #include "plugin.h"
 #include "stubs.h"
 #include "config.h"
