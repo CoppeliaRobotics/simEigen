@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.16.3)
 project(simEigen)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -24,4 +24,4 @@ coppeliasim_generate_stubs(${CMAKE_CURRENT_BINARY_DIR}/generated XML_FILE ${CMAK
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DIR}/config.h)
 
 coppeliasim_add_plugin(simEigen SOURCES plugin.cpp)
-target_link_libraries(simEigen Eigen3::Eigen)
+target_link_libraries(simEigen PRIVATE Eigen3::Eigen)
