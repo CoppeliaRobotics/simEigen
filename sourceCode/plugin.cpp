@@ -51,6 +51,29 @@ public:
         *m = m->array() + in->k;
     }
 
+    void mtxBlock(mtxBlock_in *in, mtxBlock_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->p == -1) in->p = m->rows() - in->i;
+        if(in->q == -1) in->q = m->cols() - in->j;
+        if(in->p < 1 || in->q < 1)
+            throw std::runtime_error("Invalid size");
+        auto m2 = new MatrixXd(in->p, in->q);
+        *m2 = m->block(in->i, in->j, in->p, in->q);
+        out->handle = mtxHandles.add(m2, in->_.scriptID);
+    }
+
+    void mtxBlockAssign(mtxBlockAssign_in *in, mtxBlockAssign_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->p == -1) in->p = m->rows() - in->i;
+        if(in->q == -1) in->q = m->cols() - in->j;
+        if(in->p < 1 || in->q < 1)
+            throw std::runtime_error("Invalid size");
+        auto m2 = mtxHandles.get(in->handle2);
+        m->block(in->i, in->j, in->p, in->q) = *m2;
+    }
+
     void mtxCopy(mtxCopy_in *in, mtxCopy_out *out)
     {
         auto m = mtxHandles.get(in->handle);

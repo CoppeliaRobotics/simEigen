@@ -21,6 +21,32 @@
         <return>
         </return>
     </command>
+    <command name="mtxBlock">
+        <description>Block of size (p,q), starting at (i,j). Indices start at 0. Returns a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="i" type="int" default="0"></param>
+            <param name="j" type="int" default="0"></param>
+            <param name="p" type="int" default="-1"></param>
+            <param name="q" type="int" default="-1"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="mtxBlockAssign">
+        <description>Assign matrix 2 to block of size (p,q), starting at (i,j). Indices start at 0. Operates in place.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+            <param name="i" type="int" default="0"></param>
+            <param name="j" type="int" default="0"></param>
+            <param name="p" type="int" default="-1"></param>
+            <param name="q" type="int" default="-1"></param>
+        </params>
+        <return>
+        </return>
+    </command>
     <command name="mtxCopy">
         <description>Return a new matrix, copy of this one.</description>
         <params>

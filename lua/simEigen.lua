@@ -14,6 +14,32 @@ function simEigen.Matrix:addk(k)
     return self
 end
 
+function simEigen.Matrix:block(i, j, p, q)
+    i = i or 1
+    j = j or 1
+    p = p or -1
+    q = q or -1
+    assert(math.type(i) == 'integer')
+    assert(math.type(j) == 'integer')
+    assert(math.type(p) == 'integer')
+    assert(math.type(q) == 'integer')
+    local m = simEigen.mtxBlock(self.__handle, i - 1, j - 1, p, q)
+    return simEigen.Matrix(m)
+end
+
+function simEigen.Matrix:blockassign(m, i, j, p, q)
+    assert(getmetatable(m) == simEigen.Matrix)
+    i = i or 1
+    j = j or 1
+    p = p or -1
+    q = q or -1
+    assert(math.type(i) == 'integer')
+    assert(math.type(j) == 'integer')
+    assert(math.type(p) == 'integer')
+    assert(math.type(q) == 'integer')
+    simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
+end
+
 function simEigen.Matrix:cols()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return cols
