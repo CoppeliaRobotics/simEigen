@@ -10,7 +10,6 @@ function simEigen.Matrix:add(m)
 end
 
 function simEigen.Matrix:addk(k)
-    assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxAddK(self.__handle, k)
     return self
 end
@@ -46,7 +45,6 @@ function simEigen.Matrix:mul(m)
 end
 
 function simEigen.Matrix:mulk(k)
-    assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxMulK(self.__handle, k)
     return self
 end
