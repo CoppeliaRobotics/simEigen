@@ -215,6 +215,21 @@ public:
         out->result = m->squaredNorm();
     }
 
+    void mtxSub(mtxSub_in *in, mtxSub_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != m2->rows() || m->cols() != m2->cols())
+            throw std::runtime_error("Incompatible matrix dimensions for addition");
+        *m -= *m2;
+    }
+
+    void mtxSubK(mtxSubK_in *in, mtxSubK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        *m = m->array() - in->k;
+    }
+
     void mtxSum(mtxSum_in *in, mtxSum_out *out)
     {
         auto m = mtxHandles.get(in->handle);

@@ -117,6 +117,17 @@ function simEigen.Matrix:squaredNorm()
     return simEigen.mtxSquaredNorm(self.__handle)
 end
 
+function simEigen.Matrix:sub(m)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxSub(self.__handle, m.__handle)
+    return self
+end
+
+function simEigen.Matrix:subk(k)
+    simEigen.mtxSubK(self.__handle, k)
+    return self
+end
+
 function simEigen.Matrix:sum()
     return simEigen.mtxSum(self.__handle)
 end

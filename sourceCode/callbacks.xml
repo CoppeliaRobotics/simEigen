@@ -197,6 +197,24 @@
             <param name="result" type="double"></param>
         </return>
     </command>
+    <command name="mtxSub">
+        <description>Performs subtraction of the two matrices in place (writes result to first matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxSubK">
+        <description>Performs subtraction of matrix and scalar in place (writes result to matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="k" type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
     <command name="mtxSum">
         <description>Compute sum of elements of this matrix.</description>
         <params>
