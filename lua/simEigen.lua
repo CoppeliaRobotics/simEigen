@@ -3,14 +3,25 @@ local simEigen = loadPlugin 'simEigen';
 
 simEigen.Matrix = {}
 
-function simEigen.Matrix:rows()
-    local rows, cols = simEigen.mtxGetSize(self.__handle)
-    return rows
+function simEigen.Matrix:add(m)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxAdd(self.__handle, m.__handle)
+    return self
+end
+
+function simEigen.Matrix:addk(k)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxAddK(self.__handle, k)
+    return self
 end
 
 function simEigen.Matrix:cols()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return cols
+end
+
+function simEigen.Matrix:copy()
+    return simEigen.Matrix(simEigen.mtxCopy(self.__handle))
 end
 
 function simEigen.Matrix:count()
@@ -22,24 +33,10 @@ function simEigen.Matrix:data()
     return simEigen.mtxGetData(self.__handle)
 end
 
-function simEigen.Matrix:setdata(data)
-    assert(type(data) == 'table')
-    simEigen.mtxSetData(self.__handle, data)
-end
-
-function simEigen.Matrix:copy()
-    return simEigen.Matrix(simEigen.mtxCopy(self.__handle))
-end
-
-function simEigen.Matrix:transpose()
-    simEigen.mtxTranspose(self.__handle)
-    return self
-end
-
-function simEigen.Matrix:add(m)
-    assert(getmetatable(m) == simEigen.Matrix)
-    simEigen.mtxAdd(self.__handle, m.__handle)
-    return self
+function simEigen.Matrix:eye(size)
+    local data = {}
+    for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
+    return simEigen.Matrix(size, size, data)
 end
 
 function simEigen.Matrix:mul(m)
@@ -48,16 +45,28 @@ function simEigen.Matrix:mul(m)
     return self
 end
 
-function simEigen.Matrix:addk(k)
-    assert(getmetatable(m) == simEigen.Matrix)
-    simEigen.mtxAddK(self.__handle, k)
-    return self
-end
-
 function simEigen.Matrix:mulk(k)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxMulK(self.__handle, k)
     return self
+end
+
+function simEigen.Matrix:pinv(b, damping)
+    assert(b == nil or getmetatable(b) == simEigen.Matrix)
+    damping = damping or 0.0
+    local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
+    m = simEigen.Matrix(m)
+    if x then x = simEigen.Matrix(x) end
+end
+
+function simEigen.Matrix:rows()
+    local rows, cols = simEigen.mtxGetSize(self.__handle)
+    return rows
+end
+
+function simEigen.Matrix:setdata(data)
+    assert(type(data) == 'table')
+    simEigen.mtxSetData(self.__handle, data)
 end
 
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
@@ -70,18 +79,13 @@ function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     return s, u, v, x
 end
 
-function simEigen.Matrix:pinv(b, damping)
-    assert(b == nil or getmetatable(b) == simEigen.Matrix)
-    damping = damping or 0.0
-    local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
-    m = simEigen.Matrix(m)
-    if x then x = simEigen.Matrix(x) end
+function simEigen.Matrix:transpose()
+    simEigen.mtxTranspose(self.__handle)
+    return self
 end
 
-function simEigen.Matrix:eye(size)
-    local data = {}
-    for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
-    return simEigen.Matrix(size, size, data)
+function simEigen.Matrix:__index(k)
+    return simEigen.Matrix[k]
 end
 
 function simEigen.Matrix:__tostring()
@@ -95,10 +99,6 @@ function simEigen.Matrix:__tostring()
     end
     s = s .. '})'
     return s
-end
-
-function simEigen.Matrix:__index(k)
-    return simEigen.Matrix[k]
 end
 
 setmetatable(

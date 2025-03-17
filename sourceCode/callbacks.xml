@@ -3,45 +3,7 @@
 
 <plugin name="simEigen" author="federico.ferri.it@gmail.com">
     <description></description>
-    <command name="mtxNew">
-        <params>
-            <param name="rows" type="int"></param>
-            <param name="cols" type="int"></param>
-            <param name="initialData" type="table" item-type="double" default="{}"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
-    <command name="mtxDestroy">
-        <params>
-            <param name="handle" type="string"></param>
-        </params>
-        <return>
-        </return>
-    </command>
-    <command name="mtxCopy">
-        <params>
-            <param name="handle" type="string"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
-    <command name="mtxTranspose">
-        <params>
-            <param name="handle" type="string"></param>
-        </params>
-    </command>
     <command name="mtxAdd">
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
-        </params>
-        <return>
-        </return>
-    </command>
-    <command name="mtxMul">
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
@@ -57,18 +19,17 @@
         <return>
         </return>
     </command>
-    <command name="mtxMulK">
+    <command name="mtxCopy">
         <params>
             <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
         </params>
         <return>
+            <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxSetData">
+    <command name="mtxDestroy">
         <params>
             <param name="handle" type="string"></param>
-            <param name="data" type="table" item-type="double"></param>
         </params>
         <return>
         </return>
@@ -88,6 +49,62 @@
         <return>
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
+        </return>
+    </command>
+    <command name="mtxMul">
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxMulK">
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="k" type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxNew">
+        <params>
+            <param name="rows" type="int"></param>
+            <param name="cols" type="int"></param>
+            <param name="initialData" type="table" item-type="double" default="{}"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="mtxPInv">
+        <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
+        <params>
+            <param name="m" type="string">
+                <description>input matrix</description>
+            </param>
+            <param name="b" type="string" nullable="true" default="nil">
+                <description>an optional vector to compute pinv(m)*b, which is more stable and efficient than right-multiplying the result by b</description>
+            </param>
+            <param name="damping" type="double" default="0">
+                <description>damping factor. if > 0 then it will return m'*(m*m'+damping^2*I)^-1</description>
+            </param>
+        </params>
+        <return>
+            <param name="m" type="string">
+                <description>pseudo-inverse of input matrix</description>
+            </param>
+            <param name="x" type="string" nullable="true">
+                <description>the result of pinv(m)*b if b has been specified</description>
+            </param>
+        </return>
+    </command>
+    <command name="mtxSetData">
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="data" type="table" item-type="double"></param>
+        </params>
+        <return>
         </return>
     </command>
     <command name="mtxSVD">
@@ -121,27 +138,10 @@
             </param>
         </return>
     </command>
-    <command name="mtxPInv">
-        <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
+    <command name="mtxTranspose">
         <params>
-            <param name="m" type="string">
-                <description>input matrix</description>
-            </param>
-            <param name="b" type="string" nullable="true" default="nil">
-                <description>an optional vector to compute pinv(m)*b, which is more stable and efficient than right-multiplying the result by b</description>
-            </param>
-            <param name="damping" type="double" default="0">
-                <description>damping factor. if > 0 then it will return m'*(m*m'+damping^2*I)^-1</description>
-            </param>
+            <param name="handle" type="string"></param>
         </params>
-        <return>
-            <param name="m" type="string">
-                <description>pseudo-inverse of input matrix</description>
-            </param>
-            <param name="x" type="string" nullable="true">
-                <description>the result of pinv(m)*b if b has been specified</description>
-            </param>
-        </return>
     </command>
     <!-- OLD FUNCTIONS: -->
     <command name="svd">

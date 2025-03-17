@@ -36,24 +36,19 @@ public:
         }
     }
 
-    void mtxNew(mtxNew_in *in, mtxNew_out *out)
-    {
-        auto m = new MatrixXd(in->rows, in->cols);
-        if(in->initialData.size() > 0)
-        {
-            if(in->initialData.size() != m->rows() * m->cols())
-                throw std::runtime_error("Size mismatch between data and matrix dimensions");
-            for(int i = 0; i < m->rows(); ++i)
-                for(int j = 0; j < m->cols(); ++j)
-                    (*m)(i, j) = in->initialData[i * m->cols() + j];
-        }
-        out->handle = mtxHandles.add(m, in->_.scriptID);
-    }
-
-    void mtxDestroy(mtxDestroy_in *in, mtxDestroy_out *out)
+    void mtxAdd(mtxAdd_in *in, mtxAdd_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        delete mtxHandles.remove(m);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != m2->rows() || m->cols() != m2->cols())
+            throw std::runtime_error("Incompatible matrix dimensions for addition");
+        *m += *m2;
+    }
+
+    void mtxAddK(mtxAddK_in *in, mtxAddK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        *m = m->array() + in->k;
     }
 
     void mtxCopy(mtxCopy_in *in, mtxCopy_out *out)
@@ -64,50 +59,10 @@ public:
         out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
 
-    void mtxTranspose(mtxTranspose_in *in, mtxTranspose_out *out)
+    void mtxDestroy(mtxDestroy_in *in, mtxDestroy_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        m->transposeInPlace();
-    }
-
-    void mtxAdd(mtxAdd_in *in, mtxAdd_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows() || m->cols() != m2->cols())
-            throw std::runtime_error("Incompatible matrix dimensions for addition");
-        *m += *m2;
-    }
-
-    void mtxMul(mtxMul_in *in, mtxMul_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->cols() != m2->rows())
-            throw std::runtime_error("Incompatible matrix dimensions for multiplication");
-        *m = (*m) * (*m2);
-    }
-
-    void mtxAddK(mtxAddK_in *in, mtxAddK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        *m = m->array() + in->k;
-    }
-
-    void mtxMulK(mtxMulK_in *in, mtxMulK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        *m = (*m) * in->k;
-    }
-
-    void mtxSetData(mtxSetData_in *in, mtxSetData_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        if(in->data.size() != m->rows() * m->cols())
-            throw std::runtime_error("Size mismatch between data and matrix dimensions");
-        for(int i = 0; i < m->rows(); ++i)
-            for(int j = 0; j < m->cols(); ++j)
-                (*m)(i, j) = in->data[i * m->cols() + j];
+        delete mtxHandles.remove(m);
     }
 
     void mtxGetData(mtxGetData_in *in, mtxGetData_out *out)
@@ -126,32 +81,33 @@ public:
         out->cols = m->cols();
     }
 
-    void mtxSVD(mtxSVD_in *in, mtxSVD_out *out)
+    void mtxMul(mtxMul_in *in, mtxMul_out *out)
     {
-        auto m = mtxHandles.get(in->m);
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->cols() != m2->rows())
+            throw std::runtime_error("Incompatible matrix dimensions for multiplication");
+        *m = (*m) * (*m2);
+    }
 
-        unsigned int computationOptions = 0;
-        if(in->computeThinU) computationOptions |= ComputeThinU;
-        if(in->computeThinV) computationOptions |= ComputeThinV;
-        JacobiSVD<MatrixXd> svd(*m, ComputeThinU | ComputeThinV);
+    void mtxMulK(mtxMulK_in *in, mtxMulK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        *m = (*m) * in->k;
+    }
 
-        auto s = new MatrixXd;
-        *s = svd.singularValues();
-        out->s = mtxHandles.add(s, in->_.scriptID);
-        auto u = new MatrixXd;
-        *u = svd.matrixU();
-        out->u = mtxHandles.add(u, in->_.scriptID);
-        auto v = new MatrixXd;
-        *v = svd.matrixV();
-        out->v = mtxHandles.add(v, in->_.scriptID);
-
-        if(in->b)
+    void mtxNew(mtxNew_in *in, mtxNew_out *out)
+    {
+        auto m = new MatrixXd(in->rows, in->cols);
+        if(in->initialData.size() > 0)
         {
-            auto b = mtxHandles.get(*in->b);
-            auto x = new MatrixXd;
-            *x = svd.solve(*b);
-            out->x = mtxHandles.add(x, in->_.scriptID);
+            if(in->initialData.size() != m->rows() * m->cols())
+                throw std::runtime_error("Size mismatch between data and matrix dimensions");
+            for(int i = 0; i < m->rows(); ++i)
+                for(int j = 0; j < m->cols(); ++j)
+                    (*m)(i, j) = in->initialData[i * m->cols() + j];
         }
+        out->handle = mtxHandles.add(m, in->_.scriptID);
     }
 
     void mtxPInv(mtxPInv_in *in, mtxPInv_out *out)
@@ -188,6 +144,50 @@ public:
                 out->x = mtxHandles.add(x, in->_.scriptID);
             }
         }
+    }
+
+    void mtxSetData(mtxSetData_in *in, mtxSetData_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->data.size() != m->rows() * m->cols())
+            throw std::runtime_error("Size mismatch between data and matrix dimensions");
+        for(int i = 0; i < m->rows(); ++i)
+            for(int j = 0; j < m->cols(); ++j)
+                (*m)(i, j) = in->data[i * m->cols() + j];
+    }
+
+    void mtxSVD(mtxSVD_in *in, mtxSVD_out *out)
+    {
+        auto m = mtxHandles.get(in->m);
+
+        unsigned int computationOptions = 0;
+        if(in->computeThinU) computationOptions |= ComputeThinU;
+        if(in->computeThinV) computationOptions |= ComputeThinV;
+        JacobiSVD<MatrixXd> svd(*m, ComputeThinU | ComputeThinV);
+
+        auto s = new MatrixXd;
+        *s = svd.singularValues();
+        out->s = mtxHandles.add(s, in->_.scriptID);
+        auto u = new MatrixXd;
+        *u = svd.matrixU();
+        out->u = mtxHandles.add(u, in->_.scriptID);
+        auto v = new MatrixXd;
+        *v = svd.matrixV();
+        out->v = mtxHandles.add(v, in->_.scriptID);
+
+        if(in->b)
+        {
+            auto b = mtxHandles.get(*in->b);
+            auto x = new MatrixXd;
+            *x = svd.solve(*b);
+            out->x = mtxHandles.add(x, in->_.scriptID);
+        }
+    }
+
+    void mtxTranspose(mtxTranspose_in *in, mtxTranspose_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        m->transposeInPlace();
     }
 
     // OLD FUNCTIONS:
