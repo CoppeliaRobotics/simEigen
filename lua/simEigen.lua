@@ -40,6 +40,10 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
     simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
 end
 
+function simEigen.Matrix:col(j)
+    return simEigen.mtxGetCol(self.__handle, j - 1)
+end
+
 function simEigen.Matrix:cols()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return cols
@@ -62,6 +66,10 @@ function simEigen.Matrix:eye(size)
     local data = {}
     for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
     return simEigen.Matrix(size, size, data)
+end
+
+function simEigen.Matrix:item(i, j)
+    return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
 end
 
 function simEigen.Matrix:maxCoeff()
@@ -103,14 +111,34 @@ function simEigen.Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
 
+function simEigen.Matrix:row(i)
+    return simEigen.mtxGetRow(self.__handle, i - 1)
+end
+
 function simEigen.Matrix:rows()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return rows
 end
 
+function simEigen.Matrix:setcol(j, data)
+    simEigen.mtxSetCol(self.__handle, j - 1, data)
+    return self
+end
+
 function simEigen.Matrix:setdata(data)
     assert(type(data) == 'table')
     simEigen.mtxSetData(self.__handle, data)
+    return self
+end
+
+function simEigen.Matrix:setitem(i, j, data)
+    simEigen.mtxSetItem(self.__handle, i - 1, j - 1, data)
+    return self
+end
+
+function simEigen.Matrix:setrow(i, data)
+    simEigen.mtxSetRow(self.__handle, i - 1, data)
+    return self
 end
 
 function simEigen.Matrix:squaredNorm()

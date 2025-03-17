@@ -88,6 +88,16 @@ public:
         delete mtxHandles.remove(m);
     }
 
+    void mtxGetCol(mtxGetCol_in *in, mtxGetCol_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->j < 0 || in->j >= m->cols())
+            throw std::runtime_error("Invalid indices");
+        out->data.resize(m->rows());
+        for(int i = 0; i < m->rows(); ++i)
+            out->data[i] = (*m)(i, in->j);
+    }
+
     void mtxGetData(mtxGetData_in *in, mtxGetData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -95,6 +105,24 @@ public:
         for(int i = 0; i < m->rows(); ++i)
             for(int j = 0; j < m->cols(); ++j)
                 out->data[i * m->cols() + j] = (*m)(i, j);
+    }
+
+    void mtxGetItem(mtxGetItem_in *in, mtxGetItem_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->i < 0 || in->i >= m->rows() || in->j < 0 || in->j >= m->cols())
+            throw std::runtime_error("Invalid indices");
+        out->data = (*m)(in->i, in->j);
+    }
+
+    void mtxGetRow(mtxGetRow_in *in, mtxGetRow_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->i < 0 || in->i >= m->rows())
+            throw std::runtime_error("Invalid indices");
+        out->data.resize(m->cols());
+        for(int j = 0; j < m->cols(); ++j)
+            out->data[j] = (*m)(in->i, j);
     }
 
     void mtxGetSize(mtxGetSize_in *in, mtxGetSize_out *out)
@@ -202,6 +230,17 @@ public:
         out->result = m->prod();
     }
 
+    void mtxSetCol(mtxSetCol_in *in, mtxSetCol_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->j < 0 || in->j >= m->cols())
+            throw std::runtime_error("Invalid indices");
+        if(in->data.size() != m->rows())
+            throw std::runtime_error("Size mismatch between data and matrix dimensions");
+        for(int i = 0; i < m->rows(); ++i)
+            (*m)(i, in->j) = in->data[i];
+    }
+
     void mtxSetData(mtxSetData_in *in, mtxSetData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -210,6 +249,25 @@ public:
         for(int i = 0; i < m->rows(); ++i)
             for(int j = 0; j < m->cols(); ++j)
                 (*m)(i, j) = in->data[i * m->cols() + j];
+    }
+
+    void mtxSetItem(mtxSetItem_in *in, mtxSetItem_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->i < 0 || in->i >= m->rows() || in->j < 0 || in->j >= m->cols())
+            throw std::runtime_error("Invalid indices");
+        (*m)(in->i, in->j) = in->data;
+    }
+
+    void mtxSetRow(mtxSetRow_in *in, mtxSetRow_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(in->i < 0 || in->i >= m->rows())
+            throw std::runtime_error("Invalid indices");
+        if(in->data.size() != m->cols())
+            throw std::runtime_error("Size mismatch between data and matrix dimensions");
+        for(int j = 0; j < m->cols(); ++j)
+            (*m)(in->i, j) = in->data[j];
     }
 
     void mtxSquaredNorm(mtxSquaredNorm_in *in, mtxSquaredNorm_out *out)

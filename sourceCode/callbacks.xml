@@ -64,10 +64,41 @@
         <return>
         </return>
     </command>
+    <command name="mtxGetCol">
+        <description>Get a column of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="j" type="int"></param>
+        </params>
+        <return>
+            <param name="data" type="table" item-type="double"></param>
+        </return>
+    </command>
     <command name="mtxGetData">
         <description>Return matrix data, in row-major order.</description>
         <params>
             <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="data" type="table" item-type="double"></param>
+        </return>
+    </command>
+    <command name="mtxGetItem">
+        <description>Get an item of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="i" type="int"></param>
+            <param name="j" type="int"></param>
+        </params>
+        <return>
+            <param name="data" type="double"></param>
+        </return>
+    </command>
+    <command name="mtxGetRow">
+        <description>Get a row of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="i" type="int"></param>
         </params>
         <return>
             <param name="data" type="table" item-type="double"></param>
@@ -179,10 +210,41 @@
             <param name="result" type="double"></param>
         </return>
     </command>
+    <command name="mtxSetCol">
+        <description>Set a column of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="j" type="int"></param>
+            <param name="data" type="table" item-type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
     <command name="mtxSetData">
         <description>Set data of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
+            <param name="data" type="table" item-type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxSetItem">
+        <description>Set an item of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="i" type="int"></param>
+            <param name="j" type="int"></param>
+            <param name="data" type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxSetRow">
+        <description>Set a row of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="i" type="int"></param>
             <param name="data" type="table" item-type="double"></param>
         </params>
         <return>
