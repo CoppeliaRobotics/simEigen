@@ -4,6 +4,7 @@
 <plugin name="simEigen" author="federico.ferri.it@gmail.com">
     <description></description>
     <command name="mtxAdd">
+        <description>Performs addition of the two matrices in place (writes result to first matrix).</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
@@ -12,6 +13,7 @@
         </return>
     </command>
     <command name="mtxAddK">
+        <description>Performs addition of matrix and scalar in place (writes result to matrix).</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="k" type="double"></param>
@@ -20,6 +22,7 @@
         </return>
     </command>
     <command name="mtxCopy">
+        <description>Return a new matrix, copy of this one.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
@@ -28,6 +31,7 @@
         </return>
     </command>
     <command name="mtxDestroy">
+        <description>Destroy the matrix.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
@@ -35,6 +39,7 @@
         </return>
     </command>
     <command name="mtxGetData">
+        <description>Return matrix data, in row-major order.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
@@ -43,6 +48,7 @@
         </return>
     </command>
     <command name="mtxGetSize">
+        <description>Return matrix size.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
@@ -52,6 +58,7 @@
         </return>
     </command>
     <command name="mtxMul">
+        <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
@@ -60,6 +67,7 @@
         </return>
     </command>
     <command name="mtxMulK">
+        <description>Performs multiplication of matrix and scalar in place (writes result to matrix).</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="k" type="double"></param>
@@ -68,6 +76,7 @@
         </return>
     </command>
     <command name="mtxNew">
+        <description>Create a new matrix. If initialData is specified, fill the matrix with specified data.</description>
         <params>
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
@@ -100,6 +109,7 @@
         </return>
     </command>
     <command name="mtxSetData">
+        <description>Set data of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="data" type="table" item-type="double"></param>
@@ -139,6 +149,7 @@
         </return>
     </command>
     <command name="mtxTranspose">
+        <description>Transpose this matrix in place.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
