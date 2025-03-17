@@ -33,26 +33,31 @@ end
 
 function simEigen.Matrix:transpose()
     simEigen.mtxTranspose(self.__handle)
+    return self
 end
 
 function simEigen.Matrix:add(m)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxAdd(self.__handle, m.__handle)
+    return self
 end
 
 function simEigen.Matrix:mul(m)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxMul(self.__handle, m.__handle)
+    return self
 end
 
 function simEigen.Matrix:addk(k)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxAddK(self.__handle, k)
+    return self
 end
 
 function simEigen.Matrix:mulk(k)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxMulK(self.__handle, k)
+    return self
 end
 
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
