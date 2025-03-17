@@ -104,6 +104,24 @@ public:
         out->cols = m->cols();
     }
 
+    void mtxMaxCoeff(mtxMaxCoeff_in *in, mtxMaxCoeff_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->maxCoeff();
+    }
+
+    void mtxMean(mtxMean_in *in, mtxMean_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->mean();
+    }
+
+    void mtxMinCoeff(mtxMinCoeff_in *in, mtxMinCoeff_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->minCoeff();
+    }
+
     void mtxMul(mtxMul_in *in, mtxMul_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -131,6 +149,12 @@ public:
                     (*m)(i, j) = in->initialData[i * m->cols() + j];
         }
         out->handle = mtxHandles.add(m, in->_.scriptID);
+    }
+
+    void mtxNorm(mtxNorm_in *in, mtxNorm_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->norm();
     }
 
     void mtxPInv(mtxPInv_in *in, mtxPInv_out *out)
@@ -169,6 +193,12 @@ public:
         }
     }
 
+    void mtxProd(mtxProd_in *in, mtxProd_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->prod();
+    }
+
     void mtxSetData(mtxSetData_in *in, mtxSetData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -177,6 +207,18 @@ public:
         for(int i = 0; i < m->rows(); ++i)
             for(int j = 0; j < m->cols(); ++j)
                 (*m)(i, j) = in->data[i * m->cols() + j];
+    }
+
+    void mtxSquaredNorm(mtxSquaredNorm_in *in, mtxSquaredNorm_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->squaredNorm();
+    }
+
+    void mtxSum(mtxSum_in *in, mtxSum_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->sum();
     }
 
     void mtxSVD(mtxSVD_in *in, mtxSVD_out *out)
@@ -207,10 +249,24 @@ public:
         }
     }
 
+    void mtxTrace(mtxTrace_in *in, mtxTrace_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->trace();
+    }
+
     void mtxTranspose(mtxTranspose_in *in, mtxTranspose_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         m->transposeInPlace();
+    }
+
+    void mtxTransposed(mtxTransposed_in *in, mtxTransposed_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = new MatrixXd;
+        *m2 = m->transpose();
+        out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
 
     // OLD FUNCTIONS:

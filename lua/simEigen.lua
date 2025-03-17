@@ -64,6 +64,18 @@ function simEigen.Matrix:eye(size)
     return simEigen.Matrix(size, size, data)
 end
 
+function simEigen.Matrix:maxCoeff()
+    return simEigen.mtxMaxCoeff(self.__handle)
+end
+
+function simEigen.Matrix:mean()
+    return simEigen.mtxMean(self.__handle)
+end
+
+function simEigen.Matrix:minCoeff()
+    return simEigen.mtxMinCoeff(self.__handle)
+end
+
 function simEigen.Matrix:mul(m)
     assert(getmetatable(m) == simEigen.Matrix)
     simEigen.mtxMul(self.__handle, m.__handle)
@@ -75,12 +87,20 @@ function simEigen.Matrix:mulk(k)
     return self
 end
 
+function simEigen.Matrix:norm()
+    return simEigen.mtxNorm(self.__handle)
+end
+
 function simEigen.Matrix:pinv(b, damping)
     assert(b == nil or getmetatable(b) == simEigen.Matrix)
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
     if x then x = simEigen.Matrix(x) end
+end
+
+function simEigen.Matrix:prod()
+    return simEigen.mtxProd(self.__handle)
 end
 
 function simEigen.Matrix:rows()
@@ -93,6 +113,14 @@ function simEigen.Matrix:setdata(data)
     simEigen.mtxSetData(self.__handle, data)
 end
 
+function simEigen.Matrix:squaredNorm()
+    return simEigen.mtxSquaredNorm(self.__handle)
+end
+
+function simEigen.Matrix:sum()
+    return simEigen.mtxSum(self.__handle)
+end
+
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     assert(b == nil or getmetatable(b) == simEigen.Matrix)
     local s, u, v, x = simEigen.mtxSVD(self.__handle, computeThinU, computeThinV, (b or {}).__handle)
@@ -103,9 +131,19 @@ function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     return s, u, v, x
 end
 
+function simEigen.Matrix:trace()
+    return simEigen.mtxTrace(self.__handle)
+end
+
 function simEigen.Matrix:transpose()
     simEigen.mtxTranspose(self.__handle)
     return self
+end
+
+function simEigen.Matrix:transposed()
+    local m = simEigen.mtxTransposed(self.__handle)
+    m = simEigen.Matrix(m)
+    return m
 end
 
 function simEigen.Matrix:__index(k)

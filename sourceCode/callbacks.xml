@@ -83,6 +83,33 @@
             <param name="cols" type="int"></param>
         </return>
     </command>
+    <command name="mtxMaxCoeff">
+        <description>Compute max coeff. of elements of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
+    <command name="mtxMean">
+        <description>Compute mean of elements of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
+    <command name="mtxMinCoeff">
+        <description>Compute min coeff. of elements of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
     <command name="mtxMul">
         <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
         <params>
@@ -112,6 +139,15 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="mtxNorm">
+        <description>Compute norm of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
     <command name="mtxPInv">
         <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
         <params>
@@ -134,6 +170,15 @@
             </param>
         </return>
     </command>
+    <command name="mtxProd">
+        <description>Compute product of elements of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
     <command name="mtxSetData">
         <description>Set data of this matrix.</description>
         <params>
@@ -141,6 +186,24 @@
             <param name="data" type="table" item-type="double"></param>
         </params>
         <return>
+        </return>
+    </command>
+    <command name="mtxSquaredNorm">
+        <description>Compute squared norm of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
+    <command name="mtxSum">
+        <description>Compute sum of elements of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
         </return>
     </command>
     <command name="mtxSVD">
@@ -174,11 +237,29 @@
             </param>
         </return>
     </command>
+    <command name="mtxTrace">
+        <description>Compute trace of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
     <command name="mtxTranspose">
         <description>Transpose this matrix in place.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
+    </command>
+    <command name="mtxTransposed">
+        <description>Return a transposed version of this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
     </command>
     <!-- OLD FUNCTIONS: -->
     <command name="svd">
