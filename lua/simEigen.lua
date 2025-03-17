@@ -192,13 +192,14 @@ setmetatable(
                     assert(rows == -1 or rows > 0, 'rows must be positive')
                     assert(cols == -1 or cols > 0, 'cols must be positive')
                     assert(not (rows == -1 and cols == -1), 'rows and cols cannot be both -1')
+                    if type(data) == 'number' then data = {data} end
                     assert(type(data) == 'table' and #data > 0, 'data must be a non-empty table')
                     if rows == -1 then
                         rows = #data // cols
                     elseif cols == -1 then
                         cols = #data // rows
                     end
-                    assert(#data == rows * cols, 'invalid number of elements')
+                    assert(#data == rows * cols or #data == 1, 'invalid number of elements')
                     h = simEigen.mtxNew(rows, cols, data)
                 end
             end

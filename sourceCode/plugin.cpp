@@ -142,11 +142,14 @@ public:
         auto m = new MatrixXd(in->rows, in->cols);
         if(in->initialData.size() > 0)
         {
-            if(in->initialData.size() != m->rows() * m->cols())
+            if(in->initialData.size() == 1)
+                m->setConstant(in->initialData[0]);
+            else if(in->initialData.size() == m->rows() * m->cols())
+                for(int i = 0; i < m->rows(); ++i)
+                    for(int j = 0; j < m->cols(); ++j)
+                        (*m)(i, j) = in->initialData[i * m->cols() + j];
+            else
                 throw std::runtime_error("Size mismatch between data and matrix dimensions");
-            for(int i = 0; i < m->rows(); ++i)
-                for(int j = 0; j < m->cols(); ++j)
-                    (*m)(i, j) = in->initialData[i * m->cols() + j];
         }
         out->handle = mtxHandles.add(m, in->_.scriptID);
     }
