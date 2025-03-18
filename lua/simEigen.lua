@@ -65,8 +65,20 @@ function simEigen.Matrix:count()
     return rows * cols
 end
 
+function simEigen.Matrix:cross(m)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    local r = simEigen.mtxCross(self.__handle, m.__handle)
+    r = simEigen.Matrix(r)
+    return r
+end
+
 function simEigen.Matrix:data()
     return simEigen.mtxGetData(self.__handle)
+end
+
+function simEigen.Matrix:dot(m)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    return simEigen.mtxDot(self.__handle, m.__handle)
 end
 
 function simEigen.Matrix:eye(size)

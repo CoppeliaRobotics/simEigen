@@ -58,12 +58,32 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="mtxCross">
+        <description>Performs cross-product of the two vectors. Returns a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxDestroy">
         <description>Destroy the matrix.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
         <return>
+        </return>
+    </command>
+    <command name="mtxDot">
+        <description>Performs addition of the two matrices.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
         </return>
     </command>
     <command name="mtxGetCol">

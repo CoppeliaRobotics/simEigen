@@ -86,10 +86,47 @@ public:
         out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
 
+    void mtxCross(mtxCross_in *in, mtxCross_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        auto mr = new MatrixXd;
+        Vector3d a, b;
+        if(m->rows() == 3 && m->cols() == 1 && m2->rows() == 3 && m2->cols() == 1) {
+            a = m->col(0);
+            b = m2->col(0);
+            *mr = a.cross(b);
+        } else if(m->rows() == 1 && m->cols() == 3 && m2->rows() == 1 && m2->cols() == 3) {
+            a = m->row(0).transpose();
+            b = m2->row(0).transpose();
+            *mr = a.cross(b).transpose();
+        } else {
+            throw std::invalid_argument("Both arguments must be 3D column or row vectors");
+        }
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
     void mtxDestroy(mtxDestroy_in *in, mtxDestroy_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         delete mtxHandles.remove(m);
+    }
+
+    void mtxDot(mtxDot_in *in, mtxDot_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        VectorXd a, b;
+        if(m->cols() == 1 && m2->cols() == 1) {
+            a = m->col(0);
+            b = m2->col(0);
+        } else if(m->rows() == 1 && m2->rows() == 1) {
+            a = m->row(0);
+            b = m2->row(0);
+        } else {
+            throw std::invalid_argument("Both arguments must be 3D column or row vectors");
+        }
+        out->result = a.dot(b);
     }
 
     void mtxGetCol(mtxGetCol_in *in, mtxGetCol_out *out)
