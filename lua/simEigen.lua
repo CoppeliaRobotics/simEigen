@@ -268,6 +268,10 @@ function simEigen.Matrix:__index(k)
     return simEigen.Matrix[k]
 end
 
+function simEigen.Matrix:__gc()
+    simEigen.mtxDestroy(self.__handle)
+end
+
 function simEigen.Matrix:__tostring()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     s = 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
