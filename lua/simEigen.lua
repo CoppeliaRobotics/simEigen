@@ -44,6 +44,10 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
     simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
 end
 
+function simEigen.Matrix:col(j)
+    return self:block(1, j, -1, 1)
+end
+
 function simEigen.Matrix:coldata(j)
     assert(math.type(j) == 'integer')
     return simEigen.mtxGetCol(self.__handle, j - 1)
@@ -179,6 +183,10 @@ end
 
 function simEigen.Matrix:prod()
     return simEigen.mtxProd(self.__handle)
+end
+
+function simEigen.Matrix:row(i)
+    return self:block(i, 1, 1, -1)
 end
 
 function simEigen.Matrix:rowdata(i)
