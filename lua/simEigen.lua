@@ -4,13 +4,14 @@ local simEigen = loadPlugin 'simEigen';
 simEigen.Matrix = {}
 
 function simEigen.Matrix:add(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxAdd(self.__handle, m.__handle)
     r = simEigen.Matrix(r)
     return r
 end
 
 function simEigen.Matrix:addk(k)
+    assert(type(k) == 'number', 'argument must be a number')
     local r = simEigen.mtxAddK(self.__handle, k)
     r = simEigen.Matrix(r)
     return r
@@ -31,7 +32,7 @@ function simEigen.Matrix:block(i, j, p, q)
 end
 
 function simEigen.Matrix:blockassign(m, i, j, p, q)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     i = i or 1
     j = j or 1
     p = p or -1
@@ -44,6 +45,7 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
 end
 
 function simEigen.Matrix:col(j)
+    assert(math.type(j) == 'integer')
     return simEigen.mtxGetCol(self.__handle, j - 1)
 end
 
@@ -74,34 +76,42 @@ function simEigen.Matrix:eye(size)
 end
 
 function simEigen.Matrix:iadd(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     simEigen.mtxIAdd(self.__handle, m.__handle)
     return self
 end
 
 function simEigen.Matrix:iaddk(k)
+    assert(type(k) == 'number', 'argument must be a number')
     simEigen.mtxIAddK(self.__handle, k)
     return self
 end
 
 function simEigen.Matrix:imul(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     simEigen.mtxIMul(self.__handle, m.__handle)
     return self
 end
 
 function simEigen.Matrix:imulk(k)
+    assert(type(k) == 'number', 'argument must be a number')
     simEigen.mtxIMulK(self.__handle, k)
     return self
 end
 
+function simEigen.Matrix:ismatrix(m)
+    return getmetatable(m) == simEigen.Matrix
+end
+
 function simEigen.Matrix:isub(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     simEigen.mtxISub(self.__handle, m.__handle)
     return self
 end
 
 function simEigen.Matrix:item(i, j)
+    assert(math.type(i) == 'integer')
+    assert(math.type(j) == 'integer')
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
 end
 
@@ -118,13 +128,14 @@ function simEigen.Matrix:minCoeff()
 end
 
 function simEigen.Matrix:mul(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxMul(self.__handle, m.__handle)
     r = simEigen.Matrix(r)
     return r
 end
 
 function simEigen.Matrix:mulk(k)
+    assert(type(k) == 'number', 'argument must be a number')
     local r = simEigen.mtxMulK(self.__handle, k)
     r = simEigen.Matrix(r)
     return r
@@ -146,7 +157,7 @@ function simEigen.Matrix:normalized()
 end
 
 function simEigen.Matrix:pinv(b, damping)
-    assert(b == nil or getmetatable(b) == simEigen.Matrix)
+    assert(b == nil or simEigen.Matrix:ismatrix(m), 'b must be a Matrix or nil')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
@@ -159,6 +170,7 @@ function simEigen.Matrix:prod()
 end
 
 function simEigen.Matrix:row(i)
+    assert(math.type(i) == 'integer')
     return simEigen.mtxGetRow(self.__handle, i - 1)
 end
 
@@ -168,6 +180,7 @@ function simEigen.Matrix:rows()
 end
 
 function simEigen.Matrix:setcol(j, data)
+    assert(math.type(j) == 'integer')
     simEigen.mtxSetCol(self.__handle, j - 1, data)
     return self
 end
@@ -179,11 +192,14 @@ function simEigen.Matrix:setdata(data)
 end
 
 function simEigen.Matrix:setitem(i, j, data)
+    assert(math.type(i) == 'integer')
+    assert(math.type(j) == 'integer')
     simEigen.mtxSetItem(self.__handle, i - 1, j - 1, data)
     return self
 end
 
 function simEigen.Matrix:setrow(i, data)
+    assert(math.type(i) == 'integer')
     simEigen.mtxSetRow(self.__handle, i - 1, data)
     return self
 end
@@ -193,7 +209,7 @@ function simEigen.Matrix:squaredNorm()
 end
 
 function simEigen.Matrix:sub(m)
-    assert(getmetatable(m) == simEigen.Matrix)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxSub(self.__handle, m.__handle)
     r = simEigen.Matrix(r)
     return r
@@ -204,7 +220,7 @@ function simEigen.Matrix:sum()
 end
 
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
-    assert(b == nil or getmetatable(b) == simEigen.Matrix)
+    assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
     local s, u, v, x = simEigen.mtxSVD(self.__handle, computeThinU, computeThinV, (b or {}).__handle)
     s = simEigen.Matrix(s)
     u = simEigen.Matrix(u)
