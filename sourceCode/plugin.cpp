@@ -129,7 +129,7 @@ public:
         out->result = a.dot(b);
     }
 
-    void mtxGetCol(mtxGetCol_in *in, mtxGetCol_out *out)
+    void mtxGetColData(mtxGetColData_in *in, mtxGetColData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         if(in->j < 0 || in->j >= m->cols())
@@ -156,7 +156,7 @@ public:
         out->data = (*m)(in->i, in->j);
     }
 
-    void mtxGetRow(mtxGetRow_in *in, mtxGetRow_out *out)
+    void mtxGetRowData(mtxGetRowData_in *in, mtxGetRowData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         if(in->i < 0 || in->i >= m->rows())
@@ -328,7 +328,7 @@ public:
         out->result = m->prod();
     }
 
-    void mtxSetCol(mtxSetCol_in *in, mtxSetCol_out *out)
+    void mtxSetColData(mtxSetColData_in *in, mtxSetColData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         if(in->j < 0 || in->j >= m->cols())
@@ -357,7 +357,7 @@ public:
         (*m)(in->i, in->j) = in->data;
     }
 
-    void mtxSetRow(mtxSetRow_in *in, mtxSetRow_out *out)
+    void mtxSetRowData(mtxSetRowData_in *in, mtxSetRowData_out *out)
     {
         auto m = mtxHandles.get(in->handle);
         if(in->i < 0 || in->i >= m->rows())

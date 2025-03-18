@@ -86,7 +86,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxGetCol">
+    <command name="mtxGetColData">
         <description>Get a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -116,7 +116,7 @@
             <param name="data" type="double"></param>
         </return>
     </command>
-    <command name="mtxGetRow">
+    <command name="mtxGetRowData">
         <description>Get a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -296,7 +296,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxSetCol">
+    <command name="mtxSetColData">
         <description>Set a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -326,7 +326,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxSetRow">
+    <command name="mtxSetRowData">
         <description>Set a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
