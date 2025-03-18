@@ -235,6 +235,20 @@ public:
         out->result = m->norm();
     }
 
+    void mtxNormalize(mtxNormalize_in *in, mtxNormalize_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        m->normalize();
+    }
+
+    void mtxNormalized(mtxNormalized_in *in, mtxNormalized_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = m->normalized();
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
     void mtxPInv(mtxPInv_in *in, mtxPInv_out *out)
     {
         auto m = mtxHandles.get(in->m);

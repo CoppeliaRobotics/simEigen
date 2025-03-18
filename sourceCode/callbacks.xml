@@ -228,6 +228,23 @@
             <param name="result" type="double"></param>
         </return>
     </command>
+    <command name="mtxNormalize">
+        <description>Normalize this matrix in place.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxNormalized">
+        <description>Return normalized matrix. Returns a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxPInv">
         <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
         <params>

@@ -134,6 +134,17 @@ function simEigen.Matrix:norm()
     return simEigen.mtxNorm(self.__handle)
 end
 
+function simEigen.Matrix:normalize()
+    simEigen.mtxNormalize(self.__handle)
+    return self
+end
+
+function simEigen.Matrix:normalized()
+    local m = simEigen.mtxNormalized(self.__handle)
+    m = simEigen.Matrix(m)
+    return m
+end
+
 function simEigen.Matrix:pinv(b, damping)
     assert(b == nil or getmetatable(b) == simEigen.Matrix)
     damping = damping or 0.0
