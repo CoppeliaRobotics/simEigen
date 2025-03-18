@@ -50,7 +50,7 @@ end
 
 function simEigen.Matrix:coldata(j)
     assert(math.type(j) == 'integer')
-    return simEigen.mtxGetCol(self.__handle, j - 1)
+    return simEigen.mtxGetColData(self.__handle, j - 1)
 end
 
 function simEigen.Matrix:cols()
@@ -191,7 +191,7 @@ end
 
 function simEigen.Matrix:rowdata(i)
     assert(math.type(i) == 'integer')
-    return simEigen.mtxGetRow(self.__handle, i - 1)
+    return simEigen.mtxGetRowData(self.__handle, i - 1)
 end
 
 function simEigen.Matrix:rows()
