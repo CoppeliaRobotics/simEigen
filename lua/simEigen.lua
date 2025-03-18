@@ -5,13 +5,15 @@ simEigen.Matrix = {}
 
 function simEigen.Matrix:add(m)
     assert(getmetatable(m) == simEigen.Matrix)
-    simEigen.mtxAdd(self.__handle, m.__handle)
-    return self
+    local r = simEigen.mtxAdd(self.__handle, m.__handle)
+    r = simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:addk(k)
-    simEigen.mtxAddK(self.__handle, k)
-    return self
+    local r = simEigen.mtxAddK(self.__handle, k)
+    r = simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:block(i, j, p, q)
@@ -24,7 +26,8 @@ function simEigen.Matrix:block(i, j, p, q)
     assert(math.type(p) == 'integer')
     assert(math.type(q) == 'integer')
     local m = simEigen.mtxBlock(self.__handle, i - 1, j - 1, p, q)
-    return simEigen.Matrix(m)
+    m = simEigen.Matrix(m)
+    return m
 end
 
 function simEigen.Matrix:blockassign(m, i, j, p, q)
@@ -50,7 +53,9 @@ function simEigen.Matrix:cols()
 end
 
 function simEigen.Matrix:copy()
-    return simEigen.Matrix(simEigen.mtxCopy(self.__handle))
+    local m = simEigen.mtxCopy(self.__handle)
+    m = simEigen.Matrix(m)
+    return m
 end
 
 function simEigen.Matrix:count()
@@ -66,6 +71,34 @@ function simEigen.Matrix:eye(size)
     local data = {}
     for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
     return simEigen.Matrix(size, size, data)
+end
+
+function simEigen.Matrix:iadd(m)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxIAdd(self.__handle, m.__handle)
+    return self
+end
+
+function simEigen.Matrix:iaddk(k)
+    simEigen.mtxIAddK(self.__handle, k)
+    return self
+end
+
+function simEigen.Matrix:imul(m)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxIMul(self.__handle, m.__handle)
+    return self
+end
+
+function simEigen.Matrix:imulk(k)
+    simEigen.mtxIMulK(self.__handle, k)
+    return self
+end
+
+function simEigen.Matrix:isub(m)
+    assert(getmetatable(m) == simEigen.Matrix)
+    simEigen.mtxISub(self.__handle, m.__handle)
+    return self
 end
 
 function simEigen.Matrix:item(i, j)
@@ -86,13 +119,15 @@ end
 
 function simEigen.Matrix:mul(m)
     assert(getmetatable(m) == simEigen.Matrix)
-    simEigen.mtxMul(self.__handle, m.__handle)
-    return self
+    local r = simEigen.mtxMul(self.__handle, m.__handle)
+    r = simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:mulk(k)
-    simEigen.mtxMulK(self.__handle, k)
-    return self
+    local r = simEigen.mtxMulK(self.__handle, k)
+    r = simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:norm()
@@ -105,6 +140,7 @@ function simEigen.Matrix:pinv(b, damping)
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
     if x then x = simEigen.Matrix(x) end
+    return m, x
 end
 
 function simEigen.Matrix:prod()
@@ -147,13 +183,9 @@ end
 
 function simEigen.Matrix:sub(m)
     assert(getmetatable(m) == simEigen.Matrix)
-    simEigen.mtxSub(self.__handle, m.__handle)
-    return self
-end
-
-function simEigen.Matrix:subk(k)
-    simEigen.mtxSubK(self.__handle, k)
-    return self
+    local r = simEigen.mtxSub(self.__handle, m.__handle)
+    r = simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:sum()

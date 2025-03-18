@@ -4,21 +4,23 @@
 <plugin name="simEigen" author="federico.ferri.it@gmail.com">
     <description></description>
     <command name="mtxAdd">
-        <description>Performs addition of the two matrices in place (writes result to first matrix).</description>
+        <description>Performs addition of the two matrices. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
         </params>
         <return>
+            <param name="handle" type="string"></param>
         </return>
     </command>
     <command name="mtxAddK">
-        <description>Performs addition of matrix and scalar in place (writes result to matrix).</description>
+        <description>Performs addition of matrix and scalar. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="k" type="double"></param>
         </params>
         <return>
+            <param name="handle" type="string"></param>
         </return>
     </command>
     <command name="mtxBlock">
@@ -114,6 +116,51 @@
             <param name="cols" type="int"></param>
         </return>
     </command>
+    <command name="mtxIAdd">
+        <description>Performs addition of the two matrices in place (writes result to first matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxIAddK">
+        <description>Performs addition of matrix and scalar in place (writes result to matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="k" type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxIMul">
+        <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxIMulK">
+        <description>Performs multiplication of matrix and scalar in place (writes result to matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="k" type="double"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="mtxISub">
+        <description>Performs subtraction of the two matrices in place (writes result to first matrix).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
     <command name="mtxMaxCoeff">
         <description>Compute max coeff. of elements of this matrix.</description>
         <params>
@@ -142,21 +189,23 @@
         </return>
     </command>
     <command name="mtxMul">
-        <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
+        <description>Performs multiplication of the two matrices. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
         </params>
         <return>
+            <param name="handle" type="string"></param>
         </return>
     </command>
     <command name="mtxMulK">
-        <description>Performs multiplication of matrix and scalar in place (writes result to matrix).</description>
+        <description>Performs multiplication of matrix and scalar. Returns a new matrix</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="k" type="double"></param>
         </params>
         <return>
+            <param name="handle" type="string"></param>
         </return>
     </command>
     <command name="mtxNew">
@@ -260,21 +309,13 @@
         </return>
     </command>
     <command name="mtxSub">
-        <description>Performs subtraction of the two matrices in place (writes result to first matrix).</description>
+        <description>Performs subtraction of the two matrices. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
         </params>
         <return>
-        </return>
-    </command>
-    <command name="mtxSubK">
-        <description>Performs subtraction of matrix and scalar in place (writes result to matrix).</description>
-        <params>
             <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
-        </params>
-        <return>
         </return>
     </command>
     <command name="mtxSum">

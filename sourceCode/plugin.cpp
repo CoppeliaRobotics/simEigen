@@ -42,13 +42,17 @@ public:
         auto m2 = mtxHandles.get(in->handle2);
         if(m->rows() != m2->rows() || m->cols() != m2->cols())
             throw std::runtime_error("Incompatible matrix dimensions for addition");
-        *m += *m2;
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = (*m) + (*m2);
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxAddK(mtxAddK_in *in, mtxAddK_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        *m = m->array() + in->k;
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = m->array() + in->k;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxBlock(mtxBlock_in *in, mtxBlock_out *out)
@@ -132,6 +136,45 @@ public:
         out->cols = m->cols();
     }
 
+    void mtxIAdd(mtxIAdd_in *in, mtxIAdd_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != m2->rows() || m->cols() != m2->cols())
+            throw std::runtime_error("Incompatible matrix dimensions for addition");
+        *m += *m2;
+    }
+
+    void mtxIAddK(mtxIAddK_in *in, mtxIAddK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        *m = m->array() + in->k;
+    }
+
+    void mtxIMul(mtxIMul_in *in, mtxIMul_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->cols() != m2->rows())
+            throw std::runtime_error("Incompatible matrix dimensions for multiplication");
+        *m = (*m) * (*m2);
+    }
+
+    void mtxIMulK(mtxIMulK_in *in, mtxIMulK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        *m = (*m) * in->k;
+    }
+
+    void mtxISub(mtxISub_in *in, mtxISub_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != m2->rows() || m->cols() != m2->cols())
+            throw std::runtime_error("Incompatible matrix dimensions for addition");
+        *m -= *m2;
+    }
+
     void mtxMaxCoeff(mtxMaxCoeff_in *in, mtxMaxCoeff_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -156,13 +199,17 @@ public:
         auto m2 = mtxHandles.get(in->handle2);
         if(m->cols() != m2->rows())
             throw std::runtime_error("Incompatible matrix dimensions for multiplication");
-        *m = (*m) * (*m2);
+        auto mr = new MatrixXd(m->rows(), m2->cols());
+        *mr = (*m) * (*m2);
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxMulK(mtxMulK_in *in, mtxMulK_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        *m = (*m) * in->k;
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = (*m) * in->k;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxNew(mtxNew_in *in, mtxNew_out *out)
@@ -282,13 +329,9 @@ public:
         auto m2 = mtxHandles.get(in->handle2);
         if(m->rows() != m2->rows() || m->cols() != m2->cols())
             throw std::runtime_error("Incompatible matrix dimensions for addition");
-        *m -= *m2;
-    }
-
-    void mtxSubK(mtxSubK_in *in, mtxSubK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        *m = m->array() - in->k;
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = *m - *m2;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxSum(mtxSum_in *in, mtxSum_out *out)
