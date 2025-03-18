@@ -65,7 +65,7 @@
         </return>
     </command>
     <command name="mtxGetCol">
-        <description>Get a column of this matrix.</description>
+        <description>Get a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="j" type="int"></param>
@@ -84,7 +84,7 @@
         </return>
     </command>
     <command name="mtxGetItem">
-        <description>Get an item of this matrix.</description>
+        <description>Get an item of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="i" type="int"></param>
@@ -95,7 +95,7 @@
         </return>
     </command>
     <command name="mtxGetRow">
-        <description>Get a row of this matrix.</description>
+        <description>Get a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="i" type="int"></param>
@@ -211,7 +211,7 @@
         </return>
     </command>
     <command name="mtxSetCol">
-        <description>Set a column of this matrix.</description>
+        <description>Set a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="j" type="int"></param>
@@ -230,7 +230,7 @@
         </return>
     </command>
     <command name="mtxSetItem">
-        <description>Set an item of this matrix.</description>
+        <description>Set an item of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="i" type="int"></param>
@@ -241,7 +241,7 @@
         </return>
     </command>
     <command name="mtxSetRow">
-        <description>Set a row of this matrix.</description>
+        <description>Set a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="i" type="int"></param>
