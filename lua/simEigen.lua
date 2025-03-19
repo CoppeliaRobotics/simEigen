@@ -121,6 +121,13 @@ function simEigen.Matrix:floor()
     return self:op(simEigen.op.floor, nil, false)
 end
 
+function simEigen.Matrix:horzcat(m1, m2)
+    if self ~= simEigen.Matrix then m1, m2 = self, m1 end
+    local m = simEigen.mtxHorzCat(m1.__handle, m2.__handle)
+    m = simEigen.Matrix(m)
+    return m
+end
+
 function simEigen.Matrix:iabs()
     return self:op(simEigen.op.abs, nil, true)
 end
@@ -459,6 +466,13 @@ end
 
 function simEigen.Matrix:transposed()
     local m = simEigen.mtxTransposed(self.__handle)
+    m = simEigen.Matrix(m)
+    return m
+end
+
+function simEigen.Matrix:vertcat(m1, m2)
+    if self ~= simEigen.Matrix then m1, m2 = self, m1 end
+    local m = simEigen.mtxVertCat(m1.__handle, m2.__handle)
     m = simEigen.Matrix(m)
     return m
 end

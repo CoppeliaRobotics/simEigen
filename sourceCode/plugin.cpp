@@ -158,6 +158,18 @@ public:
         out->cols = m->cols();
     }
 
+    void mtxHorzCat(mtxHorzCat_in *in, mtxHorzCat_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != m2->rows())
+            throw std::runtime_error("matrices row count mismatch");
+        auto mr = new MatrixXd(m->rows(), m->cols() + m2->cols());
+        mr->block(0, 0, m->rows(), m->cols()) = *m;
+        mr->block(0, m->cols(), m2->rows(), m2->cols()) = *m2;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
     void mtxIMul(mtxIMul_in *in, mtxIMul_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -547,6 +559,18 @@ public:
         auto m2 = new MatrixXd;
         *m2 = m->transpose();
         out->handle = mtxHandles.add(m2, in->_.scriptID);
+    }
+
+    void mtxVertCat(mtxVertCat_in *in, mtxVertCat_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->cols() != m2->cols())
+            throw std::runtime_error("matrices row count mismatch");
+        auto mr = new MatrixXd(m->rows() + m2->rows(), m->cols());
+        mr->block(0, 0, m->rows(), m->cols()) = *m;
+        mr->block(m->rows(), 0, m2->rows(), m2->cols()) = *m2;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     // OLD FUNCTIONS:

@@ -116,6 +116,16 @@
             <param name="cols" type="int"></param>
         </return>
     </command>
+    <command name="mtxHorzCat">
+        <description>Concatenate matrices, returning a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxIMul">
         <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
         <params>
@@ -373,6 +383,16 @@
         <description>Return a transposed version of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="mtxVertCat">
+        <description>Concatenate matrices, returning a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
