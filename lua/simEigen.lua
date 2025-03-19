@@ -645,7 +645,7 @@ end
 function simEigen.import(...)
     local names = {...}
     if #names == 1 and names[1] == '*' then
-        simEigen.import {'Matrix', 'Vector'}
+        simEigen.import('Matrix', 'Vector')
         _G.simEigen = simEigen
         return
     end
