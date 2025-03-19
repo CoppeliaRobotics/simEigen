@@ -4,17 +4,7 @@ local simEigen = loadPlugin 'simEigen';
 simEigen.Matrix = {}
 
 function simEigen.Matrix:add(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
-    local r = simEigen.mtxAdd(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
-    return r
-end
-
-function simEigen.Matrix:addk(k)
-    assert(type(k) == 'number', 'argument must be a number')
-    local r = simEigen.mtxAddK(self.__handle, k)
-    r = simEigen.Matrix(r)
-    return r
+    return self:op(simEigen.op.add, m, false)
 end
 
 function simEigen.Matrix:block(i, j, p, q)
@@ -92,26 +82,24 @@ function simEigen.Matrix:eye(size)
 end
 
 function simEigen.Matrix:iadd(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
-    simEigen.mtxIAdd(self.__handle, m.__handle)
-    return self
+    return self:op(simEigen.op.add, m, true)
 end
 
-function simEigen.Matrix:iaddk(k)
-    assert(type(k) == 'number', 'argument must be a number')
-    simEigen.mtxIAddK(self.__handle, k)
-    return self
+function simEigen.Matrix:imax(m)
+    return self:op(simEigen.op.max, m, true)
+end
+
+function simEigen.Matrix:imin(m)
+    return self:op(simEigen.op.min, m, true)
 end
 
 function simEigen.Matrix:imul(m)
+    if type(m) == 'number' then
+        return self:op(simEigen.op.times, k, true)
+    end
+
     assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     simEigen.mtxIMul(self.__handle, m.__handle)
-    return self
-end
-
-function simEigen.Matrix:imulk(k)
-    assert(type(k) == 'number', 'argument must be a number')
-    simEigen.mtxIMulK(self.__handle, k)
     return self
 end
 
@@ -120,15 +108,21 @@ function simEigen.Matrix:ismatrix(m)
 end
 
 function simEigen.Matrix:isub(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
-    simEigen.mtxISub(self.__handle, m.__handle)
-    return self
+    return self:op(simEigen.op.sub, m, true)
+end
+
+function simEigen.Matrix:itimes(m)
+    return self:op(simEigen.op.times, m, true)
 end
 
 function simEigen.Matrix:item(i, j)
     assert(math.type(i) == 'integer')
     assert(math.type(j) == 'integer')
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
+end
+
+function simEigen.Matrix:max(m)
+    return self:op(simEigen.op.max, m, false)
 end
 
 function simEigen.Matrix:maxcoeff()
@@ -139,20 +133,21 @@ function simEigen.Matrix:mean()
     return simEigen.mtxMean(self.__handle)
 end
 
+function simEigen.Matrix:min(m)
+    return self:op(simEigen.op.min, m, false)
+end
+
 function simEigen.Matrix:mincoeff()
     return simEigen.mtxMinCoeff(self.__handle)
 end
 
 function simEigen.Matrix:mul(m)
+    if type(m) == 'number' then
+        return self:op(simEigen.op.times, k, false)
+    end
+
     assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxMul(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
-    return r
-end
-
-function simEigen.Matrix:mulk(k)
-    assert(type(k) == 'number', 'argument must be a number')
-    local r = simEigen.mtxMulK(self.__handle, k)
     r = simEigen.Matrix(r)
     return r
 end
@@ -170,6 +165,19 @@ function simEigen.Matrix:normalized()
     local m = simEigen.mtxNormalized(self.__handle)
     m = simEigen.Matrix(m)
     return m
+end
+
+function simEigen.Matrix:op(op, x, inplace)
+    local r
+    if type(x) == 'number' then
+        r = simEigen.mtxOpK(self.__handle, op, x, inplace)
+    elseif simEigen.Matrix:ismatrix(x) or x == nil then
+        r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
+    else
+        error('invalid operand type')
+    end
+    r = inplace and self or simEigen.Matrix(r)
+    return r
 end
 
 function simEigen.Matrix:pinv(b, damping)
@@ -257,10 +265,7 @@ function simEigen.Matrix:squarednorm()
 end
 
 function simEigen.Matrix:sub(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
-    local r = simEigen.mtxSub(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
-    return r
+    return self:op(simEigen.op.sub, m, false)
 end
 
 function simEigen.Matrix:sum()
@@ -275,6 +280,10 @@ function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     v = simEigen.Matrix(v)
     if x then x = simEigen.Matrix(x) end
     return s, u, v, x
+end
+
+function simEigen.Matrix:times(m)
+    return self:op(simEigen.op.times, m, false)
 end
 
 function simEigen.Matrix:trace()

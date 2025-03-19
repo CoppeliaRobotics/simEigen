@@ -36,25 +36,6 @@ public:
         }
     }
 
-    void mtxAdd(mtxAdd_in *in, mtxAdd_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows() || m->cols() != m2->cols())
-            throw std::runtime_error("Incompatible matrix dimensions for addition");
-        auto mr = new MatrixXd(m->rows(), m->cols());
-        *mr = (*m) + (*m2);
-        out->handle = mtxHandles.add(mr, in->_.scriptID);
-    }
-
-    void mtxAddK(mtxAddK_in *in, mtxAddK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto mr = new MatrixXd(m->rows(), m->cols());
-        *mr = m->array() + in->k;
-        out->handle = mtxHandles.add(mr, in->_.scriptID);
-    }
-
     void mtxBlock(mtxBlock_in *in, mtxBlock_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -177,21 +158,6 @@ public:
         out->cols = m->cols();
     }
 
-    void mtxIAdd(mtxIAdd_in *in, mtxIAdd_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows() || m->cols() != m2->cols())
-            throw std::runtime_error("Incompatible matrix dimensions for addition");
-        *m += *m2;
-    }
-
-    void mtxIAddK(mtxIAddK_in *in, mtxIAddK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        *m = m->array() + in->k;
-    }
-
     void mtxIMul(mtxIMul_in *in, mtxIMul_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -199,21 +165,6 @@ public:
         if(m->cols() != m2->rows())
             throw std::runtime_error("Incompatible matrix dimensions for multiplication");
         *m = (*m) * (*m2);
-    }
-
-    void mtxIMulK(mtxIMulK_in *in, mtxIMulK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        *m = (*m) * in->k;
-    }
-
-    void mtxISub(mtxISub_in *in, mtxISub_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows() || m->cols() != m2->cols())
-            throw std::runtime_error("Incompatible matrix dimensions for addition");
-        *m -= *m2;
     }
 
     void mtxMaxCoeff(mtxMaxCoeff_in *in, mtxMaxCoeff_out *out)
@@ -242,14 +193,6 @@ public:
             throw std::runtime_error("Incompatible matrix dimensions for multiplication");
         auto mr = new MatrixXd(m->rows(), m2->cols());
         *mr = (*m) * (*m2);
-        out->handle = mtxHandles.add(mr, in->_.scriptID);
-    }
-
-    void mtxMulK(mtxMulK_in *in, mtxMulK_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto mr = new MatrixXd(m->rows(), m->cols());
-        *mr = (*m) * in->k;
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
@@ -288,6 +231,117 @@ public:
         auto mr = new MatrixXd(m->rows(), m->cols());
         *mr = m->normalized();
         out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void mtxOp(mtxOp_in *in, mtxOp_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        MatrixXd *mr = in->inplace ? nullptr : new MatrixXd(m->rows(), m->cols());
+        if(in->handle2)
+        {
+            // binary ops:
+            auto m2 = mtxHandles.get(*in->handle2);
+            if(m->rows() != m2->rows() || m->cols() != m2->cols())
+                throw std::runtime_error("Matrix dimensions must be the same");
+            switch(in->op)
+            {
+            case simeigen_op_add:
+                if(in->inplace)
+                    *m += (*m2);
+                else
+                    *mr = (*m) + (*m2);
+                break;
+            case simeigen_op_sub:
+                if(in->inplace)
+                    *m -= (*m2);
+                else
+                    *mr = (*m) - (*m2);
+                break;
+            case simeigen_op_times:
+                if(in->inplace)
+                    *m = m->array() * m2->array();
+                else
+                    *mr = m->array() * m2->array();
+                break;
+            case simeigen_op_min:
+                if(in->inplace)
+                    *m = m->cwiseMin(*m2);
+                else
+                    *mr = m->cwiseMin(*m2);
+                break;
+            case simeigen_op_max:
+                if(in->inplace)
+                    *m = m->cwiseMax(*m2);
+                else
+                    *mr = m->cwiseMax(*m2);
+                break;
+            default:
+                throw std::runtime_error("invalid operator");
+            }
+        }
+        else
+        {
+            // unary ops:
+            switch(in->op)
+            {
+            case simeigen_op_unm:
+                if(in->inplace)
+                    *m = -(*m);
+                else
+                    *mr = -(*m);
+                break;
+            default:
+                throw std::runtime_error("invalid operator");
+            }
+        }
+        if(!in->inplace)
+            out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void mtxOpK(mtxOpK_in *in, mtxOpK_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        MatrixXd *mr = in->inplace ? nullptr : new MatrixXd(m->rows(), m->cols());
+        {
+            // binary ops:
+            switch(in->op)
+            {
+            case simeigen_op_add:
+                if(in->inplace)
+                    *m = m->array() + in->k;
+                else
+                    *mr = m->array() + in->k;
+                break;
+            case simeigen_op_sub:
+                if(in->inplace)
+                    *m = m->array() - in->k;
+                else
+                    *mr = m->array() - in->k;
+                break;
+            case simeigen_op_times:
+                if(in->inplace)
+                    *m = m->array() * in->k;
+                else
+                    *mr = m->array() * in->k;
+                break;
+            case simeigen_op_min:
+                if(in->inplace)
+                    *m = m->array().cwiseMin(in->k);
+                else
+                    *mr = m->array().cwiseMin(in->k);
+                break;
+            case simeigen_op_max:
+                if(in->inplace)
+                    *m = m->array().cwiseMax(in->k);
+                else
+                    *mr = m->array().cwiseMax(in->k);
+                break;
+            default:
+                throw std::runtime_error("invalid operator");
+            }
+        }
+        if(!in->inplace)
+            out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxPInv(mtxPInv_in *in, mtxPInv_out *out)
@@ -376,17 +430,6 @@ public:
     {
         auto m = mtxHandles.get(in->handle);
         out->result = m->squaredNorm();
-    }
-
-    void mtxSub(mtxSub_in *in, mtxSub_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows() || m->cols() != m2->cols())
-            throw std::runtime_error("Incompatible matrix dimensions for addition");
-        auto mr = new MatrixXd(m->rows(), m->cols());
-        *mr = *m - *m2;
-        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxSum(mtxSum_in *in, mtxSum_out *out)

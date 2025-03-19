@@ -3,26 +3,6 @@
 
 <plugin name="simEigen" author="federico.ferri.it@gmail.com">
     <description></description>
-    <command name="mtxAdd">
-        <description>Performs addition of the two matrices. Returns a new matrix.</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
-    <command name="mtxAddK">
-        <description>Performs addition of matrix and scalar. Returns a new matrix.</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
     <command name="mtxBlock">
         <description>Block of size (p,q), starting at (i,j). Indices start at 0. Returns a new matrix.</description>
         <params>
@@ -136,44 +116,8 @@
             <param name="cols" type="int"></param>
         </return>
     </command>
-    <command name="mtxIAdd">
-        <description>Performs addition of the two matrices in place (writes result to first matrix).</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
-        </params>
-        <return>
-        </return>
-    </command>
-    <command name="mtxIAddK">
-        <description>Performs addition of matrix and scalar in place (writes result to matrix).</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
-        </params>
-        <return>
-        </return>
-    </command>
     <command name="mtxIMul">
         <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
-        </params>
-        <return>
-        </return>
-    </command>
-    <command name="mtxIMulK">
-        <description>Performs multiplication of matrix and scalar in place (writes result to matrix).</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
-        </params>
-        <return>
-        </return>
-    </command>
-    <command name="mtxISub">
-        <description>Performs subtraction of the two matrices in place (writes result to first matrix).</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="handle2" type="string"></param>
@@ -218,16 +162,6 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxMulK">
-        <description>Performs multiplication of matrix and scalar. Returns a new matrix</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="k" type="double"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
     <command name="mtxNew">
         <description>Create a new matrix. If initialData is specified, fill the matrix with specified data.</description>
         <params>
@@ -263,6 +197,30 @@
         </params>
         <return>
             <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="mtxOp">
+        <description>Performs element-wise operation on the matrix(es). Returns a new matrix if inplace is false, otherwise writes the result into first matrix./</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="op" type="int"></param>
+            <param name="handle2" type="string" nullable="true" default="nil"></param>
+            <param name="inplace" type="bool" default="true"></param>
+        </params>
+        <return>
+            <param name="handle" type="string" nullable="true" default="nil"></param>
+        </return>
+    </command>
+    <command name="mtxOpK">
+        <description>Performs element-wise operation on the matrix and the scalar. Returns a new matrix if inplace is false, otherwise writes the result into first matrix./</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="op" type="int"></param>
+            <param name="k" type="double"></param>
+            <param name="inplace" type="bool" default="true"></param>
+        </params>
+        <return>
+            <param name="handle" type="string" nullable="true" default="nil"></param>
         </return>
     </command>
     <command name="mtxPInv">
@@ -345,16 +303,6 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxSub">
-        <description>Performs subtraction of the two matrices. Returns a new matrix.</description>
-        <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
-        </params>
-        <return>
-            <param name="handle" type="string"></param>
-        </return>
-    </command>
     <command name="mtxSum">
         <description>Compute sum of elements of this matrix.</description>
         <params>
@@ -419,6 +367,16 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <enum name="op" item-prefix="op_" base="540">
+        <!-- unary ops: -->
+        <item name="unm"></item>
+        <!-- binary ops: -->
+        <item name="add"></item>
+        <item name="sub"></item>
+        <item name="times"></item>
+        <item name="min"></item>
+        <item name="max"></item>
+    </enum>
     <!-- OLD FUNCTIONS: -->
     <command name="svd">
         <description>SVD decomposition. See https://eigen.tuxfamily.org/dox/classEigen_1_1JacobiSVD.html for details.</description>
