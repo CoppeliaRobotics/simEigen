@@ -535,24 +535,32 @@ function simEigen.Matrix:__tostring(forDisplay, numToString)
 
         parenthesesRenderStyles = parenthesesRenderStyles or {
             curly = {
-                left  = {top = '\u{23A7}', mid = '\u{23A8}', btm = '\u{23A9}'},
-                right = {top = '\u{23AD}', mid = '\u{23AA}', btm = '\u{23AB}'},
+                left  = {top = '\u{23A7}', mid = '\u{23A8}', btm = '\u{23A9}', single = '{'},
+                right = {top = '\u{23AD}', mid = '\u{23AA}', btm = '\u{23AB}', single = '}'},
             },
             round = {
-                left  = {top = '\u{239B}', mid = '\u{239C}', btm = '\u{239D}'},
-                right = {top = '\u{239E}', mid = '\u{239F}', btm = '\u{23A0}'},
+                left  = {top = '\u{239B}', mid = '\u{239C}', btm = '\u{239D}', single = '('},
+                right = {top = '\u{239E}', mid = '\u{239F}', btm = '\u{23A0}', single = ')'},
             },
             square = {
-                left  = {top = '\u{23A1}', mid = '\u{23A2}', btm = '\u{23A3}'},
-                right = {top = '\u{23A4}', mid = '\u{23A5}', btm = '\u{23A6}'},
+                left  = {top = '\u{23A1}', mid = '\u{23A2}', btm = '\u{23A3}', single = '['},
+                right = {top = '\u{23A4}', mid = '\u{23A5}', btm = '\u{23A6}', single = ']'},
             },
         }
         parenthesesRenderStyle = parenthesesRenderStyle or parenthesesRenderStyles.round
 
         for i = 1, self:rows() do
             out = out .. (i > 1 and '\n' or '')
-            local tmb = 'mid'
-            if i == 1 then tmb = 'top' elseif i == self:rows() then tmb = 'btm' end
+            local tmb
+            if self:rows() == 1 then
+                tmb = 'single'
+            elseif i == 1 then
+                tmb = 'top'
+            elseif i == self:rows() then
+                tmb = 'btm'
+            else
+                tmb = 'mid'
+            end
             out = out .. parenthesesRenderStyle.left[tmb] .. ' '
             for j = 1, #s[i] do
                 out = out .. (j > 1 and '  ' or '')
