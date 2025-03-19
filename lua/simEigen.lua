@@ -435,6 +435,10 @@ function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     return s, u, v, x
 end
 
+function simEigen.Matrix:t()
+    return self:transposed()
+end
+
 function simEigen.Matrix:tan()
     return self:op(simEigen.op.tan, nil, false)
 end
