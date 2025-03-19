@@ -370,10 +370,29 @@
     <enum name="op" item-prefix="op_" base="540">
         <!-- unary ops: -->
         <item name="unm"></item>
+        <item name="abs"></item>
+        <item name="acos"></item>
+        <item name="asin"></item>
+        <item name="atan"></item>
+        <item name="ceil"></item>
+        <item name="cos"></item>
+        <item name="deg"></item>
+        <item name="exp"></item>
+        <item name="floor"></item>
+        <item name="log"></item>
+        <item name="log2"></item>
+        <item name="log10"></item>
+        <item name="rad"></item>
+        <item name="sin"></item>
+        <item name="sqrt"></item>
+        <item name="tan"></item>
         <!-- binary ops: -->
         <item name="add"></item>
         <item name="sub"></item>
         <item name="times"></item>
+        <item name="div"></item>
+        <item name="intdiv"></item>
+        <item name="mod"></item>
         <item name="min"></item>
         <item name="max"></item>
     </enum>

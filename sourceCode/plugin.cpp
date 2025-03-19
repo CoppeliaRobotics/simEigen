@@ -263,6 +263,18 @@ public:
                 else
                     *mr = m->array() * m2->array();
                 break;
+            case simeigen_op_div:
+                if(in->inplace)
+                    *m = m->array() / m2->array();
+                else
+                    *mr = m->array() / m2->array();
+                break;
+            case simeigen_op_intdiv:
+                if(in->inplace)
+                    *m = (m->array() / m2->array()).cast<long>().cast<double>();
+                else
+                    *mr = (m->array() / m2->array()).cast<long>().cast<double>();
+                break;
             case simeigen_op_min:
                 if(in->inplace)
                     *m = m->cwiseMin(*m2);
@@ -282,13 +294,60 @@ public:
         else
         {
             // unary ops:
+            if(in->inplace)
+                mr = m; // unary ops have no extra optimization by eigen...
             switch(in->op)
             {
             case simeigen_op_unm:
-                if(in->inplace)
-                    *m = -(*m);
-                else
-                    *mr = -(*m);
+                *mr = -(*m);
+                break;
+            case simeigen_op_abs:
+                *mr = m->array().abs();
+                break;
+            case simeigen_op_acos:
+                *mr = m->array().acos();
+                break;
+            case simeigen_op_asin:
+                *mr = m->array().asin();
+                break;
+            case simeigen_op_atan:
+                *mr = m->array().atan();
+                break;
+            case simeigen_op_ceil:
+                *mr = m->array().ceil();
+                break;
+            case simeigen_op_cos:
+                *mr = m->array().cos();
+                break;
+            case simeigen_op_deg:
+                *mr = m->array() * 180. / M_PI;
+                break;
+            case simeigen_op_exp:
+                *mr = m->array().exp();
+                break;
+            case simeigen_op_floor:
+                *mr = m->array().floor();
+                break;
+            case simeigen_op_log:
+                *mr = m->array().log();
+                break;
+            case simeigen_op_log2:
+                *mr = m->array().log2();
+                break;
+            case simeigen_op_log10:
+                *mr = m->array().log10();
+                break;
+            case simeigen_op_rad:
+                *mr = m->array() * M_PI / 180.;
+                break;
+            case simeigen_op_sin:
+                *mr = m->array().sin();
+                break;
+            case simeigen_op_sqrt:
+                *mr = m->array().sqrt();
+                break;
+            case simeigen_op_tan:
+                *mr = m->array().tan();
                 break;
             default:
                 throw std::runtime_error("invalid operator");
@@ -301,40 +360,34 @@ public:
     void mtxOpK(mtxOpK_in *in, mtxOpK_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        MatrixXd *mr = in->inplace ? nullptr : new MatrixXd(m->rows(), m->cols());
+        MatrixXd *mr = in->inplace ? m : new MatrixXd(m->rows(), m->cols());
         {
             // binary ops:
             switch(in->op)
             {
             case simeigen_op_add:
-                if(in->inplace)
-                    *m = m->array() + in->k;
-                else
-                    *mr = m->array() + in->k;
+                *mr = m->array() + in->k;
                 break;
             case simeigen_op_sub:
-                if(in->inplace)
-                    *m = m->array() - in->k;
-                else
-                    *mr = m->array() - in->k;
+                *mr = m->array() - in->k;
                 break;
             case simeigen_op_times:
-                if(in->inplace)
-                    *m = m->array() * in->k;
-                else
-                    *mr = m->array() * in->k;
+                *mr = m->array() * in->k;
+                break;
+            case simeigen_op_div:
+                *mr = m->array() / in->k;
+                break;
+            case simeigen_op_intdiv:
+                *mr = (m->array() / in->k).cast<long>().cast<double>();
+                break;
+            case simeigen_op_mod:
+                *mr = m->unaryExpr([=] (double x) { return std::fmod(x, in->k); });
                 break;
             case simeigen_op_min:
-                if(in->inplace)
-                    *m = m->array().cwiseMin(in->k);
-                else
-                    *mr = m->array().cwiseMin(in->k);
+                *mr = m->array().cwiseMin(in->k);
                 break;
             case simeigen_op_max:
-                if(in->inplace)
-                    *m = m->array().cwiseMax(in->k);
-                else
-                    *mr = m->array().cwiseMax(in->k);
+                *mr = m->array().cwiseMax(in->k);
                 break;
             default:
                 throw std::runtime_error("invalid operator");

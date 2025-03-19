@@ -3,8 +3,24 @@ local simEigen = loadPlugin 'simEigen';
 
 simEigen.Matrix = {}
 
+function simEigen.Matrix:abs()
+    return self:op(simEigen.op.abs, nil, false)
+end
+
+function simEigen.Matrix:acos()
+    return self:op(simEigen.op.acos, nil, false)
+end
+
 function simEigen.Matrix:add(m)
     return self:op(simEigen.op.add, m, false)
+end
+
+function simEigen.Matrix:asin()
+    return self:op(simEigen.op.asin, nil, false)
+end
+
+function simEigen.Matrix:atan()
+    return self:op(simEigen.op.atan, nil, false)
 end
 
 function simEigen.Matrix:block(i, j, p, q)
@@ -34,6 +50,10 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
     simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
 end
 
+function simEigen.Matrix:ceil()
+    return self:op(simEigen.op.ceil, nil, false)
+end
+
 function simEigen.Matrix:col(j)
     return self:block(1, j, -1, 1)
 end
@@ -54,6 +74,10 @@ function simEigen.Matrix:copy()
     return m
 end
 
+function simEigen.Matrix:cos()
+    return self:op(simEigen.op.cos, nil, false)
+end
+
 function simEigen.Matrix:count()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return rows * cols
@@ -70,9 +94,21 @@ function simEigen.Matrix:data()
     return simEigen.mtxGetData(self.__handle)
 end
 
+function simEigen.Matrix:deg()
+    return self:op(simEigen.op.deg, nil, false)
+end
+
+function simEigen.Matrix:div(m)
+    return self:op(simEigen.op.div, m, false)
+end
+
 function simEigen.Matrix:dot(m)
     assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
     return simEigen.mtxDot(self.__handle, m.__handle)
+end
+
+function simEigen.Matrix:exp()
+    return self:op(simEigen.op.exp, nil, false)
 end
 
 function simEigen.Matrix:eye(size)
@@ -81,8 +117,68 @@ function simEigen.Matrix:eye(size)
     return simEigen.Matrix(size, size, data)
 end
 
+function simEigen.Matrix:floor()
+    return self:op(simEigen.op.floor, nil, false)
+end
+
+function simEigen.Matrix:iabs()
+    return self:op(simEigen.op.abs, nil, true)
+end
+
+function simEigen.Matrix:iacos()
+    return self:op(simEigen.op.acos, nil, true)
+end
+
 function simEigen.Matrix:iadd(m)
     return self:op(simEigen.op.add, m, true)
+end
+
+function simEigen.Matrix:iasin()
+    return self:op(simEigen.op.asin, nil, true)
+end
+
+function simEigen.Matrix:iatan()
+    return self:op(simEigen.op.atan, nil, true)
+end
+
+function simEigen.Matrix:iceil()
+    return self:op(simEigen.op.ceil, nil, true)
+end
+
+function simEigen.Matrix:icos()
+    return self:op(simEigen.op.cos, nil, true)
+end
+
+function simEigen.Matrix:ideg()
+    return self:op(simEigen.op.deg, nil, true)
+end
+
+function simEigen.Matrix:idiv(m)
+    return self:op(simEigen.op.div, m, true)
+end
+
+function simEigen.Matrix:iexp()
+    return self:op(simEigen.op.exp, nil, true)
+end
+
+function simEigen.Matrix:ifloor()
+    return self:op(simEigen.op.floor, nil, true)
+end
+
+function simEigen.Matrix:iintdiv(m)
+    return self:op(simEigen.op.intdiv, m, true)
+end
+
+function simEigen.Matrix:ilog()
+    return self:op(simEigen.op.log, nil, true)
+end
+
+function simEigen.Matrix:ilog2()
+    return self:op(simEigen.op.log2, nil, true)
+end
+
+function simEigen.Matrix:ilog10()
+    return self:op(simEigen.op.log10, nil, true)
 end
 
 function simEigen.Matrix:imax(m)
@@ -91,6 +187,10 @@ end
 
 function simEigen.Matrix:imin(m)
     return self:op(simEigen.op.min, m, true)
+end
+
+function simEigen.Matrix:imod(m)
+    return self:op(simEigen.op.mod, m, true)
 end
 
 function simEigen.Matrix:imul(m)
@@ -103,12 +203,32 @@ function simEigen.Matrix:imul(m)
     return self
 end
 
+function simEigen.Matrix:intdiv(m)
+    return self:op(simEigen.op.intdiv, m, false)
+end
+
+function simEigen.Matrix:irad()
+    return self:op(simEigen.op.rad, nil, true)
+end
+
+function simEigen.Matrix:isin()
+    return self:op(simEigen.op.sin, nil, true)
+end
+
 function simEigen.Matrix:ismatrix(m)
     return getmetatable(m) == simEigen.Matrix
 end
 
+function simEigen.Matrix:isqrt()
+    return self:op(simEigen.op.sqrt, nil, true)
+end
+
 function simEigen.Matrix:isub(m)
     return self:op(simEigen.op.sub, m, true)
+end
+
+function simEigen.Matrix:itan()
+    return self:op(simEigen.op.tan, nil, true)
 end
 
 function simEigen.Matrix:itimes(m)
@@ -119,6 +239,18 @@ function simEigen.Matrix:item(i, j)
     assert(math.type(i) == 'integer')
     assert(math.type(j) == 'integer')
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
+end
+
+function simEigen.Matrix:log()
+    return self:op(simEigen.op.log, nil, false)
+end
+
+function simEigen.Matrix:log2()
+    return self:op(simEigen.op.log2, nil, false)
+end
+
+function simEigen.Matrix:log10()
+    return self:op(simEigen.op.log10, nil, false)
 end
 
 function simEigen.Matrix:max(m)
@@ -139,6 +271,10 @@ end
 
 function simEigen.Matrix:mincoeff()
     return simEigen.mtxMinCoeff(self.__handle)
+end
+
+function simEigen.Matrix:mod(m)
+    return self:op(simEigen.op.mod, m, false)
 end
 
 function simEigen.Matrix:mul(m)
@@ -221,6 +357,10 @@ function simEigen.Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
 
+function simEigen.Matrix:rad()
+    return self:op(simEigen.op.rad, nil, false)
+end
+
 function simEigen.Matrix:row(i)
     return self:block(i, 1, 1, -1)
 end
@@ -260,6 +400,14 @@ function simEigen.Matrix:setrow(i, data)
     return self
 end
 
+function simEigen.Matrix:sin()
+    return self:op(simEigen.op.sin, nil, false)
+end
+
+function simEigen.Matrix:sqrt()
+    return self:op(simEigen.op.sqrt, nil, false)
+end
+
 function simEigen.Matrix:squarednorm()
     return simEigen.mtxSquaredNorm(self.__handle)
 end
@@ -280,6 +428,10 @@ function simEigen.Matrix:svd(computeThinU, computeThinV, b)
     v = simEigen.Matrix(v)
     if x then x = simEigen.Matrix(x) end
     return s, u, v, x
+end
+
+function simEigen.Matrix:tan()
+    return self:op(simEigen.op.tan, nil, false)
 end
 
 function simEigen.Matrix:times(m)
