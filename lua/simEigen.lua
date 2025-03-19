@@ -95,7 +95,7 @@ end
 
 function simEigen.Matrix:imul(m)
     if type(m) == 'number' then
-        return self:op(simEigen.op.times, k, true)
+        return self:op(simEigen.op.times, m, true)
     end
 
     assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
@@ -143,7 +143,7 @@ end
 
 function simEigen.Matrix:mul(m)
     if type(m) == 'number' then
-        return self:op(simEigen.op.times, k, false)
+        return self:op(simEigen.op.times, m, false)
     end
 
     assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
