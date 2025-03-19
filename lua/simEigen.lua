@@ -532,13 +532,34 @@ function simEigen.Matrix:__tostring(forDisplay, numToString)
                 colwd[j] = math.max(colwd[j] or 0, #s[i][j][2])
             end
         end
+
+        parenthesesRenderStyles = parenthesesRenderStyles or {
+            curly = {
+                left  = {top = '\u{23A7}', mid = '\u{23A8}', btm = '\u{23A9}'},
+                right = {top = '\u{23AD}', mid = '\u{23AA}', btm = '\u{23AB}'},
+            },
+            round = {
+                left  = {top = '\u{239B}', mid = '\u{239C}', btm = '\u{239D}'},
+                right = {top = '\u{239E}', mid = '\u{239F}', btm = '\u{23A0}'},
+            },
+            square = {
+                left  = {top = '\u{23A1}', mid = '\u{23A2}', btm = '\u{23A3}'},
+                right = {top = '\u{23A4}', mid = '\u{23A5}', btm = '\u{23A6}'},
+            },
+        }
+        parenthesesRenderStyle = parenthesesRenderStyle or parenthesesRenderStyles.round
+
         for i = 1, self:rows() do
             out = out .. (i > 1 and '\n' or '')
+            local tmb = 'mid'
+            if i == 1 then tmb = 'top' elseif i == self:rows() then tmb = 'btm' end
+            out = out .. parenthesesRenderStyle.left[tmb] .. ' '
             for j = 1, #s[i] do
                 out = out .. (j > 1 and '  ' or '')
                 out = out .. string.format('%' .. colwi[j] .. 's', s[i][j][1])
                 out = out .. string.format('%-' .. colwd[j] .. 's', s[i][j][2])
             end
+            out = out .. ' ' .. parenthesesRenderStyle.right[tmb]
         end
     else
         -- compact format:
