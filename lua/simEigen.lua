@@ -131,7 +131,7 @@ function simEigen.Matrix:item(i, j)
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
 end
 
-function simEigen.Matrix:maxCoeff()
+function simEigen.Matrix:maxcoeff()
     return simEigen.mtxMaxCoeff(self.__handle)
 end
 
@@ -139,7 +139,7 @@ function simEigen.Matrix:mean()
     return simEigen.mtxMean(self.__handle)
 end
 
-function simEigen.Matrix:minCoeff()
+function simEigen.Matrix:mincoeff()
     return simEigen.mtxMinCoeff(self.__handle)
 end
 
@@ -252,7 +252,7 @@ function simEigen.Matrix:setrow(i, data)
     return self
 end
 
-function simEigen.Matrix:squaredNorm()
+function simEigen.Matrix:squarednorm()
     return simEigen.mtxSquaredNorm(self.__handle)
 end
 
