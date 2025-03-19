@@ -133,6 +133,11 @@ function simEigen.Matrix:fromtable(t)
     end
 end
 
+function simEigen.Matrix:get(i, j)
+    sim.addLog(sim.verbosity_warnings | sim.verbosity_once, 'm:get(i, j) is deprecated. use m:item(i, j) instead')
+    return self:item(i, g)
+end
+
 function simEigen.Matrix:horzcat(m1, m2)
     if self ~= simEigen.Matrix then m1, m2 = self, m1 end
     local m = simEigen.mtxHorzCat(m1.__handle, m2.__handle)
@@ -378,6 +383,11 @@ end
 function simEigen.Matrix:rows()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return rows
+end
+
+function simEigen.Matrix:set(i, j, data)
+    sim.addLog(sim.verbosity_warnings | sim.verbosity_once, 'm:set(i, j, val) is deprecated. use m:setitem(i, j, val) instead')
+    return self:setitem(i, j, data)
 end
 
 function simEigen.Matrix:setcol(j, data)
