@@ -360,7 +360,7 @@ setmetatable(
 )
 
 function simEigen.Vector(v, fv)
-    if type(v) == 'table' and type(fv) == nil then
+    if type(v) == 'table' and fv == nil then
         -- construct from vector data:
         return simEigen.Matrix(-1, 1, v)
     elseif math.type(v) == 'integer' then
