@@ -355,31 +355,7 @@ function simEigen.Matrix:pinv(b, damping)
 end
 
 function simEigen.Matrix:print(numToString)
-    numToString = numToString or function(x) return _S.anyToString(x) end
-    local s = {}
-    local colwi, colwd = {}, {}
-    for i = 1, self:rows() do
-        s[i] = self:rowdata(i)
-        for j = 1, #s[i] do
-            local ns = numToString(s[i][j])
-            local ns = string.split(ns .. '.', '%.')
-            ns = {ns[1], ns[2]}
-            if math.type(s[i][j]) == 'float' then ns[2] = '.' .. ns[2] end
-            s[i][j] = ns
-            colwi[j] = math.max(colwi[j] or 0, #s[i][j][1])
-            colwd[j] = math.max(colwd[j] or 0, #s[i][j][2])
-        end
-    end
-    local out = ''
-    for i = 1, self:rows() do
-        out = out .. (i > 1 and '\n' or '')
-        for j = 1, #s[i] do
-            out = out .. (j > 1 and '  ' or '')
-            out = out .. string.format('%' .. colwi[j] .. 's', s[i][j][1])
-            out = out .. string.format('%-' .. colwd[j] .. 's', s[i][j][2])
-        end
-    end
-    print(out)
+    print(self:__tostring(true, numToString))
 end
 
 function simEigen.Matrix:prod()
@@ -515,17 +491,54 @@ function simEigen.Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
 
-function simEigen.Matrix:__tostring()
-    local rows, cols = simEigen.mtxGetSize(self.__handle)
-    s = 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
-    local data = self:data()
-    for i = 0, rows - 1 do
-        for j = 0, cols - 1 do
-            s = s .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
+function simEigen.Matrix:__tostring(forDisplay, numToString)
+    local out = ''
+
+    if forDisplay or __tostring_for_display then
+        if __tostring_for_display then -- set by _evalExec (base.lua) for rendering in statusbar
+            __tostring_for_display.add_nl = true -- signal we need a newline after comma
+            if not __tostring_for_display.first_of_line then
+                out = out .. '\n\n' -- keep at start of line
+            end
         end
+
+        -- grid format:
+        numToString = numToString or function(x) return _S.anyToString(x) end
+        local s = {}
+        local colwi, colwd = {}, {}
+        for i = 1, self:rows() do
+            s[i] = self:rowdata(i)
+            for j = 1, #s[i] do
+                local ns = numToString(s[i][j])
+                local ns = string.split(ns .. '.', '%.')
+                ns = {ns[1], ns[2]}
+                if math.type(s[i][j]) == 'float' then ns[2] = '.' .. ns[2] end
+                s[i][j] = ns
+                colwi[j] = math.max(colwi[j] or 0, #s[i][j][1])
+                colwd[j] = math.max(colwd[j] or 0, #s[i][j][2])
+            end
+        end
+        for i = 1, self:rows() do
+            out = out .. (i > 1 and '\n' or '')
+            for j = 1, #s[i] do
+                out = out .. (j > 1 and '  ' or '')
+                out = out .. string.format('%' .. colwi[j] .. 's', s[i][j][1])
+                out = out .. string.format('%-' .. colwd[j] .. 's', s[i][j][2])
+            end
+        end
+    else
+        -- compact format:
+        local rows, cols = simEigen.mtxGetSize(self.__handle)
+        out = out .. 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
+        local data = self:data()
+        for i = 0, rows - 1 do
+            for j = 0, cols - 1 do
+                out = out .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
+            end
+        end
+        out = out .. '})'
     end
-    s = s .. '})'
-    return s
+    return out
 end
 
 function simEigen.Matrix:__add(m)
