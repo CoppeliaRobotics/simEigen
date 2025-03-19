@@ -62,6 +62,8 @@ public:
         if(in->q == -1) in->q = m->cols() - in->j;
         if(in->p < 1 || in->q < 1)
             throw std::runtime_error("Invalid size");
+        if(in->i < 0 || (in->i + in->p) > m->rows() || in->j < 0 || (in->j + in->q) > m->cols())
+            throw std::runtime_error("Size or offset out of bounds");
         auto m2 = new MatrixXd(in->p, in->q);
         *m2 = m->block(in->i, in->j, in->p, in->q);
         out->handle = mtxHandles.add(m2, in->_.scriptID);
@@ -74,6 +76,8 @@ public:
         if(in->q == -1) in->q = m->cols() - in->j;
         if(in->p < 1 || in->q < 1)
             throw std::runtime_error("Invalid size");
+        if(in->i < 0 || (in->i + in->p) > m->rows() || in->j < 0 || (in->j + in->q) > m->cols())
+            throw std::runtime_error("Size or offset out of bounds");
         auto m2 = mtxHandles.get(in->handle2);
         m->block(in->i, in->j, in->p, in->q) = *m2;
     }
