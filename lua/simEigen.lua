@@ -642,9 +642,16 @@ function simEigen.Vector(v, fv)
     end
 end
 
-function simEigen.global()
-    for _, import in ipairs{'Matrix', 'Vector'} do _G[import] = simEigen[import] end
-    _G.simEigen = simEigen
+function simEigen.import(...)
+    local names = {...}
+    if #names == 1 and names[1] == '*' then
+        simEigen.import {'Matrix', 'Vector'}
+        _G.simEigen = simEigen
+        return
+    end
+    for _, name in ipairs(names) do
+        _G[name] = simEigen[name]
+    end
 end
 
 return simEigen
