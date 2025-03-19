@@ -592,6 +592,11 @@ function simEigen.Matrix:__ipairs()
     error 'unsupported operation'
 end
 
+function simEigen.Matrix:__pairs()
+    -- for completion, return methods of simEigen.Matrix
+    return pairs(simEigen.Matrix)
+end
+
 function simEigen.Matrix:__tocbor(sref, stref)
     local _cbor = cbor or require 'org.conman.cbor'
     return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
