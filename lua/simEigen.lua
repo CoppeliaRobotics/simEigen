@@ -320,6 +320,17 @@ setmetatable(
             if type(rows) == 'string' and cols == nil and data == nil then
                 -- construct from handle:
                 h = rows
+            elseif type(rows) == 'table' and cols == nil and data == nil then
+                -- construct from 2D table data:
+                assert(#rows > 0, 'invalid table data')
+                assert(type(rows[1]) == 'table', 'invalid table data')
+                local data = rows
+                rows, cols = #data, #data[1]
+                for _, row in ipairs(data) do
+                    assert(type(row) == 'table', 'invalid table data')
+                    assert(#row == cols, 'invalid table data')
+                end
+                return simEigen.Matrix(rows, cols, reduce(table.add, data, {}))
             else
                 assert(math.type(rows) == 'integer', 'rows must be an integer')
                 assert(math.type(cols) == 'integer', 'cols must be an integer')
@@ -348,9 +359,16 @@ setmetatable(
     }
 )
 
-function simEigen.Vector(v)
-    assert(type(v) == 'table')
-    return simEigen.Matrix(-1, 1, v)
+function simEigen.Vector(v, fv)
+    if type(v) == 'table' and type(fv) == nil then
+        -- construct from vector data:
+        return simEigen.Matrix(-1, 1, v)
+    elseif math.type(v) == 'integer' then
+        -- construct from size, [fillValue]:
+        return simEigen.Matrix(v, 1, fv)
+    else
+        error('invalid arguments')
+    end
 end
 
 return simEigen
