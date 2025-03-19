@@ -121,6 +121,18 @@ function simEigen.Matrix:floor()
     return self:op(simEigen.op.floor, nil, false)
 end
 
+function simEigen.Matrix:fromtable(t)
+    assert(type(t) == 'table', 'bad type')
+    if t.dims ~= nil and t.data ~= nil then
+        assert(#t.dims == 2, 'only 2d grids are supported by this class')
+        return Matrix(t.dims[1], t.dims[2], t.data)
+    elseif type(t[1]) == 'table' then
+        return Matrix(t)
+    elseif #t == 0 then
+        return Matrix(0, 0)
+    end
+end
+
 function simEigen.Matrix:horzcat(m1, m2)
     if self ~= simEigen.Matrix then m1, m2 = self, m1 end
     local m = simEigen.mtxHorzCat(m1.__handle, m2.__handle)
@@ -455,6 +467,24 @@ function simEigen.Matrix:times(m)
     return self:op(simEigen.op.times, m, false)
 end
 
+function simEigen.Matrix:totable(format)
+    if type(format) == 'table' and #format == 0 then
+        local d = {}
+        for i = 1, self:rows() do
+            for j = 1, self:cols() do table.insert(d, self:item(i, j)) end
+        end
+        return {dims = {self:rows(), self:cols()}, data = d}
+    elseif format == nil then
+        local t = {}
+        for i = 1, self:rows() do
+            local row = {}
+            for j = 1, self:cols() do table.insert(row, self:item(i, j)) end
+            table.insert(t, row)
+        end
+        return t
+    end
+end
+
 function simEigen.Matrix:trace()
     return simEigen.mtxTrace(self.__handle)
 end
@@ -496,6 +526,62 @@ function simEigen.Matrix:__tostring()
     end
     s = s .. '})'
     return s
+end
+
+function simEigen.Matrix:__add(m)
+    if type(self) == 'number' then self, m = m, self end
+    return self:add(m)
+end
+
+function simEigen.Matrix:__sub(m)
+    if type(self) == 'number' then return m * (-1) + self end
+    return self:sub(m)
+end
+
+function simEigen.Matrix:__mul(m)
+    if type(self) == 'number' then self, m = m, self end
+    return self:mul(m)
+end
+
+function simEigen.Matrix:__div(k)
+    return self:div(k)
+end
+
+function simEigen.Matrix:__idiv(k)
+    return self:intdiv(k)
+end
+
+function simEigen.Matrix:__mod(k)
+    return self:mod(k)
+end
+
+function simEigen.Matrix:__unm()
+    return self:op(simEigen.op.unm, nil, false)
+end
+
+function simEigen.Matrix:__pow(m)
+    return self:cross(m)
+end
+
+function simEigen.Matrix:__concat(m)
+    return self:dot(m)
+end
+
+function simEigen.Matrix:__len()
+    error 'unsupported operation'
+end
+
+function simEigen.Matrix:__eq(m)
+    error 'unsupported operation'
+end
+
+function simEigen.Matrix:__ipairs()
+    error 'unsupported operation'
+end
+
+function simEigen.Matrix:__tocbor(sref, stref)
+    local _cbor = cbor or require 'org.conman.cbor'
+    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
 end
 
 setmetatable(
@@ -554,6 +640,11 @@ function simEigen.Vector(v, fv)
     else
         error('invalid arguments')
     end
+end
+
+function simEigen.global()
+    for _, import in ipairs{'Matrix', 'Vector'} do _G[import] = simEigen[import] end
+    _G.simEigen = simEigen
 end
 
 return simEigen
