@@ -125,6 +125,17 @@
         <return>
         </return>
     </command>
+    <command name="mtxLinSpaced">
+        <description>Generates equally spaced values in the closed interval [low,high]. When size is set to 1, a vector of length 1 containing 'high' is returned..</description>
+        <params>
+            <param name="count" type="int"></param>
+            <param name="low" type="double" default="1"></param>
+            <param name="high" type="double" nullable="true" default="nil"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxMaxCoeff">
         <description>Compute max coeff. of elements of this matrix.</description>
         <params>

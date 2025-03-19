@@ -167,6 +167,16 @@ public:
         *m = (*m) * (*m2);
     }
 
+    void mtxLinSpaced(mtxLinSpaced_in *in, mtxLinSpaced_out *out)
+    {
+        if(in->count < 1)
+            throw std::runtime_error("Invalid count");
+        auto m = new MatrixXd(in->count, 1);
+        double high = in->high.value_or(in->low + in->count - 1);
+        *m = VectorXd::LinSpaced(in->count, in->low, high);
+        out->handle = mtxHandles.add(m, in->_.scriptID);
+    }
+
     void mtxMaxCoeff(mtxMaxCoeff_in *in, mtxMaxCoeff_out *out)
     {
         auto m = mtxHandles.get(in->handle);

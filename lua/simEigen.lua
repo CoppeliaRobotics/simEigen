@@ -241,6 +241,16 @@ function simEigen.Matrix:item(i, j)
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
 end
 
+function simEigen.Matrix:linspace(low, high, count)
+    if math.type(low) == 'integer' and high == nil and count == nil then
+        low, high, count = 1, low, low
+    end
+    assert(math.type(count) == 'integer' and count > 1, 'invalid count')
+    local m = simEigen.mtxLinSpaced(count, low, high)
+    m = simEigen.Matrix(m)
+    return m
+end
+
 function simEigen.Matrix:log()
     return self:op(simEigen.op.log, nil, false)
 end
