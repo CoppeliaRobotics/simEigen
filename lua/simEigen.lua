@@ -507,7 +507,47 @@ function simEigen.Matrix:vertcat(m1, m2)
 end
 
 function simEigen.Matrix:__index(k)
-    return simEigen.Matrix[k]
+    if math.type(k) == 'integer' then
+        if self:rows() == 1 then
+            return self:item(1, k)
+        elseif self:cols() == 1 then
+            return self:item(k, 1)
+        else
+            return setmetatable(
+                {
+                    __handle = self.__handle,
+                    __row = k,
+                },
+                {
+                    __index = function(t, j)
+                        return self:item(t.__row, j)
+                    end,
+                    __newindex = function(t, j, v)
+                        self:setitem(t.__row, j, v)
+                    end,
+                    __tostring = function(t)
+                        return string.format('<reference to %s row %d>', t.__handle, t.__row)
+                    end,
+                }
+            )
+        end
+    else
+        return simEigen.Matrix[k]
+    end
+end
+
+function simEigen.Matrix:__newindex(k, v)
+    if math.type(k) == 'integer' then
+        if self:rows() == 1 then
+            return self:setitem(1, k, v)
+        elseif self:cols() == 1 then
+            return self:setitem(k, 1, v)
+        else
+            return self:setrow(k, v)
+        end
+    else
+        return simEigen.Matrix[k]
+    end
 end
 
 function simEigen.Matrix:__gc()
@@ -630,10 +670,6 @@ end
 
 function simEigen.Matrix:__concat(m)
     return self:dot(m)
-end
-
-function simEigen.Matrix:__len()
-    error 'unsupported operation'
 end
 
 function simEigen.Matrix:__eq(m)
