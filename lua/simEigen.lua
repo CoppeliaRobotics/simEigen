@@ -113,6 +113,9 @@ function simEigen.Matrix:exp()
 end
 
 function simEigen.Matrix:eye(size)
+    if simEigen.Matrix:ismatrix(self) then error('static method') end
+    if size == nil and math.type(self) == 'integer' then size = self end
+    assert(math.type(size) == 'integer', 'argument must be integer')
     local data = {}
     for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
     return simEigen.Matrix(size, size, data)
@@ -242,7 +245,15 @@ function simEigen.Matrix:isin()
 end
 
 function simEigen.Matrix:ismatrix(m)
-    return getmetatable(m) == simEigen.Matrix
+    if getmetatable(self) == simEigen.Matrix then
+        -- when used as non-static returns true
+        assert(m == nil, 'method does not take any arguments')
+        return true
+    else
+        if m == nil then m = self end
+        assert(m ~= nil, 'argument required')
+        return getmetatable(m) == simEigen.Matrix
+    end
 end
 
 function simEigen.Matrix:isqrt()
