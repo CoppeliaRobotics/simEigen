@@ -48,6 +48,7 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
     assert(math.type(p) == 'integer')
     assert(math.type(q) == 'integer')
     simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
+    return self
 end
 
 function simEigen.Matrix:ceil()
@@ -390,9 +391,13 @@ function simEigen.Matrix:set(i, j, data)
     return self:setitem(i, j, data)
 end
 
-function simEigen.Matrix:setcol(j, data)
+function simEigen.Matrix:setcol(j, col)
+    return self:blockassign(col, 1, j, -1, 1)
+end
+
+function simEigen.Matrix:setcoldata(j, data)
     assert(math.type(j) == 'integer')
-    simEigen.mtxSetCol(self.__handle, j - 1, data)
+    simEigen.mtxSetColData(self.__handle, j - 1, data)
     return self
 end
 
@@ -409,9 +414,13 @@ function simEigen.Matrix:setitem(i, j, data)
     return self
 end
 
-function simEigen.Matrix:setrow(i, data)
+function simEigen.Matrix:setrow(i, row)
+    return self:blockassign(row, i, 1, 1, -1)
+end
+
+function simEigen.Matrix:setrowdata(i, data)
     assert(math.type(i) == 'integer')
-    simEigen.mtxSetRow(self.__handle, i - 1, data)
+    simEigen.mtxSetRowData(self.__handle, i - 1, data)
     return self
 end
 
