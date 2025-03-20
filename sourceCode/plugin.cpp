@@ -160,13 +160,26 @@ public:
 
     void mtxHorzCat(mtxHorzCat_in *in, mtxHorzCat_out *out)
     {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->rows() != m2->rows())
-            throw std::runtime_error("matrices row count mismatch");
-        auto mr = new MatrixXd(m->rows(), m->cols() + m2->cols());
-        mr->block(0, 0, m->rows(), m->cols()) = *m;
-        mr->block(0, m->cols(), m2->rows(), m2->cols()) = *m2;
+        if(in->handles.size() < 2)
+            throw std::runtime_error("not enough matrices");
+        std::vector<MatrixXd*> m {in->handles.size()};
+        int rows = 0, cols = 0;
+        for(size_t i = 0; i < in->handles.size(); ++i)
+        {
+            m[i] = mtxHandles.get(in->handles[i]);
+            if(i == 0)
+                rows = m[i]->rows();
+            else if(rows != m[i]->rows())
+                throw std::runtime_error("matrices row count mismatch");
+            cols += m[i]->cols();
+        }
+        int j = 0;
+        auto mr = new MatrixXd(rows, cols);
+        for(auto mi : m)
+        {
+            mr->block(0, j, mi->rows(), mi->cols()) = *mi;
+            j += mi->cols();
+        }
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
@@ -563,13 +576,26 @@ public:
 
     void mtxVertCat(mtxVertCat_in *in, mtxVertCat_out *out)
     {
-        auto m = mtxHandles.get(in->handle);
-        auto m2 = mtxHandles.get(in->handle2);
-        if(m->cols() != m2->cols())
-            throw std::runtime_error("matrices row count mismatch");
-        auto mr = new MatrixXd(m->rows() + m2->rows(), m->cols());
-        mr->block(0, 0, m->rows(), m->cols()) = *m;
-        mr->block(m->rows(), 0, m2->rows(), m2->cols()) = *m2;
+        if(in->handles.size() < 2)
+            throw std::runtime_error("not enough matrices");
+        std::vector<MatrixXd*> m {in->handles.size()};
+        int rows = 0, cols = 0;
+        for(size_t i = 0; i < in->handles.size(); ++i)
+        {
+            m[i] = mtxHandles.get(in->handles[i]);
+            if(i == 0)
+                cols = m[i]->cols();
+            else if(cols != m[i]->cols())
+                throw std::runtime_error("matrices column count mismatch");
+            rows += m[i]->rows();
+        }
+        int i = 0;
+        auto mr = new MatrixXd(rows, cols);
+        for(auto mi : m)
+        {
+            mr->block(i, 0, mi->rows(), mi->cols()) = *mi;
+            i += mi->rows();
+        }
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 

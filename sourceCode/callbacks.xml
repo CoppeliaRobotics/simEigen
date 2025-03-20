@@ -119,8 +119,7 @@
     <command name="mtxHorzCat">
         <description>Concatenate matrices, returning a new matrix.</description>
         <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
+            <param name="handles" type="table" item-type="string"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
@@ -391,8 +390,7 @@
     <command name="mtxVertCat">
         <description>Concatenate matrices, returning a new matrix.</description>
         <params>
-            <param name="handle" type="string"></param>
-            <param name="handle2" type="string"></param>
+            <param name="handles" type="table" item-type="string"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>

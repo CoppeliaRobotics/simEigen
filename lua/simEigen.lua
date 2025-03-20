@@ -139,9 +139,10 @@ function simEigen.Matrix:get(i, j)
     return self:item(i, g)
 end
 
-function simEigen.Matrix:horzcat(m1, m2)
-    if self ~= simEigen.Matrix then m1, m2 = self, m1 end
-    local m = simEigen.mtxHorzCat(m1.__handle, m2.__handle)
+function simEigen.Matrix:horzcat(...)
+    local ms = {...}
+    if simEigen.Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    local m = simEigen.mtxHorzCat(map(function(m) return m.__handle end, ms))
     m = simEigen.Matrix(m)
     return m
 end
@@ -499,9 +500,10 @@ function simEigen.Matrix:transposed()
     return m
 end
 
-function simEigen.Matrix:vertcat(m1, m2)
-    if self ~= simEigen.Matrix then m1, m2 = self, m1 end
-    local m = simEigen.mtxVertCat(m1.__handle, m2.__handle)
+function simEigen.Matrix:vertcat(...)
+    local ms = {...}
+    if simEigen.Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    local m = simEigen.mtxVertCat(map(function(m) return m.__handle end, ms))
     m = simEigen.Matrix(m)
     return m
 end
