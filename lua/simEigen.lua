@@ -750,7 +750,7 @@ function simEigen.Matrix:transpose()
     return self
 end
 
--- @fun{lua_only=true} Matrix:transpose return transposed matrix
+-- @fun{lua_only=true} Matrix:transposed return transposed matrix
 -- @ret table m a new matrix transposed (Matrix)
 function simEigen.Matrix:transposed()
     local m = simEigen.mtxTransposed(self.__handle)
