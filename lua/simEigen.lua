@@ -224,7 +224,7 @@ function simEigen.Matrix:iacos()
     return self:op(simEigen.op.acos, nil, true)
 end
 
--- @fun{lua_only=true} Matrix:iaadd compute element-wise addition with another matrix or scalar, in place
+-- @fun{lua_only=true} Matrix:iadd compute element-wise addition with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:iadd(m)
