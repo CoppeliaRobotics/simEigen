@@ -202,7 +202,8 @@ function simEigen.Matrix:get(i, j)
     return self:item(i, g)
 end
 
--- @fun{lua_only=true} Matrix:horzcat stack matrices horizontally
+-- @fun{lua_only=true} Matrix:horzcat stack two or more matrices horizontally
+-- @arg table m2 matrix to stack (Matrix)
 -- @ret table m a new matrix with result (Matrix)
 function simEigen.Matrix:horzcat(...)
     local ms = {...}
@@ -685,14 +686,16 @@ function simEigen.Matrix:sum()
 end
 
 -- @fun{lua_only=true} Matrix:svd compute the singular value decomposition
--- @arg bool computeThinU
--- @arg bool computeThinV
--- @arg table b 'b' vector, optional (Matrix)
+-- @arg {type=bool,default=false} computeThinU
+-- @arg {type=bool,default=false} computeThinV
+-- @arg {type=table,default=nil} b 'b' vector, optional (Matrix)
 -- @ret table s (Matrix)
 -- @ret table u (Matrix)
 -- @ret table v (Matrix)
 -- @ret table x (Matrix)
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
+    computeThinU = computeThinU == true
+    computeThinV = computeThinV == true
     assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
     local s, u, v, x = simEigen.mtxSVD(self.__handle, computeThinU, computeThinV, (b or {}).__handle)
     s = simEigen.Matrix(s)
@@ -758,7 +761,8 @@ function simEigen.Matrix:transposed()
     return m
 end
 
--- @fun{lua_only=true} Matrix:vertcat stack matrices vertically
+-- @fun{lua_only=true} Matrix:vertcat stack two or more matrices vertically
+-- @arg table m2 matrix to stack (Matrix)
 -- @ret table m a new matrix with result (Matrix)
 function simEigen.Matrix:vertcat(...)
     local ms = {...}
