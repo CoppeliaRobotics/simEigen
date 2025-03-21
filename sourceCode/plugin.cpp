@@ -13,6 +13,8 @@
 using namespace std;
 using namespace Eigen;
 
+namespace simEigen { using Matrix = ::Matrix<double, ::Dynamic, ::Dynamic, ::RowMajor>; }
+
 class Plugin : public sim::Plugin
 {
 public:
@@ -46,7 +48,7 @@ public:
             throw std::runtime_error("Invalid size");
         if(in->i < 0 || (in->i + in->p) > m->rows() || in->j < 0 || (in->j + in->q) > m->cols())
             throw std::runtime_error("Size or offset out of bounds");
-        auto m2 = new MatrixXd(in->p, in->q);
+        auto m2 = new simEigen::Matrix(in->p, in->q);
         *m2 = m->block(in->i, in->j, in->p, in->q);
         out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
@@ -67,7 +69,7 @@ public:
     void mtxCopy(mtxCopy_in *in, mtxCopy_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        auto m2 = new MatrixXd(m->rows(), m->cols());
+        auto m2 = new simEigen::Matrix(m->rows(), m->cols());
         *m2 = *m;
         out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
@@ -76,7 +78,7 @@ public:
     {
         auto m = mtxHandles.get(in->handle);
         auto m2 = mtxHandles.get(in->handle2);
-        auto mr = new MatrixXd;
+        auto mr = new simEigen::Matrix;
         Vector3d a, b;
         if(m->rows() == 3 && m->cols() == 1 && m2->rows() == 3 && m2->cols() == 1) {
             a = m->col(0);
@@ -163,7 +165,7 @@ public:
     {
         if(in->handles.size() < 2)
             throw std::runtime_error("not enough matrices");
-        std::vector<MatrixXd*> m {in->handles.size()};
+        std::vector<simEigen::Matrix*> m {in->handles.size()};
         int rows = 0, cols = 0;
         for(size_t i = 0; i < in->handles.size(); ++i)
         {
@@ -175,7 +177,7 @@ public:
             cols += m[i]->cols();
         }
         int j = 0;
-        auto mr = new MatrixXd(rows, cols);
+        auto mr = new simEigen::Matrix(rows, cols);
         for(auto mi : m)
         {
             mr->block(0, j, mi->rows(), mi->cols()) = *mi;
@@ -197,7 +199,7 @@ public:
     {
         auto m = mtxHandles.get(in->handle);
         auto m2 = mtxHandles.get(in->handle2);
-        auto mr = new MatrixXd(m->rows(), m->cols());
+        auto mr = new simEigen::Matrix(m->rows(), m->cols());
         *mr = Eigen::kroneckerProduct(*m, *m2).eval();
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
@@ -206,7 +208,7 @@ public:
     {
         if(in->count < 1)
             throw std::runtime_error("Invalid count");
-        auto m = new MatrixXd(in->count, 1);
+        auto m = new simEigen::Matrix(in->count, 1);
         double high = in->high.value_or(in->low + in->count - 1);
         *m = VectorXd::LinSpaced(in->count, in->low, high);
         out->handle = mtxHandles.add(m, in->_.scriptID);
@@ -236,14 +238,14 @@ public:
         auto m2 = mtxHandles.get(in->handle2);
         if(m->cols() != m2->rows())
             throw std::runtime_error("Incompatible matrix dimensions for multiplication");
-        auto mr = new MatrixXd(m->rows(), m2->cols());
+        auto mr = new simEigen::Matrix(m->rows(), m2->cols());
         *mr = (*m) * (*m2);
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxNew(mtxNew_in *in, mtxNew_out *out)
     {
-        auto m = new MatrixXd(in->rows, in->cols);
+        auto m = new simEigen::Matrix(in->rows, in->cols);
         if(in->initialData.size() > 0)
         {
             if(in->initialData.size() == 1)
@@ -273,7 +275,7 @@ public:
     void mtxNormalized(mtxNormalized_in *in, mtxNormalized_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        auto mr = new MatrixXd(m->rows(), m->cols());
+        auto mr = new simEigen::Matrix(m->rows(), m->cols());
         *mr = m->normalized();
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
@@ -281,7 +283,7 @@ public:
     void mtxOp(mtxOp_in *in, mtxOp_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        MatrixXd *mr = in->inplace ? nullptr : new MatrixXd(m->rows(), m->cols());
+        simEigen::Matrix *mr = in->inplace ? nullptr : new simEigen::Matrix(m->rows(), m->cols());
         if(in->handle2)
         {
             // binary ops:
@@ -405,7 +407,7 @@ public:
     void mtxOpK(mtxOpK_in *in, mtxOpK_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        MatrixXd *mr = in->inplace ? m : new MatrixXd(m->rows(), m->cols());
+        simEigen::Matrix *mr = in->inplace ? m : new simEigen::Matrix(m->rows(), m->cols());
         {
             // binary ops:
             switch(in->op)
@@ -449,14 +451,14 @@ public:
         if(in->damping > 1e-10)
         {
             int n = m->rows();
-            auto minv = new Eigen::MatrixXd;
-            *minv = m->transpose() * ((*m) * m->transpose() + in->damping * in->damping * MatrixXd::Identity(n, n)).inverse();
+            auto minv = new simEigen::Matrix;
+            *minv = m->transpose() * ((*m) * m->transpose() + in->damping * in->damping * simEigen::Matrix::Identity(n, n)).inverse();
             out->m = mtxHandles.add(minv, in->_.scriptID);
 
             if(in->b)
             {
                 auto b = mtxHandles.get(*in->b);
-                auto x = new MatrixXd;
+                auto x = new simEigen::Matrix;
                 *x = (*minv) * (*b);
                 out->x = mtxHandles.add(x, in->_.scriptID);
             }
@@ -464,14 +466,14 @@ public:
         else
         {
             auto d = m->completeOrthogonalDecomposition();
-            auto minv = new Eigen::MatrixXd;
+            auto minv = new simEigen::Matrix;
             *minv = d.pseudoInverse();
             out->m = mtxHandles.add(minv, in->_.scriptID);
 
             if(in->b)
             {
                 auto b = mtxHandles.get(*in->b);
-                auto x = new MatrixXd;
+                auto x = new simEigen::Matrix;
                 *x = d.solve(*b);
                 out->x = mtxHandles.add(x, in->_.scriptID);
             }
@@ -483,8 +485,8 @@ public:
         auto m = mtxHandles.get(in->handle);
         if((m->rows() * m->cols()) != (in->rows * in->cols))
             throw std::runtime_error("incompatible dimensions");
-        auto mr = new MatrixXd;
-        *mr = Eigen::Map<Eigen::MatrixXd>(m->data(), in->rows, in->cols);
+        auto mr = new simEigen::Matrix;
+        *mr = Eigen::Map<simEigen::Matrix>(m->data(), in->rows, in->cols);
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
@@ -553,22 +555,22 @@ public:
         unsigned int computationOptions = 0;
         if(in->computeThinU) computationOptions |= ComputeThinU;
         if(in->computeThinV) computationOptions |= ComputeThinV;
-        JacobiSVD<MatrixXd> svd(*m, ComputeThinU | ComputeThinV);
+        JacobiSVD<simEigen::Matrix> svd(*m, ComputeThinU | ComputeThinV);
 
-        auto s = new MatrixXd;
+        auto s = new simEigen::Matrix;
         *s = svd.singularValues();
         out->s = mtxHandles.add(s, in->_.scriptID);
-        auto u = new MatrixXd;
+        auto u = new simEigen::Matrix;
         *u = svd.matrixU();
         out->u = mtxHandles.add(u, in->_.scriptID);
-        auto v = new MatrixXd;
+        auto v = new simEigen::Matrix;
         *v = svd.matrixV();
         out->v = mtxHandles.add(v, in->_.scriptID);
 
         if(in->b)
         {
             auto b = mtxHandles.get(*in->b);
-            auto x = new MatrixXd;
+            auto x = new simEigen::Matrix;
             *x = svd.solve(*b);
             out->x = mtxHandles.add(x, in->_.scriptID);
         }
@@ -589,7 +591,7 @@ public:
     void mtxTransposed(mtxTransposed_in *in, mtxTransposed_out *out)
     {
         auto m = mtxHandles.get(in->handle);
-        auto m2 = new MatrixXd;
+        auto m2 = new simEigen::Matrix;
         *m2 = m->transpose();
         out->handle = mtxHandles.add(m2, in->_.scriptID);
     }
@@ -598,7 +600,7 @@ public:
     {
         if(in->handles.size() < 2)
             throw std::runtime_error("not enough matrices");
-        std::vector<MatrixXd*> m {in->handles.size()};
+        std::vector<simEigen::Matrix*> m {in->handles.size()};
         int rows = 0, cols = 0;
         for(size_t i = 0; i < in->handles.size(); ++i)
         {
@@ -610,7 +612,7 @@ public:
             rows += m[i]->rows();
         }
         int i = 0;
-        auto mr = new MatrixXd(rows, cols);
+        auto mr = new simEigen::Matrix(rows, cols);
         for(auto mi : m)
         {
             mr->block(i, 0, mi->rows(), mi->cols()) = *mi;
@@ -621,7 +623,7 @@ public:
 
     // OLD FUNCTIONS:
 
-    void toMatrix(const Grid<double> &g, MatrixXd &m)
+    void toMatrix(const Grid<double> &g, simEigen::Matrix &m)
     {
         if(g.dims.size() != 2)
             throw sim::exception("grid must be a matrix");
@@ -632,7 +634,7 @@ public:
                 m(i, j) = g.data[k++];
     }
 
-    void toGrid(const MatrixXd &m, Grid<double> &g)
+    void toGrid(const simEigen::Matrix &m, Grid<double> &g)
     {
         g.dims.clear();
         g.dims.push_back(m.rows());
@@ -646,13 +648,13 @@ public:
 
     void svd(svd_in *in, svd_out *out)
     {
-        MatrixXd m, v;
+        simEigen::Matrix m, v;
         toMatrix(in->m, m);
 
         unsigned int computationOptions = 0;
         if(in->computeThinU) computationOptions |= ComputeThinU;
         if(in->computeThinV) computationOptions |= ComputeThinV;
-        JacobiSVD<MatrixXd> svd(m, ComputeThinU | ComputeThinV);
+        JacobiSVD<simEigen::Matrix> svd(m, ComputeThinU | ComputeThinV);
 
         toGrid(svd.singularValues(), out->s);
         toGrid(svd.matrixU(), out->u);
@@ -660,7 +662,7 @@ public:
 
         if(in->b)
         {
-            MatrixXd b;
+            simEigen::Matrix b;
             toMatrix(*in->b, b);
             out->x = Grid<double>{};
             toGrid(svd.solve(b), *out->x);
@@ -669,18 +671,18 @@ public:
 
     void pinv(pinv_in *in, pinv_out *out)
     {
-        MatrixXd m;
+        simEigen::Matrix m;
         toMatrix(in->m, m);
 
         if(in->damping > 1e-10)
         {
             int n = m.rows();
-            Eigen::MatrixXd minv = m.transpose() * (m * m.transpose() + in->damping * in->damping * MatrixXd::Identity(n, n)).inverse();
+            simEigen::Matrix minv = m.transpose() * (m * m.transpose() + in->damping * in->damping * simEigen::Matrix::Identity(n, n)).inverse();
             toGrid(minv, out->m);
 
             if(in->b)
             {
-                MatrixXd b;
+                simEigen::Matrix b;
                 toMatrix(*in->b, b);
                 out->x = Grid<double>{};
                 toGrid(minv * b, *out->x);
@@ -689,12 +691,12 @@ public:
         else
         {
             auto d = m.completeOrthogonalDecomposition();
-            Eigen::MatrixXd minv = d.pseudoInverse();
+            simEigen::Matrix minv = d.pseudoInverse();
             toGrid(minv, out->m);
 
             if(in->b)
             {
-                MatrixXd b;
+                simEigen::Matrix b;
                 toMatrix(*in->b, b);
                 out->x = Grid<double>{};
                 toGrid(d.solve(b), *out->x);
@@ -703,7 +705,7 @@ public:
     }
 
 private:
-    sim::Handles<MatrixXd*> mtxHandles{"simEigen.Matrix"};
+    sim::Handles<simEigen::Matrix*> mtxHandles{"simEigen.Matrix"};
 };
 
 SIM_PLUGIN(Plugin)
