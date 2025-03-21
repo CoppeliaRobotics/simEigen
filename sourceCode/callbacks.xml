@@ -2,8 +2,17 @@
 <?xml-stylesheet type="text/xsl" href="callbacks.xsl"?>
 
 <plugin name="simEigen" author="federico.ferri.it@gmail.com">
-    <description></description>
-    <command name="mtxBlock">
+    <description>
+        A plugin wrapping some functions of the <a href="http://eigen.tuxfamily.org">Eigen</a> C++ library.<br />
+        <br />
+        It also contains a Lua class for matrix operations:<br />
+        <code>
+            a = simEigen.Matrix{{1, 2}, {3, 4}}
+            ainv = a:pinv()
+            a * ainv - simEigen.Matrix.eye(2)
+        </code>
+    </description>
+    <command name="mtxBlock" skip-documentation="true">
         <description>Block of size (p,q), starting at (i,j). Indices start at 0. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -16,7 +25,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxBlockAssign">
+    <command name="mtxBlockAssign" skip-documentation="true">
         <description>Assign matrix 2 to block of size (p,q), starting at (i,j). Indices start at 0. Operates in place.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -29,7 +38,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxCopy">
+    <command name="mtxCopy" skip-documentation="true">
         <description>Return a new matrix, copy of this one.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -38,7 +47,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxCross">
+    <command name="mtxCross" skip-documentation="true">
         <description>Performs cross-product of the two vectors. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -48,7 +57,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxDestroy">
+    <command name="mtxDestroy" skip-documentation="true">
         <description>Destroy the matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -56,7 +65,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxDot">
+    <command name="mtxDot" skip-documentation="true">
         <description>Performs addition of the two matrices.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -66,7 +75,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxGetColData">
+    <command name="mtxGetColData" skip-documentation="true">
         <description>Get a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -76,7 +85,7 @@
             <param name="data" type="table" item-type="double"></param>
         </return>
     </command>
-    <command name="mtxGetData">
+    <command name="mtxGetData" skip-documentation="true">
         <description>Return matrix data, in row-major order.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -85,7 +94,7 @@
             <param name="data" type="table" item-type="double"></param>
         </return>
     </command>
-    <command name="mtxGetItem">
+    <command name="mtxGetItem" skip-documentation="true">
         <description>Get an item of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -96,7 +105,7 @@
             <param name="data" type="double"></param>
         </return>
     </command>
-    <command name="mtxGetRowData">
+    <command name="mtxGetRowData" skip-documentation="true">
         <description>Get a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -106,7 +115,7 @@
             <param name="data" type="table" item-type="double"></param>
         </return>
     </command>
-    <command name="mtxGetSize">
+    <command name="mtxGetSize" skip-documentation="true">
         <description>Return matrix size.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -116,7 +125,7 @@
             <param name="cols" type="int"></param>
         </return>
     </command>
-    <command name="mtxHorzCat">
+    <command name="mtxHorzCat" skip-documentation="true">
         <description>Concatenate matrices, returning a new matrix.</description>
         <params>
             <param name="handles" type="table" item-type="string"></param>
@@ -125,7 +134,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxIMul">
+    <command name="mtxIMul" skip-documentation="true">
         <description>Performs multiplication of the two matrices in place (writes result to first matrix).</description>
         <params>
             <param name="handle" type="string"></param>
@@ -134,7 +143,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxLinSpaced">
+    <command name="mtxLinSpaced" skip-documentation="true">
         <description>Generates equally spaced values in the closed interval [low,high]. When size is set to 1, a vector of length 1 containing 'high' is returned..</description>
         <params>
             <param name="count" type="int"></param>
@@ -145,7 +154,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxMaxCoeff">
+    <command name="mtxMaxCoeff" skip-documentation="true">
         <description>Compute max coeff. of elements of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -154,7 +163,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxMean">
+    <command name="mtxMean" skip-documentation="true">
         <description>Compute mean of elements of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -163,7 +172,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxMinCoeff">
+    <command name="mtxMinCoeff" skip-documentation="true">
         <description>Compute min coeff. of elements of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -172,7 +181,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxMul">
+    <command name="mtxMul" skip-documentation="true">
         <description>Performs multiplication of the two matrices. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -182,7 +191,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxNew">
+    <command name="mtxNew" skip-documentation="true">
         <description>Create a new matrix. If initialData is specified, fill the matrix with specified data.</description>
         <params>
             <param name="rows" type="int"></param>
@@ -193,7 +202,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxNorm">
+    <command name="mtxNorm" skip-documentation="true">
         <description>Compute norm of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -202,7 +211,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxNormalize">
+    <command name="mtxNormalize" skip-documentation="true">
         <description>Normalize this matrix in place.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -210,7 +219,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxNormalized">
+    <command name="mtxNormalized" skip-documentation="true">
         <description>Return normalized matrix. Returns a new matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -219,7 +228,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxOp">
+    <command name="mtxOp" skip-documentation="true">
         <description>Performs element-wise operation on the matrix(es). Returns a new matrix if inplace is false, otherwise writes the result into first matrix./</description>
         <params>
             <param name="handle" type="string"></param>
@@ -231,7 +240,7 @@
             <param name="handle" type="string" nullable="true" default="nil"></param>
         </return>
     </command>
-    <command name="mtxOpK">
+    <command name="mtxOpK" skip-documentation="true">
         <description>Performs element-wise operation on the matrix and the scalar. Returns a new matrix if inplace is false, otherwise writes the result into first matrix./</description>
         <params>
             <param name="handle" type="string"></param>
@@ -243,7 +252,7 @@
             <param name="handle" type="string" nullable="true" default="nil"></param>
         </return>
     </command>
-    <command name="mtxPInv">
+    <command name="mtxPInv" skip-documentation="true">
         <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
         <params>
             <param name="m" type="string">
@@ -265,7 +274,7 @@
             </param>
         </return>
     </command>
-    <command name="mtxProd">
+    <command name="mtxProd" skip-documentation="true">
         <description>Compute product of elements of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -274,7 +283,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxSetColData">
+    <command name="mtxSetColData" skip-documentation="true">
         <description>Set a column of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -284,7 +293,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxSetData">
+    <command name="mtxSetData" skip-documentation="true">
         <description>Set data of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -293,7 +302,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxSetItem">
+    <command name="mtxSetItem" skip-documentation="true">
         <description>Set an item of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -304,7 +313,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxSetRowData">
+    <command name="mtxSetRowData" skip-documentation="true">
         <description>Set a row of this matrix. Indices start at 0.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -314,7 +323,7 @@
         <return>
         </return>
     </command>
-    <command name="mtxSquaredNorm">
+    <command name="mtxSquaredNorm" skip-documentation="true">
         <description>Compute squared norm of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -323,7 +332,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxSum">
+    <command name="mtxSum" skip-documentation="true">
         <description>Compute sum of elements of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -332,7 +341,7 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxSVD">
+    <command name="mtxSVD" skip-documentation="true">
         <description>SVD decomposition. See https://eigen.tuxfamily.org/dox/classEigen_1_1JacobiSVD.html for details.</description>
         <params>
             <param name="m" type="string">
@@ -363,7 +372,7 @@
             </param>
         </return>
     </command>
-    <command name="mtxTrace">
+    <command name="mtxTrace" skip-documentation="true">
         <description>Compute trace of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -372,13 +381,13 @@
             <param name="result" type="double"></param>
         </return>
     </command>
-    <command name="mtxTranspose">
+    <command name="mtxTranspose" skip-documentation="true">
         <description>Transpose this matrix in place.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
     </command>
-    <command name="mtxTransposed">
+    <command name="mtxTransposed" skip-documentation="true">
         <description>Return a transposed version of this matrix.</description>
         <params>
             <param name="handle" type="string"></param>
@@ -387,7 +396,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <command name="mtxVertCat">
+    <command name="mtxVertCat" skip-documentation="true">
         <description>Concatenate matrices, returning a new matrix.</description>
         <params>
             <param name="handles" type="table" item-type="string"></param>
@@ -396,7 +405,7 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
-    <enum name="op" item-prefix="op_" base="540">
+    <enum name="op" item-prefix="op_" base="540" skip-documentation="true">
         <!-- unary ops: -->
         <item name="unm"></item>
         <item name="abs"></item>
@@ -426,7 +435,7 @@
         <item name="max"></item>
     </enum>
     <!-- OLD FUNCTIONS: -->
-    <command name="svd">
+    <command name="svd" deprecated="true">
         <description>SVD decomposition. See https://eigen.tuxfamily.org/dox/classEigen_1_1JacobiSVD.html for details.</description>
         <params>
             <param name="m" type="grid" item-type="double" size="*,*">
@@ -457,7 +466,7 @@
             </param>
         </return>
     </command>
-    <command name="pinv">
+    <command name="pinv" deprecated="true">
         <description>Pseudo-inverse. See https://eigen.tuxfamily.org/dox/classEigen_1_1CompleteOrthogonalDecomposition.html#ab5e8b3f2c7b602772e1f1d7ce63d446e for details.</description>
         <params>
             <param name="m" type="grid" item-type="double" size="*,*">
