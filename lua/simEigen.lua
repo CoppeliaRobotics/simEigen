@@ -771,6 +771,14 @@ function simEigen.Matrix:__div(k)
     return self:div(k)
 end
 
+function simEigen.Matrix:__eq(m)
+    if simEigen.Matrix:ismatrix(m) then
+        return self.__handle == m.__handle
+    else
+        return false
+    end
+end
+
 function simEigen.Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
