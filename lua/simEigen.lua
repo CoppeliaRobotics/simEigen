@@ -519,6 +519,27 @@ function simEigen.Matrix:vertcat(...)
     return m
 end
 
+function simEigen.Matrix:__add(m)
+    if type(self) == 'number' then self, m = m, self end
+    return self:add(m)
+end
+
+function simEigen.Matrix:__concat(m)
+    return self:dot(m)
+end
+
+function simEigen.Matrix:__div(k)
+    return self:div(k)
+end
+
+function simEigen.Matrix:__gc()
+    simEigen.mtxDestroy(self.__handle)
+end
+
+function simEigen.Matrix:__idiv(k)
+    return self:intdiv(k)
+end
+
 function simEigen.Matrix:__index(k)
     if math.type(k) == 'integer' then
         if self:rows() == 1 then
@@ -549,6 +570,23 @@ function simEigen.Matrix:__index(k)
     end
 end
 
+function simEigen.Matrix:__len()
+    if self:rows() == 1 then
+        return self:cols()
+    else
+        return self:rows()
+    end
+end
+
+function simEigen.Matrix:__mod(k)
+    return self:mod(k)
+end
+
+function simEigen.Matrix:__mul(m)
+    if type(self) == 'number' then self, m = m, self end
+    return self:mul(m)
+end
+
 function simEigen.Matrix:__newindex(k, v)
     if math.type(k) == 'integer' then
         if self:rows() == 1 then
@@ -563,8 +601,23 @@ function simEigen.Matrix:__newindex(k, v)
     end
 end
 
-function simEigen.Matrix:__gc()
-    simEigen.mtxDestroy(self.__handle)
+function simEigen.Matrix:__pairs()
+    -- for completion, return methods of simEigen.Matrix
+    return pairs(simEigen.Matrix)
+end
+
+function simEigen.Matrix:__pow(m)
+    return self:cross(m)
+end
+
+function simEigen.Matrix:__sub(m)
+    if type(self) == 'number' then return m * (-1) + self end
+    return self:sub(m)
+end
+
+function simEigen.Matrix:__tocbor(sref, stref)
+    local _cbor = cbor or require 'org.conman.cbor'
+    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
 end
 
 function simEigen.Matrix:__tostring(forDisplay, numToString)
@@ -646,61 +699,8 @@ function simEigen.Matrix:__tostring(forDisplay, numToString)
     return out
 end
 
-function simEigen.Matrix:__add(m)
-    if type(self) == 'number' then self, m = m, self end
-    return self:add(m)
-end
-
-function simEigen.Matrix:__sub(m)
-    if type(self) == 'number' then return m * (-1) + self end
-    return self:sub(m)
-end
-
-function simEigen.Matrix:__mul(m)
-    if type(self) == 'number' then self, m = m, self end
-    return self:mul(m)
-end
-
-function simEigen.Matrix:__div(k)
-    return self:div(k)
-end
-
-function simEigen.Matrix:__idiv(k)
-    return self:intdiv(k)
-end
-
-function simEigen.Matrix:__mod(k)
-    return self:mod(k)
-end
-
 function simEigen.Matrix:__unm()
     return self:op(simEigen.op.unm, nil, false)
-end
-
-function simEigen.Matrix:__pow(m)
-    return self:cross(m)
-end
-
-function simEigen.Matrix:__concat(m)
-    return self:dot(m)
-end
-
-function simEigen.Matrix:__eq(m)
-    error 'unsupported operation'
-end
-
-function simEigen.Matrix:__ipairs()
-    error 'unsupported operation'
-end
-
-function simEigen.Matrix:__pairs()
-    -- for completion, return methods of simEigen.Matrix
-    return pairs(simEigen.Matrix)
-end
-
-function simEigen.Matrix:__tocbor(sref, stref)
-    local _cbor = cbor or require 'org.conman.cbor'
-    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
 end
 
 setmetatable(
