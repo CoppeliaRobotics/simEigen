@@ -293,6 +293,17 @@
             <param name="result" type="double"></param>
         </return>
     </command>
+    <command name="mtxReshaped" skip-documentation="true">
+        <description>Return a reshaped version this matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="rows" type="int"></param>
+            <param name="cols" type="int"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxSetColData" skip-documentation="true">
         <description>Set a column of this matrix. Indices start at 0.</description>
         <params>

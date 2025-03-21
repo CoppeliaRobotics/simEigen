@@ -570,6 +570,16 @@ function simEigen.Matrix:rad()
     return self:op(simEigen.op.rad, nil, false)
 end
 
+-- @fun {lua_only=true} Matrix:reshaped return a reshaped version of this matrix
+-- @arg int rows new row count
+-- @arg int cols new column count
+-- @ret table m a new matrix with result (Matrix)
+function simEigen.Matrix:reshaped(rows, cols)
+    local m = simEigen.mtxReshaped(self.__handle, rows, cols)
+    m = simEigen.Matrix(m)
+    return m
+end
+
 -- @fun {lua_only=true} Matrix:row return the i-th row as a new vector
 -- @arg int i row index
 -- @ret table m a new matrix with result (Matrix)

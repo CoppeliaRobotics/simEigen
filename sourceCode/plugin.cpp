@@ -478,6 +478,16 @@ public:
         }
     }
 
+    void mtxReshaped(mtxReshaped_in *in, mtxReshaped_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if((m->rows() * m->cols()) != (in->rows * in->cols))
+            throw std::runtime_error("incompatible dimensions");
+        auto mr = new MatrixXd;
+        *mr = Eigen::Map<Eigen::MatrixXd>(m->data(), in->rows, in->cols);
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
     void mtxProd(mtxProd_in *in, mtxProd_out *out)
     {
         auto m = mtxHandles.get(in->handle);
