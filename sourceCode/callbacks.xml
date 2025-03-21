@@ -143,6 +143,16 @@
         <return>
         </return>
     </command>
+    <command name="mtxKron" skip-documentation="true">
+        <description>Computes kronecker product of the two matrices. Returns a new matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxLinSpaced" skip-documentation="true">
         <description>Generates equally spaced values in the closed interval [low,high]. When size is set to 1, a vector of length 1 containing 'high' is returned..</description>
         <params>

@@ -8,6 +8,7 @@
 #include "config.h"
 #include <Eigen/Dense>
 #include <Eigen/QR>
+#include <unsupported/Eigen/KroneckerProduct>
 
 using namespace std;
 using namespace Eigen;
@@ -190,6 +191,15 @@ public:
         if(m->cols() != m2->rows())
             throw std::runtime_error("Incompatible matrix dimensions for multiplication");
         *m = (*m) * (*m2);
+    }
+
+    void mtxKron(mtxKron_in *in, mtxKron_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        auto mr = new MatrixXd(m->rows(), m->cols());
+        *mr = Eigen::kroneckerProduct(*m, *m2).eval();
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
     void mtxLinSpaced(mtxLinSpaced_in *in, mtxLinSpaced_out *out)

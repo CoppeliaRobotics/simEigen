@@ -409,6 +409,16 @@ function simEigen.Matrix:item(i, j)
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
 end
 
+-- @fun Matrix:kron compute kronecker product with another matrix
+-- @arg table m the other matrix (Matrix)
+-- @ret table a new matrix with result (Matrix)
+function simEigen.Matrix:kron(m)
+    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    local r = simEigen.mtxKron(self.__handle, m.__handle)
+    r = simEigen.Matrix(r)
+    return r
+end
+
 -- @fun Matrix:linspace create a new matrix of 'count' evenly spaced elements from 'low' to 'high'
 -- @arg float low lower bound
 -- @arg float high upper bound
@@ -534,7 +544,7 @@ end
 -- @ret table a new matrix with result (Matrix)
 -- @ret table the solution to m*x=b, if b was passed (Matrix)
 function simEigen.Matrix:pinv(b, damping)
-    assert(b == nil or simEigen.Matrix:ismatrix(m), 'b must be a Matrix or nil')
+    assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
