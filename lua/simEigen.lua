@@ -895,11 +895,6 @@ function simEigen.Matrix:__todisplay(opts)
     opts = opts or {}
     local out = ''
 
-    -- XXX:
-    if not opts.first_of_line then
-        out = out .. '\n\n' -- keep at start of line
-    end
-
     opts.numToString = opts.numToString or function(x) return _S.anyToString(x) end
     local s = {}
     local colwi, colwd = {}, {}
@@ -953,7 +948,7 @@ function simEigen.Matrix:__todisplay(opts)
         out = out .. ' ' .. parenthesesRenderStyle.right[tmb]
     end
 
-    return out, {add_nl = true}
+    return out
 end
 
 function simEigen.Matrix:__tostring()
