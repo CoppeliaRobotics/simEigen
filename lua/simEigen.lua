@@ -555,7 +555,7 @@ end
 
 -- @fun {lua_only=true} Matrix:print print the contents of this matrix
 function simEigen.Matrix:print(numToString)
-    print(self:__tostring(true, numToString))
+    print(self:__todisplay(numToString))
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the product of all elements of this matrix
@@ -891,82 +891,82 @@ function simEigen.Matrix:__tocbor(sref, stref)
     return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
 end
 
-function simEigen.Matrix:__tostring(forDisplay, numToString)
+function simEigen.Matrix:__todisplay(opts)
+    opts = opts or {}
     local out = ''
 
-    if forDisplay or __tostring_for_display then
-        if __tostring_for_display then -- set by _evalExec (base.lua) for rendering in statusbar
-            __tostring_for_display.add_nl = true -- signal we need a newline after comma
-            if not __tostring_for_display.first_of_line then
-                out = out .. '\n\n' -- keep at start of line
-            end
-        end
-
-        -- grid format:
-        numToString = numToString or function(x) return _S.anyToString(x) end
-        local s = {}
-        local colwi, colwd = {}, {}
-        for i = 1, self:rows() do
-            s[i] = self:rowdata(i)
-            for j = 1, #s[i] do
-                local ns = numToString(s[i][j])
-                local ns = string.split(ns .. '.', '%.')
-                ns = {ns[1], ns[2]}
-                if math.type(s[i][j]) == 'float' then ns[2] = '.' .. ns[2] end
-                s[i][j] = ns
-                colwi[j] = math.max(colwi[j] or 0, #s[i][j][1])
-                colwd[j] = math.max(colwd[j] or 0, #s[i][j][2])
-            end
-        end
-
-        parenthesesRenderStyles = parenthesesRenderStyles or {
-            curly = {
-                left  = {top = '\u{23A7}', mid = '\u{23A8}', btm = '\u{23A9}', single = '{'},
-                right = {top = '\u{23AD}', mid = '\u{23AA}', btm = '\u{23AB}', single = '}'},
-            },
-            round = {
-                left  = {top = '\u{239B}', mid = '\u{239C}', btm = '\u{239D}', single = '('},
-                right = {top = '\u{239E}', mid = '\u{239F}', btm = '\u{23A0}', single = ')'},
-            },
-            square = {
-                left  = {top = '\u{23A1}', mid = '\u{23A2}', btm = '\u{23A3}', single = '['},
-                right = {top = '\u{23A4}', mid = '\u{23A5}', btm = '\u{23A6}', single = ']'},
-            },
-        }
-        parenthesesRenderStyle = parenthesesRenderStyle or parenthesesRenderStyles.round
-
-        for i = 1, self:rows() do
-            out = out .. (i > 1 and '\n' or '')
-            local tmb
-            if self:rows() == 1 then
-                tmb = 'single'
-            elseif i == 1 then
-                tmb = 'top'
-            elseif i == self:rows() then
-                tmb = 'btm'
-            else
-                tmb = 'mid'
-            end
-            out = out .. parenthesesRenderStyle.left[tmb] .. ' '
-            for j = 1, #s[i] do
-                out = out .. (j > 1 and '  ' or '')
-                out = out .. string.format('%' .. colwi[j] .. 's', s[i][j][1])
-                out = out .. string.format('%-' .. colwd[j] .. 's', s[i][j][2])
-            end
-            out = out .. ' ' .. parenthesesRenderStyle.right[tmb]
-        end
-    else
-        -- compact format:
-        local rows, cols = simEigen.mtxGetSize(self.__handle)
-        out = out .. 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
-        local data = self:data()
-        for i = 0, rows - 1 do
-            for j = 0, cols - 1 do
-                out = out .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
-            end
-        end
-        out = out .. '})'
+    -- XXX:
+    if not opts.first_of_line then
+        out = out .. '\n\n' -- keep at start of line
     end
+
+    opts.numToString = opts.numToString or function(x) return _S.anyToString(x) end
+    local s = {}
+    local colwi, colwd = {}, {}
+    for i = 1, self:rows() do
+        s[i] = self:rowdata(i)
+        for j = 1, #s[i] do
+            local ns = opts.numToString(s[i][j])
+            local ns = string.split(ns .. '.', '%.')
+            ns = {ns[1], ns[2]}
+            if math.type(s[i][j]) == 'float' then ns[2] = '.' .. ns[2] end
+            s[i][j] = ns
+            colwi[j] = math.max(colwi[j] or 0, #s[i][j][1])
+            colwd[j] = math.max(colwd[j] or 0, #s[i][j][2])
+        end
+    end
+
+    parenthesesRenderStyles = parenthesesRenderStyles or {
+        curly = {
+            left  = {top = '\u{23A7}', mid = '\u{23A8}', btm = '\u{23A9}', single = '{'},
+            right = {top = '\u{23AD}', mid = '\u{23AA}', btm = '\u{23AB}', single = '}'},
+        },
+        round = {
+            left  = {top = '\u{239B}', mid = '\u{239C}', btm = '\u{239D}', single = '('},
+            right = {top = '\u{239E}', mid = '\u{239F}', btm = '\u{23A0}', single = ')'},
+        },
+        square = {
+            left  = {top = '\u{23A1}', mid = '\u{23A2}', btm = '\u{23A3}', single = '['},
+            right = {top = '\u{23A4}', mid = '\u{23A5}', btm = '\u{23A6}', single = ']'},
+        },
+    }
+    parenthesesRenderStyle = parenthesesRenderStyle or parenthesesRenderStyles.round
+
+    for i = 1, self:rows() do
+        out = out .. (i > 1 and '\n' or '')
+        local tmb
+        if self:rows() == 1 then
+            tmb = 'single'
+        elseif i == 1 then
+            tmb = 'top'
+        elseif i == self:rows() then
+            tmb = 'btm'
+        else
+            tmb = 'mid'
+        end
+        out = out .. parenthesesRenderStyle.left[tmb] .. ' '
+        for j = 1, #s[i] do
+            out = out .. (j > 1 and '  ' or '')
+            out = out .. string.format('%' .. colwi[j] .. 's', s[i][j][1])
+            out = out .. string.format('%-' .. colwd[j] .. 's', s[i][j][2])
+        end
+        out = out .. ' ' .. parenthesesRenderStyle.right[tmb]
+    end
+
+    return out, {add_nl = true}
+end
+
+function simEigen.Matrix:__tostring()
+    local out = ''
+    local rows, cols = simEigen.mtxGetSize(self.__handle)
+    out = out .. 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
+    local data = self:data()
+    for i = 0, rows - 1 do
+        for j = 0, cols - 1 do
+            out = out .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
+        end
+    end
+    out = out .. '})'
     return out
 end
 
