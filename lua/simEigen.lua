@@ -554,8 +554,8 @@ function simEigen.Matrix:pinv(b, damping)
 end
 
 -- @fun {lua_only=true} Matrix:print print the contents of this matrix
-function simEigen.Matrix:print(numToString)
-    print(self:__todisplay(numToString))
+function simEigen.Matrix:print(opts)
+    print(self:__todisplay(opts))
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the product of all elements of this matrix
