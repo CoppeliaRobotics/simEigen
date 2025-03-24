@@ -1262,10 +1262,102 @@ setmetatable(
     }
 )
 
+simEigen.Pose = {}
+
+-- @fun {lua_only=true} Pose:data get the data of this pose, in (tx, ty, tz, qx, qy, qz, qw) order
+-- @ret table.double data the pose data
+function simEigen.Pose:data()
+    return table.add(self.t:data(), self.q:data())
+end
+
+-- @fun {lua_only=true} Pose:inv return a new pose inverse of this
+-- @ret table result inverse pose (Pose)
+function simEigen.Pose:inv()
+    local invq = self.q:inv()
+    return simEigen.Pose(invq * (-self.t), invq)
+end
+
+-- @fun {lua_only=true} Pose:ispose (class method) check wether the argument is a simEigen.Pose
+-- @arg any m
+-- @ret bool true if the argument is an instance of simEigen.Pose
+function simEigen.Pose:ispose(m)
+    assert(self == simEigen.Pose, 'class method')
+    assert(m ~= nil, 'argument required')
+    return getmetatable(m) == simEigen.Pose
+end
+
+-- @fun {lua_only=true} Pose:mul multiply with another pose/vector, returning new pose/vector
+-- @arg table o the other pose (Pose)
+-- @ret table q a new pose with result (Pose)
+function simEigen.Pose:mul(o)
+    if simEigen.Matrix:isvector3(o) then
+        return self.q * o + self.t
+    elseif simEigen.Pose:ispose(o) then
+        return simEigen.Pose(self.q * o.t + self.t, o.q * self.q)
+    else
+        error 'invalid argument type'
+    end
+end
+
+function simEigen.Pose:__index(k)
+    if math.type(k) == 'integer' then
+        error 'not implemented'
+    else
+        return simEigen.Pose[k]
+    end
+end
+
+function simEigen.Pose:__len()
+    return 4
+end
+
+function simEigen.Pose:__mul(m)
+    return self:mul(m)
+end
+
+function simEigen.Pose:__newindex(k, v)
+    if math.type(k) == 'integer' then
+        error 'not implemented'
+    else
+        return simEigen.Pose[k]
+    end
+end
+
+function simEigen.Pose:__pairs()
+    -- for completion, return methods of simEigen.Pose
+    return pairs(simEigen.Pose)
+end
+
+function simEigen.Pose:__tostring()
+    local out = ''
+    out = out .. 'simEigen.Pose({'
+    for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
+    out = out ..'})'
+    return out
+end
+
+function simEigen.Pose:__unm()
+    return self:inv()
+end
+
+-- @fun {lua_only=true} Pose a combination of a rotation and a translation
+-- @arg table t the translation vector
+-- @arg table q the rotation quaternion
+-- @ret table p the pose (Pose)
+setmetatable(
+    simEigen.Pose, {
+        __call = function(self, t, q)
+            assert(simEigen.Matrix:isvector3(t))
+            assert(simEigen.Quaternion:isquaternion(q))
+            return setmetatable({t = t, q = q}, self)
+        end,
+    }
+)
+
 function simEigen.import(...)
     local names = {...}
     if #names == 1 and names[1] == '*' then
-        simEigen.import('Matrix', 'Quaternion', 'Vector')
+        simEigen.import('Matrix', 'Pose', 'Quaternion', 'Vector')
         _G.simEigen = simEigen
         return
     end
