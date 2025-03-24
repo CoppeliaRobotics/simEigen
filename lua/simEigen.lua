@@ -167,12 +167,11 @@ function simEigen.Matrix:exp()
     return self:op(simEigen.op.exp, nil, false)
 end
 
--- @fun {lua_only=true} Matrix.eye (static method) create a new identity matrix of given size
+-- @fun {lua_only=true} Matrix:eye (class method) create a new identity matrix of given size
 -- @arg int n size
 -- @ret table m a new matrix with result (Matrix)
 function simEigen.Matrix:eye(size)
-    if simEigen.Matrix:ismatrix(self) then error('static method') end
-    if size == nil and math.type(self) == 'integer' then size = self end
+    assert(self == simEigen.Matrix, 'class method')
     assert(math.type(size) == 'integer', 'argument must be integer')
     local data = {}
     for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
@@ -186,6 +185,7 @@ function simEigen.Matrix:floor()
 end
 
 function simEigen.Matrix:fromtable(t)
+    assert(self == simEigen.Matrix, 'class method')
     assert(type(t) == 'table', 'bad type')
     if t.dims ~= nil and t.data ~= nil then
         assert(#t.dims == 2, 'only 2d grids are supported by this class')
@@ -359,19 +359,13 @@ function simEigen.Matrix:isin()
     return self:op(simEigen.op.sin, nil, true)
 end
 
--- @fun {lua_only=true} Matrix.ismatrix (static method) check wether the argument is a simEigen.Matrix
+-- @fun {lua_only=true} Matrix:ismatrix (class method) check wether the argument is a simEigen.Matrix
 -- @arg any m
 -- @ret bool true if the argument is an instance of simEigen.Matrix
 function simEigen.Matrix:ismatrix(m)
-    if getmetatable(self) == simEigen.Matrix then
-        -- when used as non-static returns true
-        assert(m == nil, 'method does not take any arguments')
-        return true
-    else
-        if m == nil then m = self end
-        assert(m ~= nil, 'argument required')
-        return getmetatable(m) == simEigen.Matrix
-    end
+    assert(self == simEigen.Matrix, 'class method')
+    assert(m ~= nil, 'argument required')
+    return getmetatable(m) == simEigen.Matrix
 end
 
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place
@@ -385,6 +379,14 @@ end
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:isub(m)
     return self:op(simEigen.op.sub, m, true)
+end
+
+-- @fun {lua_only=true} Matrix:isvector (class method) check wether the argument is a simEigen.Matrix with exactly 1 columns
+-- @arg any m
+-- @ret bool true if the argument is an instance of simEigen.Matrix with exactly 1 columns
+function simEigen.Matrix:isvector(m)
+    assert(self == simEigen.Matrix, 'class method')
+    return simEigen.Matrix:ismatrix(m) and m:cols() == 1
 end
 
 -- @fun {lua_only=true} Matrix:itan compute element-wise tangent, in place
@@ -420,12 +422,13 @@ function simEigen.Matrix:kron(m)
     return r
 end
 
--- @fun {lua_only=true} Matrix:linspace create a new matrix of 'count' evenly spaced elements from 'low' to 'high'
+-- @fun {lua_only=true} Matrix:linspace (class method) create a new matrix of 'count' evenly spaced elements from 'low' to 'high'
 -- @arg float low lower bound
 -- @arg float high upper bound
 -- @arg int count number of elements
 -- @ret table m a new matrix (Matrix)
 function simEigen.Matrix:linspace(low, high, count)
+    assert(self == simEigen.Matrix, 'class method')
     if math.type(low) == 'integer' and high == nil and count == nil then
         low, high, count = 1, low, low
     end
