@@ -128,7 +128,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret table v the resulting vector (Matrix)
 function simEigen.Matrix:cross(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    assert(self:isvector(3) and simEigen.Matrix:isvector(m, 3), 'arguments must be a 3D vector')
     local r = simEigen.mtxCross(self.__handle, m.__handle)
     r = simEigen.Matrix(r)
     return r
@@ -157,7 +157,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret float the result
 function simEigen.Matrix:dot(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    assert(self:isvector() and simEigen.Matrix:isvector(m), 'arguments must be vectors')
     return simEigen.mtxDot(self.__handle, m.__handle)
 end
 
