@@ -391,7 +391,6 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
     else
         error 'invalid arguments'
     end
-
 end
 
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place
@@ -411,7 +410,17 @@ end
 -- @arg any m
 -- @ret bool true if the argument is an instance of simEigen.Matrix of size Nx1
 function simEigen.Matrix:isvector(m, elemCount)
-    return simEigen.Matrix:ismatrix(m, elemCount, 1)
+    if self == simEigen.Matrix then
+        -- used as a class method:
+        return simEigen.Matrix:ismatrix(m, elemCount, 1)
+    elseif getmetatable(self) == simEigen.Matrix then
+        -- used as object method:
+        assert(elemCount == nil, 'too many arguments')
+        m, elemCount = nil, m
+        return self:ismatrix(elemCount, 1)
+    else
+        error 'invalid arguments'
+    end
 end
 
 -- @fun {lua_only=true} Matrix:itan compute element-wise tangent, in place
