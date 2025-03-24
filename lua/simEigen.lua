@@ -45,10 +45,10 @@ function simEigen.Matrix:block(i, j, p, q)
     j = j or 1
     p = p or -1
     q = q or -1
-    assert(math.type(i) == 'integer')
-    assert(math.type(j) == 'integer')
-    assert(math.type(p) == 'integer')
-    assert(math.type(q) == 'integer')
+    assert(math.type(i) == 'integer', 'indices must be integer')
+    assert(math.type(j) == 'integer', 'indices must be integer')
+    assert(math.type(p) == 'integer', 'block sizes must be integer')
+    assert(math.type(q) == 'integer', 'block sizes must be integer')
     local m = simEigen.mtxBlock(self.__handle, i - 1, j - 1, p, q)
     m = simEigen.Matrix(m)
     return m
@@ -67,10 +67,10 @@ function simEigen.Matrix:blockassign(m, i, j, p, q)
     j = j or 1
     p = p or -1
     q = q or -1
-    assert(math.type(i) == 'integer')
-    assert(math.type(j) == 'integer')
-    assert(math.type(p) == 'integer')
-    assert(math.type(q) == 'integer')
+    assert(math.type(i) == 'integer', 'indices must be integer')
+    assert(math.type(j) == 'integer', 'indices must be integer')
+    assert(math.type(p) == 'integer', 'block sizes must be integer')
+    assert(math.type(q) == 'integer', 'block sizes must be integer')
     simEigen.mtxBlockAssign(self.__handle, m.__handle, i - 1, j - 1, p, q)
     return self
 end
@@ -92,7 +92,7 @@ end
 -- @arg int j column index
 -- @ret table.float a table of numbers
 function simEigen.Matrix:coldata(j)
-    assert(math.type(j) == 'integer')
+    assert(math.type(j) == 'integer', 'indices must be integer')
     return simEigen.mtxGetColData(self.__handle, j - 1)
 end
 
@@ -128,7 +128,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret table v the resulting vector (Matrix)
 function simEigen.Matrix:cross(m)
-    assert(self:isvector(3) and simEigen.Matrix:isvector(m, 3), 'arguments must be a 3D vector')
+    assert(simEigen.Matrix:isvector(self, 3) and simEigen.Matrix:isvector(m, 3), 'arguments must be 3D vectors')
     local r = simEigen.mtxCross(self.__handle, m.__handle)
     r = simEigen.Matrix(r)
     return r
@@ -157,7 +157,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret float the result
 function simEigen.Matrix:dot(m)
-    assert(self:isvector() and simEigen.Matrix:isvector(m), 'arguments must be vectors')
+    assert(simEigen.Matrix:isvector(self) and simEigen.Matrix:isvector(m, self:rows()), 'arguments must be vectors of same length')
     return simEigen.mtxDot(self.__handle, m.__handle)
 end
 
@@ -375,8 +375,14 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
         -- used as a class method:
         assert(m ~= nil, 'argument required')
         if getmetatable(m) ~= simEigen.Matrix then return false end
-        if rowCount and m:rows() ~= rowCount then return false end
-        if colCount and m:cols() ~= colCount then return false end
+        if rowCount ~= nil then
+            assert(math.type(rowCount) == 'integer', 'row count must be integer')
+            if m:rows() ~= rowCount then return false end
+        end
+        if colCount ~= nil then
+            assert(math.type(colCount) == 'integer', 'col count must be integer')
+            if m:cols() ~= colCount then return false end
+        end
         return true
     elseif getmetatable(self) == simEigen.Matrix then
         -- used as object method:
@@ -568,6 +574,7 @@ end
 -- @ret table the solution to m*x=b, if b was passed (Matrix)
 function simEigen.Matrix:pinv(b, damping)
     assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
+    assert(type(damping) == 'number', 'damping must be numeric')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
@@ -597,6 +604,8 @@ end
 -- @arg int cols new column count
 -- @ret table m a new matrix with result (Matrix)
 function simEigen.Matrix:reshaped(rows, cols)
+    assert(math.type(rows) == 'integer', 'row count must be integer')
+    assert(math.type(cols) == 'integer', 'col count must be integer')
     local m = simEigen.mtxReshaped(self.__handle, rows, cols)
     m = simEigen.Matrix(m)
     return m
@@ -613,7 +622,7 @@ end
 -- @arg int i row index
 -- @ret table.float a table of numbers
 function simEigen.Matrix:rowdata(i)
-    assert(math.type(i) == 'integer')
+    assert(math.type(i) == 'integer', 'indices must be integer')
     return simEigen.mtxGetRowData(self.__handle, i - 1)
 end
 
@@ -642,7 +651,7 @@ end
 -- @arg table.float data column data
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:setcoldata(j, data)
-    assert(math.type(j) == 'integer')
+    assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetColData(self.__handle, j - 1, data)
     return self
 end
@@ -662,8 +671,8 @@ end
 -- @arg table.float data element value
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:setitem(i, j, data)
-    assert(math.type(i) == 'integer')
-    assert(math.type(j) == 'integer')
+    assert(math.type(i) == 'integer', 'indices must be integer')
+    assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetItem(self.__handle, i - 1, j - 1, data)
     return self
 end
@@ -681,7 +690,7 @@ end
 -- @arg table.float data row data
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:setrowdata(i, data)
-    assert(math.type(i) == 'integer')
+    assert(math.type(i) == 'integer', 'indices must be integer')
     simEigen.mtxSetRowData(self.__handle, i - 1, data)
     return self
 end
@@ -726,6 +735,8 @@ end
 -- @ret table v (Matrix)
 -- @ret table x (Matrix)
 function simEigen.Matrix:svd(computeThinU, computeThinV, b)
+    assert(computeThinU == nil or type(computeThinU) == 'bool', 'computeThinU must be bool')
+    assert(computeThinV == nil or type(computeThinV) == 'bool', 'computeThinV must be bool')
     computeThinU = computeThinU == true
     computeThinV = computeThinV == true
     assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
@@ -1084,6 +1095,7 @@ end
 function simEigen.Quaternion:fromaxisangle(axis, angle)
     assert(self == simEigen.Quaternion, 'class method')
     assert(simEigen.Matrix:isvector(axis, 3), 'argument must be a 3D vector')
+    assert(type(angle) == 'number', 'angle must be a number')
     local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
     q = simEigen.Quaternion(q)
     return q
