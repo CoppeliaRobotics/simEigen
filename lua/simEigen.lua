@@ -146,6 +146,12 @@ function simEigen.Matrix:deg()
     return self:op(simEigen.op.deg, nil, false)
 end
 
+-- @fun {lua_only=true} Matrix:det compute matrix determinant
+-- @ret double d matrix determinant
+function simEigen.Matrix:det()
+    return simEigen.mtxDeterminant(self.__handle)
+end
+
 -- @fun {lua_only=true} Matrix:div compute element-wise division with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
@@ -391,6 +397,15 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
     else
         error 'invalid arguments'
     end
+end
+
+-- @fun {lua_only=true} Matrix:isorthogonal check wether the matrix is orthogonal
+-- @arg {type='double',default='1e-6'} tol tolerance
+-- @ret bool true if the matrix is orthogonal
+function simEigen.Matrix:isorthogonal(tol)
+    tol = tol or 1e-6
+    local z = self:t() * self - simEigen.Matrix:eye(self:rows())
+    return all(function(x) return math.abs(x) < tol end, z:data())
 end
 
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place

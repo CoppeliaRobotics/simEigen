@@ -103,6 +103,12 @@ public:
         delete mtxHandles.remove(m);
     }
 
+    void mtxDeterminant(mtxDeterminant_in *in, mtxDeterminant_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->determinant();
+    }
+
     void mtxDot(mtxDot_in *in, mtxDot_out *out)
     {
         auto m = mtxHandles.get(in->handle);

@@ -65,6 +65,15 @@
         <return>
         </return>
     </command>
+    <command name="mtxDeterminant" skip-documentation="true">
+        <description>Compute determinant of the matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="result" type="double"></param>
+        </return>
+    </command>
     <command name="mtxDot" skip-documentation="true">
         <description>Performs addition of the two matrices.</description>
         <params>
