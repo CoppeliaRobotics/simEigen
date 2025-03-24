@@ -549,7 +549,7 @@ function simEigen.Matrix:op(op, x, inplace)
     local r
     if type(x) == 'number' then
         r = simEigen.mtxOpK(self.__handle, op, x, inplace)
-    elseif simEigen.Matrix:ismatrix(x) or x == nil then
+    elseif x == nil or simEigen.Matrix:ismatrix(x) then
         r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
     else
         error('invalid operand type')
