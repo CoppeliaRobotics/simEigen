@@ -904,6 +904,8 @@ function simEigen.Matrix:__index(k)
                 }
             )
         end
+    elseif k == 'T' then
+        return self:transposed()
     else
         return simEigen.Matrix[k]
     end
