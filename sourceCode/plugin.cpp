@@ -13,7 +13,10 @@
 using namespace std;
 using namespace Eigen;
 
-namespace simEigen { using Matrix = ::Matrix<double, ::Dynamic, ::Dynamic, ::RowMajor>; }
+namespace simEigen {
+    using Matrix = ::Matrix<double, ::Dynamic, ::Dynamic, ::RowMajor>;
+    using Quaternion = ::Quaterniond;
+}
 
 class Plugin : public sim::Plugin
 {
@@ -621,6 +624,138 @@ public:
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
+    void quatDestroy(quatDestroy_in *in, quatDestroy_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        delete quatHandles.remove(q);
+    }
+
+    void quatFromAxisAngle(quatFromAxisAngle_in *in, quatFromAxisAngle_out *out)
+    {
+        auto axis = mtxHandles.get(in->axisHandle);
+        if(axis->rows() != 3 || axis->cols() != 1)
+            throw std::runtime_error("not a vector 3D");
+        auto q = new simEigen::Quaternion(Eigen::AngleAxisd(in->angle, *axis));
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
+    void quatFromEuler(quatFromEuler_in *in, quatFromEuler_out *out)
+    {
+        auto euler = mtxHandles.get(in->handle);
+        if(euler->rows() != 3 || euler->cols() != 1)
+            throw std::runtime_error("not a vector 3D");
+        Eigen::AngleAxisd rollAngle((*euler)(0), Eigen::Vector3d::UnitX());
+        Eigen::AngleAxisd pitchAngle((*euler)(1), Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd yawAngle((*euler)(2), Eigen::Vector3d::UnitZ());
+        auto q = new simEigen::Quaternion(rollAngle * pitchAngle * yawAngle);
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
+    void quatFromRotation(quatFromRotation_in *in, quatFromRotation_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        if(m->rows() != 3 || m->cols() != 3)
+            throw std::runtime_error("not a 3x3 matrix");
+        Matrix3d R = *m;
+        if(std::abs(R.determinant() - 1.0) > 1e-6)
+            throw std::runtime_error("not a rotation matrix (det != 1)");
+        if(!(R * R.transpose()).isApprox(Matrix3d::Identity(), 1e-6))
+            throw std::runtime_error("not a rotation matrix (not orthogonal)");
+        auto q = new simEigen::Quaternion(R);
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
+    void quatGetData(quatGetData_in *in, quatGetData_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        out->data.resize(4);
+        out->data[3] = q->w();
+        out->data[0] = q->x();
+        out->data[1] = q->y();
+        out->data[2] = q->z();
+    }
+
+    void quatInv(quatInv_in *in, quatInv_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        auto qr = new simEigen::Quaternion;
+        *qr = q->inverse();
+        out->handle = quatHandles.add(qr, in->_.scriptID);
+    }
+
+    void quatMulQuat(quatMulQuat_in *in, quatMulQuat_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        auto q2 = quatHandles.get(in->handle2);
+        simEigen::Quaternion *qr = in->inplace ? q : new simEigen::Quaternion;
+        *qr = (*q) * (*q2);
+        if(!in->inplace)
+            out->handle = quatHandles.add(qr, in->_.scriptID);
+    }
+
+    void quatMulVec(quatMulVec_in *in, quatMulVec_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        auto v = mtxHandles.get(in->vectorHandle);
+        if(v->rows() != 3)
+            throw std::runtime_error("invalid size");
+        simEigen::Matrix *mr = new simEigen::Matrix(v->rows(), v->cols());
+        *mr = q->toRotationMatrix() * (*v);
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void quatNew(quatNew_in *in, quatNew_out *out)
+    {
+        const auto &d = in->initialData;
+        double qx = d[0], qy = d[1], qz = d[2], qw = d[3];
+        auto q = new simEigen::Quaternion(qw, qx, qy, qz);
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
+    void quatSetData(quatSetData_in *in, quatSetData_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        q->w() = in->data[3];
+        q->x() = in->data[0];
+        q->y() = in->data[1];
+        q->z() = in->data[2];
+    }
+
+    void quatSLERP(quatSLERP_in *in, quatSLERP_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        auto q2 = quatHandles.get(in->handle2);
+        auto qr = new simEigen::Quaternion;
+        *qr = q->slerp(in->t, *q2);
+        out->handle = quatHandles.add(qr, in->_.scriptID);
+    }
+
+    void quatToAxisAngle(quatToAxisAngle_in *in, quatToAxisAngle_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        Eigen::AngleAxisd angleAxis(*q);
+        out->angle = angleAxis.angle();
+        simEigen::Matrix *mr = new simEigen::Matrix(3, 1);
+        *mr = angleAxis.axis();
+        out->axisHandle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void quatToEuler(quatToEuler_in *in, quatToEuler_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        simEigen::Matrix *mr = new simEigen::Matrix(3, 1);
+        *mr = q->toRotationMatrix().eulerAngles(0, 1, 2);
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void quatToRotation(quatToRotation_in *in, quatToRotation_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        simEigen::Matrix *mr = new simEigen::Matrix(3, 3);
+        *mr = q->toRotationMatrix();
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
     // OLD FUNCTIONS:
 
     void toMatrix(const Grid<double> &g, simEigen::Matrix &m)
@@ -706,6 +841,7 @@ public:
 
 private:
     sim::Handles<simEigen::Matrix*> mtxHandles{"simEigen.Matrix"};
+    sim::Handles<simEigen::Quaternion*> quatHandles{"simEigen.Quaternion"};
 };
 
 SIM_PLUGIN(Plugin)

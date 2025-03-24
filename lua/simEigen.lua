@@ -1039,10 +1039,221 @@ function simEigen.Vector(v, fv)
     end
 end
 
+simEigen.Quaternion = {}
+
+-- @fun {lua_only=true} Quaternion:data get the data of this quaternion, in (qx, qy, qz, qw) order
+-- @ret table.double data the quaternion data
+function simEigen.Quaternion:data()
+    return simEigen.quatGetData(self.__handle)
+end
+
+-- @fun {lua_only=true} Quaternion:fromaxisangle (class method) create a new quaternion from axis/angle
+-- @arg table axis the rotation axis vector 3D (Matrix)
+-- @arg double angle the rotation angle
+-- @ret table q the quaternion (Quaternion)
+function simEigen.Quaternion:fromaxisangle(axis, angle)
+    assert(self == simEigen.Quaternion, 'class method')
+    assert(simEigen.Matrix:ismatrix(axis), 'argument must be a Matrix')
+    assert(axis:rows() == 3 and axis:cols() == 1, 'argument must be a 3D vector')
+    local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
+    q = simEigen.Quaternion(q)
+    return q
+end
+
+-- @fun {lua_only=true} Quaternion:fromeuler (class method) create a new quaternion from euler angles
+-- @arg table euler the Euler angles as 3D vector (Matrix)
+-- @ret table q the quaternion (Quaternion)
+function simEigen.Quaternion:fromeuler(euler)
+    assert(self == simEigen.Quaternion, 'class method')
+    assert(simEigen.Matrix:ismatrix(euler), 'argument must be a Matrix')
+    assert(euler:rows() == 3 and euler:cols() == 1, 'argument must be a 3D vector')
+    local q = simEigen.quatFromEuler(euler.__handle)
+    q = simEigen.Quaternion(q)
+    return q
+end
+
+-- @fun {lua_only=true} Quaternion:fromrotation (class method) create a new quaternion from rotation matrix
+-- @arg table r the rotation matrix (Matrix)
+-- @ret table q the quaternion (Quaternion)
+function simEigen.Quaternion:fromrotation(r)
+    assert(self == simEigen.Quaternion, 'class method')
+    assert(simEigen.Matrix:ismatrix(r), 'argument must be a Matrix')
+    assert(r:rows() == 3 and r:cols() == 3, 'argument must be a 3x3 Matrix')
+    local q = simEigen.quatFromRotation(r.__handle)
+    q = simEigen.Quaternion(q)
+    return q
+end
+
+-- @fun {lua_only=true} Quaternion:imul multiply with another quaternion, in place
+-- @arg table o the other quaternion (Quaternion)
+-- @ret table self this quaternion (Quaternion)
+function simEigen.Quaternion:imul(o)
+    if simEigen.Quaternion:isquaternion(o) then
+        simEigen.quatMulQuat(self.__handle, o.__handle, true)
+        return self
+    else
+        error 'invalid type'
+    end
+end
+
+-- @fun {lua_only=true} Quaternion:inv return a new quaternion inverse of this
+-- @ret table self this quaternion (Quaternion)
+function simEigen.Quaternion:inv()
+    local q = simEigen.quatInv(self.__handle)
+    q = simEigen.Quaternion(q)
+    return q
+end
+
+-- @fun {lua_only=true} Quaternion:isquaternion (class method) check wether the argument is a simEigen.Quaternion
+-- @arg any m
+-- @ret bool true if the argument is an instance of simEigen.Quaternion
+function simEigen.Quaternion:isquaternion(m)
+    assert(self == simEigen.Quaternion, 'class method')
+    assert(m ~= nil, 'argument required')
+    return getmetatable(m) == simEigen.Quaternion
+end
+
+-- @fun {lua_only=true} Quaternion:mul multiply with another quaternion, returning new quaternion
+-- @arg table o the other quaternion (Quaternion)
+-- @ret table q a new quaternion with result (Quaternion)
+function simEigen.Quaternion:mul(o)
+    if simEigen.Quaternion:isquaternion(o) then
+        local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
+        q = simEigen.Quaternion(q)
+        return q
+    elseif simEigen.Matrix:ismatrix(o) then
+        assert(o:rows() == 3 and o:cols() == 1)
+        local v = simEigen.quatMulVec(self.__handle, o.__handle)
+        v = simEigen.Matrix(v)
+        return v
+    else
+        error 'invalid type'
+    end
+end
+
+-- @fun {lua_only=true} Quaternion:slerp interpolate quaternions
+-- @arg double t interpolation factor 0..1
+-- @arg table q2 the other quaternion (Quaternion)
+-- @ret table q a new quaternion with result (Quaternion)
+function simEigen.Quaternion:slerp(t, q2)
+    local q = simEigen.quatSLERP(self.__handle, q2.__handle, t)
+    q = simEigen.Quaternion(q)
+    return q
+end
+
+-- @fun {lua_only=true} Quaternion:toaxisangle convert this quaternion to a axis/angle representation
+-- @ret table axis a new vector 3D with rotation axis (Matrix)
+-- @ret double angle the rotation angle
+function simEigen.Quaternion:toaxisangle()
+    local axis, angle = simEigen.quatToAxisAngle(self.__handle)
+    axis = simEigen.Matrix(axis)
+    return axis, angle
+end
+
+-- @fun {lua_only=true} Quaternion:toeuler convert this quaternion to a Euler angles representation
+-- @ret table euler a new vector 3D with euler angles (Matrix)
+function simEigen.Quaternion:toeuler()
+    local euler = simEigen.quatToEuler(self.__handle)
+    euler = simEigen.Matrix(euler)
+    return euler
+end
+
+-- @fun {lua_only=true} Quaternion:torotation convert this quaternion to a rotation matrix
+-- @ret table q a new matrix with result (Matrix)
+function simEigen.Quaternion:torotation()
+    local r = simEigen.quatToRotation(self.__handle)
+    r = simEigen.Matrix(r)
+    return r
+end
+
+function simEigen.Quaternion:__eq(m)
+    if simEigen.Quaternion:ismatrix(m) then
+        return self.__handle == m.__handle
+    else
+        return false
+    end
+end
+
+function simEigen.Quaternion:__gc()
+    simEigen.quatDestroy(self.__handle)
+end
+
+function simEigen.Quaternion:__index(k)
+    if math.type(k) == 'integer' then
+        local data = simEigen.quatGetData(self.__handle)
+        return data[k]
+    else
+        return simEigen.Quaternion[k]
+    end
+end
+
+function simEigen.Quaternion:__len()
+    return 4
+end
+
+function simEigen.Quaternion:__mul(m)
+    return self:mul(m)
+end
+
+function simEigen.Quaternion:__newindex(k, v)
+    if math.type(k) == 'integer' then
+        local data = simEigen.quatGetData(self.__handle)
+        data[k] = v
+        simEigen.quatSetData(self.__handle, data)
+    else
+        return simEigen.Quaternion[k]
+    end
+end
+
+function simEigen.Quaternion:__pairs()
+    -- for completion, return methods of simEigen.Quaternion
+    return pairs(simEigen.Quaternion)
+end
+
+function simEigen.Quaternion:__tocbor(sref, stref)
+    local _cbor = cbor or require 'org.conman.cbor'
+    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
+end
+
+function simEigen.Quaternion:__tostring()
+    local out = ''
+    local data = simEigen.quatGetData(self.__handle)
+    out = out .. 'simEigen.Quaternion('
+    for i = 1, 4 do out = out .. (i > 1 and ', ' or '') .. tostring(data[i]) end
+    out = out ..')'
+    return out
+end
+
+function simEigen.Quaternion:__unm()
+    return self:inv()
+end
+
+-- @fun {lua_only=true} Quaternion construct a new quaternion
+-- @arg {type='table',item_type='float',default={0,0,0,1}} data initialization data, in (qx, qy, qz, qw) order
+-- @ret table q the new quaternion (Quaternion)
+setmetatable(
+    simEigen.Quaternion, {
+        __call = function(self, data)
+            local h = nil
+            if type(data) == 'string' then
+                -- construct from handle:
+                h = data
+            elseif data == nil then
+                h = simEigen.quatNew()
+            else
+                assert(type(data) == 'table' and #data == 4, 'invalid data')
+                h = simEigen.quatNew(data)
+            end
+            assert(h ~= nil)
+            return setmetatable({__handle = h}, self)
+        end,
+    }
+)
+
 function simEigen.import(...)
     local names = {...}
     if #names == 1 and names[1] == '*' then
-        simEigen.import('Matrix', 'Vector')
+        simEigen.import('Matrix', 'Quaternion', 'Vector')
         _G.simEigen = simEigen
         return
     end

@@ -426,6 +426,138 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="quatDestroy" skip-documentation="true">
+        <description>Destroy the quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="quatFromAxisAngle" skip-documentation="true">
+        <description>Create a new quaternion from axis/angle.</description>
+        <params>
+            <param name="axisHandle" type="string"></param>
+            <param name="angle" type="double"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatFromEuler" skip-documentation="true">
+        <description>Create a new quaternion from Euler angles (as a 3D vector).</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatFromRotation" skip-documentation="true">
+        <description>Create a new quaternion from rotation matrix.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatGetData" skip-documentation="true">
+        <description>Return quaternion data.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="data" type="table" item-type="double" size="4"></param>
+        </return>
+    </command>
+    <command name="quatInv" skip-documentation="true">
+        <description>Return a new quaternion inverse of this.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatMulQuat" skip-documentation="true">
+        <description>Multiply quaternions. Returns a new quaternion if inplace is false, otherwise writes the result into first quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+            <param name="inplace" type="bool" default="true"></param>
+        </params>
+        <return>
+            <param name="handle" type="string" nullable="true" default="nil"></param>
+        </return>
+    </command>
+    <command name="quatMulVec" skip-documentation="true">
+        <description>Rotate vector by this quaternion, returning a new vector.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="vectorHandle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string" nullable="true" default="nil"></param>
+        </return>
+    </command>
+    <command name="quatNew" skip-documentation="true">
+        <description>Create a new quaternion. If initialData is specified, fill the quaternion with specified data.</description>
+        <params>
+            <param name="initialData" type="table" item-type="float" size="4" default="{0,0,0,1}"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatSetData" skip-documentation="true">
+        <description>Set data of this quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="data" type="table" item-type="double" size="4"></param>
+        </params>
+        <return>
+        </return>
+    </command>
+    <command name="quatSLERP" skip-documentation="true">
+        <description>Compute SLERP between 2 quaternions, return a new quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+            <param name="t" type="double"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatToAxisAngle" skip-documentation="true">
+        <description>Return a axis/angle representation of the given quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="axisHandle" type="string"></param>
+            <param name="angle" type="double"></param>
+        </return>
+    </command>
+    <command name="quatToEuler" skip-documentation="true">
+        <description>Return an Euler angles representation of the given quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatToRotation" skip-documentation="true">
+        <description>Return a new 3x3 matrix corresponding to the rotation matrix of the given quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <enum name="op" item-prefix="op_" base="540" skip-documentation="true">
         <!-- unary ops: -->
         <item name="unm"></item>
