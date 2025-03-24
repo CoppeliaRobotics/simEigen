@@ -368,6 +368,14 @@ function simEigen.Matrix:ismatrix(m)
     return getmetatable(m) == simEigen.Matrix
 end
 
+-- @fun {lua_only=true} Matrix:ismatrix3x3 (class method) check wether the argument is a 3x3 simEigen.Matrix
+-- @arg any m
+-- @ret bool true if the argument is an instance of simEigen.Matrix of size 3x3
+function simEigen.Matrix:ismatrix3x3(m)
+    assert(self == simEigen.Matrix, 'class method')
+    return simEigen.Matrix:ismatrix(m) and m:rows() == 3 and m:cols() == 3
+end
+
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:isqrt()
@@ -381,12 +389,20 @@ function simEigen.Matrix:isub(m)
     return self:op(simEigen.op.sub, m, true)
 end
 
--- @fun {lua_only=true} Matrix:isvector (class method) check wether the argument is a simEigen.Matrix with exactly 1 columns
+-- @fun {lua_only=true} Matrix:isvector (class method) check wether the argument is a Nx1 simEigen.Matrix
 -- @arg any m
--- @ret bool true if the argument is an instance of simEigen.Matrix with exactly 1 columns
+-- @ret bool true if the argument is an instance of simEigen.Matrix of size Nx1
 function simEigen.Matrix:isvector(m)
     assert(self == simEigen.Matrix, 'class method')
     return simEigen.Matrix:ismatrix(m) and m:cols() == 1
+end
+
+-- @fun {lua_only=true} Matrix:isvector3 (class method) check wether the argument is a 3x1 simEigen.Matrix
+-- @arg any m
+-- @ret bool true if the argument is an instance of simEigen.Matrix of size 3x1
+function simEigen.Matrix:isvector3(m)
+    assert(self == simEigen.Matrix, 'class method')
+    return simEigen.Matrix:isvector(m) and m:rows() == 3
 end
 
 -- @fun {lua_only=true} Matrix:itan compute element-wise tangent, in place
@@ -1053,8 +1069,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function simEigen.Quaternion:fromaxisangle(axis, angle)
     assert(self == simEigen.Quaternion, 'class method')
-    assert(simEigen.Matrix:ismatrix(axis), 'argument must be a Matrix')
-    assert(axis:rows() == 3 and axis:cols() == 1, 'argument must be a 3D vector')
+    assert(simEigen.Matrix:isvector3(axis), 'argument must be a 3D vector')
     local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
     q = simEigen.Quaternion(q)
     return q
@@ -1065,8 +1080,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function simEigen.Quaternion:fromeuler(euler)
     assert(self == simEigen.Quaternion, 'class method')
-    assert(simEigen.Matrix:ismatrix(euler), 'argument must be a Matrix')
-    assert(euler:rows() == 3 and euler:cols() == 1, 'argument must be a 3D vector')
+    assert(simEigen.Matrix:isvector3(euler), 'argument must be a 3D vector')
     local q = simEigen.quatFromEuler(euler.__handle)
     q = simEigen.Quaternion(q)
     return q
@@ -1077,8 +1091,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function simEigen.Quaternion:fromrotation(r)
     assert(self == simEigen.Quaternion, 'class method')
-    assert(simEigen.Matrix:ismatrix(r), 'argument must be a Matrix')
-    assert(r:rows() == 3 and r:cols() == 3, 'argument must be a 3x3 Matrix')
+    assert(simEigen.Matrix:ismatrix3x3(r), 'argument must be a 3x3 Matrix')
     local q = simEigen.quatFromRotation(r.__handle)
     q = simEigen.Quaternion(q)
     return q
@@ -1097,7 +1110,7 @@ function simEigen.Quaternion:imul(o)
 end
 
 -- @fun {lua_only=true} Quaternion:inv return a new quaternion inverse of this
--- @ret table self this quaternion (Quaternion)
+-- @ret table result inverted quaternion (Quaternion)
 function simEigen.Quaternion:inv()
     local q = simEigen.quatInv(self.__handle)
     q = simEigen.Quaternion(q)
@@ -1113,7 +1126,7 @@ function simEigen.Quaternion:isquaternion(m)
     return getmetatable(m) == simEigen.Quaternion
 end
 
--- @fun {lua_only=true} Quaternion:mul multiply with another quaternion, returning new quaternion
+-- @fun {lua_only=true} Quaternion:mul multiply with another quaternion/vector, returning new quaternion/vector
 -- @arg table o the other quaternion (Quaternion)
 -- @ret table q a new quaternion with result (Quaternion)
 function simEigen.Quaternion:mul(o)
@@ -1121,8 +1134,7 @@ function simEigen.Quaternion:mul(o)
         local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
         q = simEigen.Quaternion(q)
         return q
-    elseif simEigen.Matrix:ismatrix(o) then
-        assert(o:rows() == 3 and o:cols() == 1)
+    elseif simEigen.Matrix:isvector3(o) then
         local v = simEigen.quatMulVec(self.__handle, o.__handle)
         v = simEigen.Matrix(v)
         return v
@@ -1218,9 +1230,9 @@ end
 function simEigen.Quaternion:__tostring()
     local out = ''
     local data = simEigen.quatGetData(self.__handle)
-    out = out .. 'simEigen.Quaternion('
-    for i = 1, 4 do out = out .. (i > 1 and ', ' or '') .. tostring(data[i]) end
-    out = out ..')'
+    out = out .. 'simEigen.Quaternion({'
+    for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
+    out = out ..'})'
     return out
 end
 
