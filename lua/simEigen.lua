@@ -347,6 +347,14 @@ function simEigen.Matrix:intdiv(m)
     return self:op(simEigen.op.intdiv, m, false)
 end
 
+-- @fun {lua_only=true} Matrix:inversetransform compute the inverse of a 4x4 transform matrix, returns a new matrix
+-- @ret table m a new matrix with result (Matrix)
+function simEigen.Matrix:inversetransform()
+    assert(self:ismatrix(4, 4), 'only works on 4x4 transform matrices')
+    local R, t = self:block(1, 1, 3, 3), self:block(1, 4, 3, 1)
+    return R:t():horzcat(-R:t() * t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
+end
+
 -- @fun {lua_only=true} Matrix:irad compute element-wise degrees to radians conversion, in place
 -- @ret table self this matrix (Matrix)
 function simEigen.Matrix:irad()
@@ -768,6 +776,17 @@ end
 -- @ret float trace
 function simEigen.Matrix:trace()
     return simEigen.mtxTrace(self.__handle)
+end
+
+-- @fun {lua_only=true} Matrix:transform transform a 3D vector using this 4x4 transform matrix, returns a new vector
+-- @arg table v a 3D vector (Matrix)
+-- @ret table m a new vector with result (Matrix)
+function simEigen.Matrix:transform(v)
+    assert(self:ismatrix(4, 4), 'only works on 4x4 transform matrices')
+    assert(simEigen.Matrix:isvector(v, 3), 'only works on 3D vectors')
+    local Rt, t = self:block(1, 1, 3, 3), self:block(1, 4, 3, 1)
+    Rt.transpose()
+    return Rt:horzcat(-Rt * t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
 end
 
 -- @fun {lua_only=true} Matrix:transpose transpose the matrix, in place
@@ -1267,6 +1286,16 @@ function simEigen.Pose:data()
     return table.add(self.t:data(), self.q:data())
 end
 
+-- @fun {lua_only=true} Pose:fromtransform (class method) convert 4x4 transform matrix to new pose
+-- @arg table m a 4x4 transform matrix (Matrix)
+-- @ret table p a new pose with result (Pose)
+function simEigen.Pose:fromtransform(m)
+    assert(self == simEigen.Pose, 'class method')
+    assert(simEigen.Matrix:ismatrix(m, 4, 4), 'only works on 4x4 matrices')
+    local R, t = m:block(1, 1, 3, 3), m:block(1, 4, 3, 1)
+    return simEigen.Pose(t, simEigen.Quaternion:fromrotation(R))
+end
+
 -- @fun {lua_only=true} Pose:inv return a new pose inverse of this
 -- @ret table result inverse pose (Pose)
 function simEigen.Pose:inv()
@@ -1285,7 +1314,7 @@ end
 
 -- @fun {lua_only=true} Pose:mul multiply with another pose/vector, returning new pose/vector
 -- @arg table o the other pose (Pose)
--- @ret table q a new pose with result (Pose)
+-- @ret table p a new pose with result (Pose)
 function simEigen.Pose:mul(o)
     if simEigen.Matrix:isvector(o, 3) then
         return self.q * o + self.t
@@ -1294,6 +1323,12 @@ function simEigen.Pose:mul(o)
     else
         error 'invalid argument type'
     end
+end
+
+-- @fun {lua_only=true} Pose:totransform convert pose to 4x4 transform matrix
+-- @ret table m a new 4x4 transform matrix (Matrix)
+function simEigen.Pose:totransform()
+    return self.q:torotation():horzcat(self.t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
 end
 
 function simEigen.Pose:__index(k)
