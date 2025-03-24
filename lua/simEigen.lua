@@ -1373,8 +1373,8 @@ function simEigen.Pose:__unm()
 end
 
 -- @fun {lua_only=true} Pose a combination of a rotation and a translation
--- @arg table t the translation vector
--- @arg table q the rotation quaternion
+-- @arg table t the translation vector (Matrix)
+-- @arg table q the rotation quaternion (Quaternion)
 -- @ret table p the pose (Pose)
 setmetatable(
     simEigen.Pose, {
