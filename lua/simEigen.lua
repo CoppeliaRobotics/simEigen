@@ -1233,7 +1233,7 @@ function simEigen.Quaternion:torotation()
 end
 
 function simEigen.Quaternion:__eq(m)
-    if simEigen.Quaternion:ismatrix(m) then
+    if simEigen.Quaternion:isquaternion(m) then
         return self.__handle == m.__handle
     else
         return false
