@@ -1424,4 +1424,6 @@ setmetatable(
     }
 )
 
+simEigen.__all = {'Matrix', 'Vector', 'Quaternion', 'Pose'}
+
 return simEigen
