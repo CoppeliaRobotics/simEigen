@@ -1424,16 +1424,4 @@ setmetatable(
     }
 )
 
-function simEigen.import(...)
-    local names = {...}
-    if #names == 1 and names[1] == '*' then
-        simEigen.import('Matrix', 'Pose', 'Quaternion', 'Vector')
-        _G.simEigen = simEigen
-        return
-    end
-    for _, name in ipairs(names) do
-        _G[name] = simEigen[name]
-    end
-end
-
 return simEigen
