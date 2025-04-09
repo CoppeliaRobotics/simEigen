@@ -871,9 +871,29 @@ function simEigen.Matrix:__eq(m)
     end
 end
 
+-- TEMP fix for strange error on Windows related to garbage collection
+----------------------------------------------------------------------
+--[[
 function simEigen.Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
+--]]
+function simEigen.Matrix:__gc()
+    if __simEigenCont == nil then __simEigenCont = {} end
+    if __simEigenCont2 == nil then __simEigenCont2 = {} end
+    __simEigenCont[#__simEigenCont + 1] = self.__handle
+    if #__simEigenCont > 10000 then
+        __simEigenCont2[#__simEigenCont2 + 1] = __simEigenCont
+        __simEigenCont = {}
+    end
+    while #__simEigenCont2 > 0 do
+        for j = 1, #__simEigenCont2[1] do
+            simEigen.mtxDestroy(__simEigenCont2[1][j])
+        end
+        table.remove(__simEigenCont2, 1)
+    end
+end
+----------------------------------------------------------------------
 
 function simEigen.Matrix:__idiv(k)
     return self:intdiv(k)
