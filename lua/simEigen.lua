@@ -598,7 +598,7 @@ end
 -- @ret table the solution to m*x=b, if b was passed (Matrix)
 function simEigen.Matrix:pinv(b, damping)
     assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
-    assert(type(damping) == 'number', 'damping must be numeric')
+    assert(damping == nil or type(damping) == 'number', 'damping must be numeric')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = simEigen.Matrix(m)
