@@ -753,7 +753,7 @@ end
 -- @fun {lua_only=true} Matrix:svd compute the singular value decomposition
 -- @arg {type='bool',default=false} computeThinU
 -- @arg {type='bool',default=false} computeThinV
--- @arg {type='table',default='nil'} b 'b' vector, optional (Matrix)
+-- @arg {type='table',nullable=true,default_nil=true} b 'b' vector, optional (Matrix)
 -- @ret table s (Matrix)
 -- @ret table u (Matrix)
 -- @ret table v (Matrix)
