@@ -1,5 +1,6 @@
 local simEigen = loadPlugin 'simEigen';
 (require 'simEigen-typecheck')(simEigen)
+local SIM = 'sim-2'
 
 simEigen.Matrix = {}
 
@@ -204,6 +205,7 @@ function simEigen.Matrix:fromtable(t)
 end
 
 function simEigen.Matrix:get(i, j)
+    local sim = require(SIM)
     sim.addLog(sim.verbosity_warnings | sim.verbosity_once, 'm:get(i, j) is deprecated. use m:item(i, j) instead')
     return self:item(i, g)
 end
@@ -658,6 +660,7 @@ function simEigen.Matrix:rows()
 end
 
 function simEigen.Matrix:set(i, j, data)
+    local sim = require(SIM)
     sim.addLog(sim.verbosity_warnings | sim.verbosity_once, 'm:set(i, j, val) is deprecated. use m:setitem(i, j, val) instead')
     return self:setitem(i, j, data)
 end
@@ -875,6 +878,7 @@ function simEigen.Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
 
+local sim = require(SIM)
 if sim.getIntProperty(sim.handle_app, 'platform') == 0 then
     -- TEMP fix for strange error on Windows related to garbage collection
     function simEigen.Matrix:__gc()
