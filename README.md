@@ -22,7 +22,7 @@ The main difference from `matrix.lua` is that the functions in this library are 
 
 #### In place VS. return a copy
 
-There are both functions that operate in place (on the current matrix) and functions that return a new matrix, so it is possible to optimize code even further, by avoiding too many memory allocations.
+There are both functions that operate in place (i.e.: on the current matrix) and functions that return a new matrix, so it is possible to optimize code even further, by avoiding too many memory allocations.
 
 #### Added/changed/removed methods
 
@@ -49,6 +49,8 @@ There are a few methods that have different names and different semantics with r
  - `:eq()` / `:ne()` / `:lt()` / `:gt()` / `:le()` / `:ge()` / `:all()` / `:any()` / `:isnan()` / `:nonzero()` / `:where()` not present
  - `m.t()` can be also written as `m.T`, and `m.transpose()` transposes in place
 
+ - `Vector:linspace()` now is in `simEigen.Matrix`; `:logspace()` / `:geomspace()` not present
+ - classes `Vector3` / `Vector4` / `Vector7` / `Matrix3x3` / `Matrix4x4` removed or replaced by `Vector` / `Quaternion` / `Pose`
 ### Compiling
 
 1. Install required packages for simStubsGen: see simStubsGen's [README](https://github.com/CoppeliaRobotics/include/blob/master/simStubsGen/README.md)
