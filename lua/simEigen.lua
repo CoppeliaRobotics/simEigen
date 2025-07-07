@@ -989,8 +989,12 @@ function simEigen.Matrix:__sub(m)
 end
 
 function simEigen.Matrix:__tocbor(sref, stref)
-    local _cbor = cbor or require 'org.conman.cbor'
-    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
+    local cbor = require 'org.conman.cbor'
+    local cbor_c = require 'org.conman.cbor_c'
+    return cbor_c.encode(0xC0, 40) -- RFC8746 multi-dimensional array tag
+        .. cbor.TYPE.ARRAY(2)
+            .. cbor.encode{self:rows(), self:cols()}
+            .. cbor.encode(self:data())
 end
 
 function simEigen.Matrix:__todisplay(opts)
