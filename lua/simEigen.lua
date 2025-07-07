@@ -935,6 +935,14 @@ function simEigen.Matrix:__index(k)
     end
 end
 
+function simEigen.Matrix:__ismatrix()
+    return simEigen.Matrix:ismatrix(self)
+end
+
+function simEigen.Matrix:__isvector3()
+    return simEigen.Matrix:ismatrix(self, 3, 1)
+end
+
 function simEigen.Matrix:__len()
     if self:rows() == 1 then
         return self:cols()
@@ -1045,6 +1053,10 @@ function simEigen.Matrix:__todisplay(opts)
     return out
 end
 
+function simEigen.Matrix:__tomatrix()
+    return self:data()
+end
+
 function simEigen.Matrix:__tostring()
     local out = ''
     local rows, cols = simEigen.mtxGetSize(self.__handle)
@@ -1057,6 +1069,11 @@ function simEigen.Matrix:__tostring()
     end
     out = out .. '})'
     return out
+end
+
+function simEigen.Matrix:__tovector3()
+    assert(simEigen.Matrix:ismatrix(self, 3, 1), 'incorrect size for vector3')
+    return self:data()
 end
 
 function simEigen.Matrix:__unm()
@@ -1277,6 +1294,10 @@ function simEigen.Quaternion:__index(k)
     end
 end
 
+function simEigen.Quaternion:__isquaternion()
+    return simEigen.Quaternion:isquaternion(self)
+end
+
 function simEigen.Quaternion:__len()
     return 4
 end
@@ -1303,6 +1324,10 @@ end
 function simEigen.Quaternion:__tocbor(sref, stref)
     local _cbor = cbor or require 'org.conman.cbor'
     return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
+end
+
+function simEigen.Quaternion:__toquaternion()
+    return self:data()
 end
 
 function simEigen.Quaternion:__tostring()
@@ -1401,6 +1426,10 @@ function simEigen.Pose:__index(k)
     end
 end
 
+function simEigen.Pose:__ispose()
+    return simEigen.Pose:ispose(self)
+end
+
 function simEigen.Pose:__len()
     return 4
 end
@@ -1420,6 +1449,10 @@ end
 function simEigen.Pose:__pairs()
     -- for completion, return methods of simEigen.Pose
     return pairs(simEigen.Pose)
+end
+
+function simEigen.Pose:__topose()
+    return self:data()
 end
 
 function simEigen.Pose:__tostring()
