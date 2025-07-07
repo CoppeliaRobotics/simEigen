@@ -382,7 +382,7 @@ end
 -- @arg any m
 -- @ret bool true if the argument is an instance of simEigen.Matrix
 function simEigen.Matrix:ismatrix(m, rowCount, colCount)
-    if self == simEigen.Matrix then
+    if rawequal(self, simEigen.Matrix) then
         -- used as a class method:
         assert(m ~= nil, 'argument required')
         if getmetatable(m) ~= simEigen.Matrix then return false end
@@ -400,7 +400,7 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
         assert(colCount == nil, 'too many args')
         return simEigen.Matrix:ismatrix(self, m, rowCount)
     else
-        error 'invalid arguments'
+        return false
     end
 end
 
@@ -430,7 +430,7 @@ end
 -- @arg any m
 -- @ret bool true if the argument is an instance of simEigen.Matrix of size Nx1
 function simEigen.Matrix:isvector(m, elemCount)
-    if self == simEigen.Matrix then
+    if rawequal(self, simEigen.Matrix) then
         -- used as a class method:
         return simEigen.Matrix:ismatrix(m, elemCount, 1)
     elseif getmetatable(self) == simEigen.Matrix then
@@ -439,7 +439,7 @@ function simEigen.Matrix:isvector(m, elemCount)
         m, elemCount = nil, m
         return self:ismatrix(elemCount, 1)
     else
-        error 'invalid arguments'
+        return false
     end
 end
 
