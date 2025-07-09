@@ -1478,6 +1478,9 @@ end
 setmetatable(
     simEigen.Pose, {
         __call = function(self, t, q)
+            if type(t) == 'table' and #t == 7 and q == nil then
+                t, q = simEigen.Vector{t[1], t[2], t[3]}, simEigen.Quaternion{t[4], t[5], t[6], t[7]}
+            end
             assert(simEigen.Matrix:isvector(t, 3))
             assert(simEigen.Quaternion:isquaternion(q))
             return setmetatable({t = t, q = q}, self)
