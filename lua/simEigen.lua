@@ -1481,13 +1481,12 @@ end
 setmetatable(
     simEigen.Pose, {
         __call = function(self, t, q)
-            if type(t) == 'table' and #t == 7 and q == nil then
-                t = simEigen.Vector(t)
-            end
             if simEigen.Matrix:ismatrix(t) then
                 assert(q == nil, 'invalid args')
                 assert(t:isvector(7), 'invalid matrix shape')
                 t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
+            elseif type(t) == 'table' and q == nil then
+                return simEigen.Pose(simEigen.Vector(t))
             end
             assert(simEigen.Matrix:isvector(t, 3))
             if simEigen.Matrix:ismatrix(q) then
