@@ -1357,6 +1357,9 @@ setmetatable(
             if type(data) == 'string' then
                 -- construct from handle:
                 h = data
+            elseif simEigen.Matrix:ismatrix(data) then
+                assert(data:isvector(4), 'invalid matrix shape')
+                return simEigen.Quaternion(data:data())
             elseif data == nil then
                 h = simEigen.quatNew()
             else
@@ -1479,9 +1482,17 @@ setmetatable(
     simEigen.Pose, {
         __call = function(self, t, q)
             if type(t) == 'table' and #t == 7 and q == nil then
-                t, q = simEigen.Vector{t[1], t[2], t[3]}, simEigen.Quaternion{t[4], t[5], t[6], t[7]}
+                t = simEigen.Vector(t)
+            end
+            if simEigen.Matrix:ismatrix(t) then
+                assert(q == nil, 'invalid args')
+                assert(t:isvector(7), 'invalid matrix shape')
+                t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
             end
             assert(simEigen.Matrix:isvector(t, 3))
+            if simEigen.Matrix:ismatrix(q) then
+                q = simEigen.Quaternion(q)
+            end
             assert(simEigen.Quaternion:isquaternion(q))
             return setmetatable({t = t, q = q}, self)
         end,
