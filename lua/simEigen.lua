@@ -6,7 +6,56 @@ local function logDeprecated(what, repl)
     sim.addLog(sim.verbosity_warnings | sim.verbosity_once, what .. ' is deprecated. use ' .. repl .. ' instead')
 end
 
-simEigen.Matrix = {}
+local class = require 'middleclass'
+
+simEigen.Matrix = class 'simEigen.Matrix'
+
+-- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: simEigen.Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
+-- @arg int rows number of rows
+-- @arg int cols number of columns
+-- @arg table.float data initialization data (optional; can also be a single value)
+-- @ret table m the new matrix (Matrix)
+function simEigen.Matrix:initialize(rows, cols, data)
+    -- construct from handle:
+    if type(rows) == 'string' and cols == nil and data == nil then
+        self.__handle = rows
+        return
+    end
+
+    -- construct from 2D table data:
+    if type(rows) == 'table' and cols == nil and data == nil then
+        assert(#rows > 0, 'invalid table data')
+        assert(type(rows[1]) == 'table', 'invalid table data')
+        local data = rows
+        rows, cols = #data, #data[1]
+        for _, row in ipairs(data) do
+            assert(type(row) == 'table', 'invalid table data')
+            assert(#row == cols, 'invalid table data')
+        end
+        data = reduce(table.add, data, {})
+    end
+
+    assert(math.type(rows) == 'integer', 'rows must be an integer')
+    assert(math.type(cols) == 'integer', 'cols must be an integer')
+    if data == nil then
+        assert(rows > 0, 'rows must be positive')
+        assert(cols > 0, 'cols must be positive')
+        self.__handle = simEigen.mtxNew(rows, cols)
+    else
+        assert(rows == -1 or rows > 0, 'rows must be positive')
+        assert(cols == -1 or cols > 0, 'cols must be positive')
+        assert(not (rows == -1 and cols == -1), 'rows and cols cannot be both -1')
+        if type(data) == 'number' then data = {data} end
+        assert(type(data) == 'table' and #data > 0, 'data must be a non-empty table')
+        if rows == -1 then
+            rows = #data // cols
+        elseif cols == -1 then
+            cols = #data // rows
+        end
+        assert(#data == rows * cols or #data == 1, 'invalid number of elements')
+        self.__handle = simEigen.mtxNew(rows, cols, data)
+    end
+end
 
 -- @fun {lua_only=true} Matrix:abs compute element-wise absolute value
 -- @ret table m a new matrix with result (Matrix)
@@ -385,7 +434,7 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
     if rawequal(self, simEigen.Matrix) then
         -- used as a class method:
         assert(m ~= nil, 'argument required')
-        if getmetatable(m) ~= simEigen.Matrix then return false end
+        if not simEigen.Matrix.isInstanceOf(m, simEigen.Matrix) then return false end
         if rowCount ~= nil then
             assert(math.type(rowCount) == 'integer', 'row count must be integer')
             if m:rows() ~= rowCount then return false end
@@ -395,7 +444,7 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
             if m:cols() ~= colCount then return false end
         end
         return true
-    elseif getmetatable(self) == simEigen.Matrix then
+    elseif simEigen.Matrix.isInstanceOf(self, simEigen.Matrix) then
         -- used as object method:
         assert(colCount == nil, 'too many args')
         return simEigen.Matrix:ismatrix(self, m, rowCount)
@@ -433,7 +482,7 @@ function simEigen.Matrix:isvector(m, elemCount)
     if rawequal(self, simEigen.Matrix) then
         -- used as a class method:
         return simEigen.Matrix:ismatrix(m, elemCount, 1)
-    elseif getmetatable(self) == simEigen.Matrix then
+    elseif simEigen.Matrix:ismatrix(m) then
         -- used as object method:
         assert(elemCount == nil, 'too many arguments')
         m, elemCount = nil, m
@@ -931,7 +980,7 @@ function simEigen.Matrix:__index(k)
     elseif k == 'T' then
         return self:transposed()
     else
-        return simEigen.Matrix[k]
+        return rawget(self, k)
     end
 end
 
@@ -970,7 +1019,7 @@ function simEigen.Matrix:__newindex(k, v)
             return self:setrow(k, v)
         end
     else
-        return simEigen.Matrix[k]
+        rawset(self, k, v)
     end
 end
 
@@ -1084,57 +1133,6 @@ function simEigen.Matrix:__unm()
     return self:op(simEigen.op.unm, nil, false)
 end
 
--- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: simEigen.Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
--- @arg int rows number of rows
--- @arg int cols number of columns
--- @arg table.float data initialization data (optional; can also be a single value)
--- @ret table m the new matrix (Matrix)
-setmetatable(
-    simEigen.Matrix, {
-        __call = function(self, rows, cols, data)
-            local h = nil
-            if type(rows) == 'string' and cols == nil and data == nil then
-                -- construct from handle:
-                h = rows
-            elseif type(rows) == 'table' and cols == nil and data == nil then
-                -- construct from 2D table data:
-                assert(#rows > 0, 'invalid table data')
-                assert(type(rows[1]) == 'table', 'invalid table data')
-                local data = rows
-                rows, cols = #data, #data[1]
-                for _, row in ipairs(data) do
-                    assert(type(row) == 'table', 'invalid table data')
-                    assert(#row == cols, 'invalid table data')
-                end
-                return simEigen.Matrix(rows, cols, reduce(table.add, data, {}))
-            else
-                assert(math.type(rows) == 'integer', 'rows must be an integer')
-                assert(math.type(cols) == 'integer', 'cols must be an integer')
-                if data == nil then
-                    assert(rows > 0, 'rows must be positive')
-                    assert(cols > 0, 'cols must be positive')
-                    h = simEigen.mtxNew(rows, cols)
-                else
-                    assert(rows == -1 or rows > 0, 'rows must be positive')
-                    assert(cols == -1 or cols > 0, 'cols must be positive')
-                    assert(not (rows == -1 and cols == -1), 'rows and cols cannot be both -1')
-                    if type(data) == 'number' then data = {data} end
-                    assert(type(data) == 'table' and #data > 0, 'data must be a non-empty table')
-                    if rows == -1 then
-                        rows = #data // cols
-                    elseif cols == -1 then
-                        cols = #data // rows
-                    end
-                    assert(#data == rows * cols or #data == 1, 'invalid number of elements')
-                    h = simEigen.mtxNew(rows, cols, data)
-                end
-            end
-            assert(h ~= nil)
-            return setmetatable({__handle = h}, self)
-        end,
-    }
-)
-
 -- @fun {lua_only=true} Vector construct a new vector (that is: a one-column matrix); can also use the form: simEigen.Vector{1, 2, 3, 4} to construct directly from data, size will be determined automatically
 -- @arg int size number of elements (matrix rows)
 -- @arg table.float data initialization data (optional; can also be a single value)
@@ -1151,7 +1149,32 @@ function simEigen.Vector(v, fv)
     end
 end
 
-simEigen.Quaternion = {}
+simEigen.Quaternion = class 'simEigen.Quaternion'
+
+-- @fun {lua_only=true} Quaternion construct a new quaternion
+-- @arg {type='table',item_type='float',default={0,0,0,1}} data initialization data, in (qx, qy, qz, qw) order
+-- @ret table q the new quaternion (Quaternion)
+function simEigen.Quaternion:initialize(data)
+    -- construct from handle:
+    if type(data) == 'string' then
+        self.__handle = data
+        return
+    end
+
+    -- construct from Matrix
+    if simEigen.Matrix:ismatrix(data) then
+        assert(data:isvector(4), 'invalid matrix shape')
+        data = data:data()
+    end
+
+    assert((type(data) == 'table' and #data == 4) or data == nil, 'invalid data')
+
+    if data == nil then
+        self.__handle = simEigen.quatNew()
+    else
+        self.__handle = simEigen.quatNew(data)
+    end
+end
 
 -- @fun {lua_only=true} Quaternion:data get the data of this quaternion, in (qx, qy, qz, qw) order
 -- @ret table.double data the quaternion data
@@ -1220,7 +1243,7 @@ end
 function simEigen.Quaternion:isquaternion(m)
     assert(self == simEigen.Quaternion, 'class method')
     assert(m ~= nil, 'argument required')
-    return getmetatable(m) == simEigen.Quaternion
+    return simEigen.Quaternion.isInstanceOf(m, simEigen.Quaternion)
 end
 
 -- @fun {lua_only=true} Quaternion:mul multiply with another quaternion/vector, returning new quaternion/vector
@@ -1294,7 +1317,7 @@ function simEigen.Quaternion:__index(k)
         local data = simEigen.quatGetData(self.__handle)
         return data[k]
     else
-        return simEigen.Quaternion[k]
+        return rawget(self, k)
     end
 end
 
@@ -1316,7 +1339,7 @@ function simEigen.Quaternion:__newindex(k, v)
         data[k] = v
         simEigen.quatSetData(self.__handle, data)
     else
-        return simEigen.Quaternion[k]
+        rawset(self, k, v)
     end
 end
 
@@ -1347,32 +1370,33 @@ function simEigen.Quaternion:__unm()
     return self:inv()
 end
 
--- @fun {lua_only=true} Quaternion construct a new quaternion
--- @arg {type='table',item_type='float',default={0,0,0,1}} data initialization data, in (qx, qy, qz, qw) order
--- @ret table q the new quaternion (Quaternion)
-setmetatable(
-    simEigen.Quaternion, {
-        __call = function(self, data)
-            local h = nil
-            if type(data) == 'string' then
-                -- construct from handle:
-                h = data
-            elseif simEigen.Matrix:ismatrix(data) then
-                assert(data:isvector(4), 'invalid matrix shape')
-                return simEigen.Quaternion(data:data())
-            elseif data == nil then
-                h = simEigen.quatNew()
-            else
-                assert(type(data) == 'table' and #data == 4, 'invalid data')
-                h = simEigen.quatNew(data)
-            end
-            assert(h ~= nil)
-            return setmetatable({__handle = h}, self)
-        end,
-    }
-)
+simEigen.Pose = class 'simEigen.Pose'
 
-simEigen.Pose = {}
+-- @fun {lua_only=true} Pose a combination of a rotation and a translation
+-- @arg table t the translation vector (Matrix)
+-- @arg table q the rotation quaternion (Quaternion)
+-- @ret table p the pose (Pose)
+function simEigen.Pose:initialize(t, q)
+    if q == nil then
+        -- called with only 1 arg: construct from 7D vector or table
+
+        if not simEigen.Matrix:ismatrix(t) then
+            assert(type(t) == 'table', 'invalid type')
+            t = simEigen.Vector(t)
+        end
+
+        assert(simEigen.Matrix:ismatrix(t), 'invalid type')
+        assert(t:isvector(7), 'invalid matrix shape')
+        t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
+    end
+
+    assert(simEigen.Matrix:isvector(t, 3))
+    if simEigen.Matrix:ismatrix(q) then
+        q = simEigen.Quaternion(q)
+    end
+    assert(simEigen.Quaternion:isquaternion(q))
+    return setmetatable({t = t, q = q}, self)
+end
 
 -- @fun {lua_only=true} Pose:data get the data of this pose, in (tx, ty, tz, qx, qy, qz, qw) order
 -- @ret table.double data the pose data
@@ -1403,7 +1427,7 @@ end
 function simEigen.Pose:ispose(m)
     assert(self == simEigen.Pose, 'class method')
     assert(m ~= nil, 'argument required')
-    return getmetatable(m) == simEigen.Pose
+    return simEigen.Pose.isInstanceOf(m, simEigen.Pose)
 end
 
 -- @fun {lua_only=true} Pose:mul multiply with another pose/vector, returning new pose/vector
@@ -1429,7 +1453,7 @@ function simEigen.Pose:__index(k)
     if math.type(k) == 'integer' then
         error 'not implemented'
     else
-        return simEigen.Pose[k]
+        return rawget(self, k)
     end
 end
 
@@ -1449,7 +1473,7 @@ function simEigen.Pose:__newindex(k, v)
     if math.type(k) == 'integer' then
         error 'not implemented'
     else
-        return simEigen.Pose[k]
+        rawset(self, k, v)
     end
 end
 
@@ -1473,30 +1497,6 @@ end
 function simEigen.Pose:__unm()
     return self:inv()
 end
-
--- @fun {lua_only=true} Pose a combination of a rotation and a translation
--- @arg table t the translation vector (Matrix)
--- @arg table q the rotation quaternion (Quaternion)
--- @ret table p the pose (Pose)
-setmetatable(
-    simEigen.Pose, {
-        __call = function(self, t, q)
-            if simEigen.Matrix:ismatrix(t) then
-                assert(q == nil, 'invalid args')
-                assert(t:isvector(7), 'invalid matrix shape')
-                t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
-            elseif type(t) == 'table' and q == nil then
-                return simEigen.Pose(simEigen.Vector(t))
-            end
-            assert(simEigen.Matrix:isvector(t, 3))
-            if simEigen.Matrix:ismatrix(q) then
-                q = simEigen.Quaternion(q)
-            end
-            assert(simEigen.Quaternion:isquaternion(q))
-            return setmetatable({t = t, q = q}, self)
-        end,
-    }
-)
 
 simEigen.__all = {'Matrix', 'Vector', 'Quaternion', 'Pose'}
 
