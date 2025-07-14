@@ -200,11 +200,11 @@ function simEigen.Matrix:fromtable(t)
     assert(type(t) == 'table', 'bad type')
     if t.dims ~= nil and t.data ~= nil then
         assert(#t.dims == 2, 'only 2d grids are supported by this class')
-        return Matrix(t.dims[1], t.dims[2], t.data)
+        return simEigen.Matrix(t.dims[1], t.dims[2], t.data)
     elseif type(t[1]) == 'table' then
-        return Matrix(t)
+        return simEigen.Matrix(t)
     elseif #t == 0 then
-        return Matrix(0, 0)
+        return simEigen.Matrix(0, 0)
     end
 end
 
@@ -1422,7 +1422,7 @@ end
 -- @fun {lua_only=true} Pose:totransform convert pose to 4x4 transform matrix
 -- @ret table m a new 4x4 transform matrix (Matrix)
 function simEigen.Pose:totransform()
-    return self.q:torotation():horzcat(self.t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
+    return self.q:torotation():horzcat(self.t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
 end
 
 function simEigen.Pose:__index(k)
