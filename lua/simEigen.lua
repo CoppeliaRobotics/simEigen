@@ -1382,6 +1382,7 @@ function simEigen.Pose:initialize(t, q)
 
         if not simEigen.Matrix:ismatrix(t) then
             assert(type(t) == 'table', 'invalid type')
+            assert(#t == 7, 'invalid table size')
             t = simEigen.Vector(t)
         end
 
