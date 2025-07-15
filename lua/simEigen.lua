@@ -1200,6 +1200,9 @@ end
 -- @ret table q the quaternion (Quaternion)
 function simEigen.Quaternion:fromeuler(euler)
     assert(self == simEigen.Quaternion, 'class method')
+    if type(euler) == 'table' and not simEigen.Matrix:ismatrix(euler) then
+        euler = simEigen.Vector(euler)
+    end
     assert(simEigen.Matrix:isvector(euler, 3), 'argument must be a 3D vector')
     local q = simEigen.quatFromEuler(euler.__handle)
     q = simEigen.Quaternion(q)
