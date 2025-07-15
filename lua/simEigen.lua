@@ -1568,25 +1568,32 @@ function simEigen.unittest()
     end
     assertApproxEq(m:item(2, 3), m[2][3])
     assertApproxEq(m[2][3], m:row(2)[3])
+    assertApproxEq(m.T:col(2).T, m:row(2))
     assertApproxEq(m:t():col(2):t(), m:row(2))
     assertApproxEq(m * Matrix(4, 1, {1, 0, 0, 1}), Matrix(3, 1, {25, 45, 65}))
     assertApproxEq(2 * m, 2 * m)
     assertApproxEq(m + m, 2 * m)
     assertApproxEq(m - m, 0 * m)
+    assertApproxEq(m * m.T, Matrix(3, 3, {630, 1130, 1630, 1130, 2030, 2930, 1630, 2930, 4230}))
     assertApproxEq(m * m:t(), Matrix(3, 3, {630, 1130, 1630, 1130, 2030, 2930, 1630, 2930, 4230}))
     assertApproxEq(m * m:t() * m * m:t(), Matrix(3, 3, {
         4330700, 7781700, 11232700,
         7781700, 13982700, 20183700,
         11232700, 20183700, 29134700,
     }))
-    assertApproxEq(m:t() * m, Matrix(4, 4, {
+    assertApproxEq(m * m.T * m * m.T, Matrix(3, 3, {
+        4330700, 7781700, 11232700,
+        7781700, 13982700, 20183700,
+        11232700, 20183700, 29134700,
+    }))
+    assertApproxEq(m.T * m, Matrix(4, 4, {
         1523, 1586, 1649, 1712,
         1586, 1652, 1718, 1784,
         1649, 1718, 1787, 1856,
         1712, 1784, 1856, 1928,
     }))
     assertApproxEq(Vector {2.1, 7, 8.2} // 2, Vector {1, 3, 4})
-    assertApproxEq(Matrix:fromtable{{1, 0, 0, 0}}:t():norm(), 1)
+    assertApproxEq(Matrix:fromtable{{1, 0, 0, 0}}.T:norm(), 1)
     assertApproxEq(Matrix(3, 1, {3, 4, 0}):norm(), 5)
     assertApproxEq(Matrix(3, 1, {3, 4, 0}):dot(Matrix(3, 1, {-4, 3, 5})), 0)
     assertApproxEq(Matrix(3, 1, {3, 4, 0}):data()[1], 3)
