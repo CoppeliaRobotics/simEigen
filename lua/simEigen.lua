@@ -26,7 +26,7 @@ function simEigen.Matrix:initialize(rows, cols, data)
     if type(rows) == 'table' and cols == nil and data == nil then
         assert(#rows > 0, 'invalid table data')
         assert(type(rows[1]) == 'table', 'invalid table data')
-        local data = rows
+        data = rows
         rows, cols = #data, #data[1]
         for _, row in ipairs(data) do
             assert(type(row) == 'table', 'invalid table data')
