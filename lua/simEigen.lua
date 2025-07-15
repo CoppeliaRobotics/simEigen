@@ -1686,6 +1686,17 @@ function simEigen.unittest()
     end
     asserterror(function() Matrix(-1, 3, {1, 2, 3, 4, 5, 6, 7}) end)
     print(debug.getinfo(1, 'S').source, 'tests passed')
+    -- tests for bugs
+    local p = Pose{0, 0, 0, 0, 0, 0, 1}
+    assertApproxEq(p.t, Vector{0, 0, 0})
+    assertApproxEq(p.q, Quaternion{0, 0, 0, 1})
+    assertApproxEq(Matrix(2, 2, {1, 2, 3, 4}), Matrix{{1, 2}, {3, 4}})
+    local v = Vector{8, 3, 0.2}
+    assert(Matrix:isvector(v))
+    assert(Matrix:isvector(v, 3))
+    assert(v:isvector())
+    assert(v:isvector(3))
+    assert(not Matrix{{1, 2}, {8, 0.1}}:isvector())
 end
 
 return simEigen
