@@ -1395,7 +1395,8 @@ function simEigen.Pose:initialize(t, q)
         q = simEigen.Quaternion(q)
     end
     assert(simEigen.Quaternion:isquaternion(q))
-    return setmetatable({t = t, q = q}, self)
+    self.t = t
+    self.q = q
 end
 
 -- @fun {lua_only=true} Pose:data get the data of this pose, in (tx, ty, tz, qx, qy, qz, qw) order
