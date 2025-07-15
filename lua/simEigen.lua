@@ -482,7 +482,7 @@ function simEigen.Matrix:isvector(m, elemCount)
     if rawequal(self, simEigen.Matrix) then
         -- used as a class method:
         return simEigen.Matrix:ismatrix(m, elemCount, 1)
-    elseif simEigen.Matrix:ismatrix(m) then
+    elseif simEigen.Matrix:ismatrix(self) then
         -- used as object method:
         assert(elemCount == nil, 'too many arguments')
         m, elemCount = nil, m
