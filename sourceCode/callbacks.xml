@@ -302,6 +302,16 @@
             <param name="result" type="double"></param>
         </return>
     </command>
+    <command name="mtxRandom" skip-documentation="true">
+        <description>Create a new matrix of uniformly distributed random values in [-1..1] range.</description>
+        <params>
+            <param name="rows" type="int"></param>
+            <param name="cols" type="int"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxReshaped" skip-documentation="true">
         <description>Return a reshaped version this matrix.</description>
         <params>

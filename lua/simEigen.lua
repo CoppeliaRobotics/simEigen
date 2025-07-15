@@ -671,6 +671,14 @@ function simEigen.Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
 
+-- @fun {lua_only=true} Matrix:random return a matrix of uniformly distributed random values in range [-1..1]
+-- @ret table m a new matrix of random values in range [-1..1] (Matrix)
+function simEigen.Matrix:random(rows, cols)
+    local m = simEigen.mtxRandom(rows, cols)
+    m = simEigen.Matrix(m)
+    return m
+end
+
 -- @fun {lua_only=true} Matrix:rad compute element-wise degrees to radians conversion
 -- @ret table m a new matrix with result (Matrix)
 function simEigen.Matrix:rad()

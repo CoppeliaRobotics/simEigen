@@ -489,6 +489,13 @@ public:
         }
     }
 
+    void mtxRandom(mtxRandom_in *in, mtxRandom_out *out)
+    {
+        auto m = new simEigen::Matrix(in->rows, in->cols);
+        m->setRandom();
+        out->handle = mtxHandles.add(m, in->_.scriptID);
+    }
+
     void mtxReshaped(mtxReshaped_in *in, mtxReshaped_out *out)
     {
         auto m = mtxHandles.get(in->handle);
