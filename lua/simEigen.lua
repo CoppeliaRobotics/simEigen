@@ -966,7 +966,7 @@ function simEigen.Matrix:__index(k)
             return self:item(1, k)
         elseif self:cols() == 1 then
             return self:item(k, 1)
-        else
+        elseif k >= 1 and k <= self:rows() then
             return setmetatable(
                 {
                     __handle = self.__handle,
