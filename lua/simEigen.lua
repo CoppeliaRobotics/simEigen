@@ -1410,11 +1410,11 @@ function simEigen.Pose:initialize(t, q)
         t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
     end
 
-    assert(simEigen.Matrix:isvector(t, 3))
+    assert(simEigen.Matrix:isvector(t, 3), 'argument 1 must be a 3D vector')
     if simEigen.Matrix:ismatrix(q) then
         q = simEigen.Quaternion(q)
     end
-    assert(simEigen.Quaternion:isquaternion(q))
+    assert(simEigen.Quaternion:isquaternion(q), 'argument 2 must be a Quaternion')
     self.t = t
     self.q = q
 end
