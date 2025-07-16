@@ -445,6 +445,15 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="quatCopy" skip-documentation="true">
+        <description>Return a new quaternion, copy of this one.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="quatDestroy" skip-documentation="true">
         <description>Destroy the quaternion.</description>
         <params>

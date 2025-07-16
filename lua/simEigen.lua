@@ -1184,6 +1184,14 @@ function simEigen.Quaternion:initialize(data)
     end
 end
 
+-- @fun {lua_only=true} Quaternion:copy create a copy of this quaternion
+-- @ret table m a new quaternion with same data (Quaternion)
+function simEigen.Quaternion:copy()
+    local m = simEigen.quatCopy(self.__handle)
+    m = simEigen.Quaternion(m)
+    return m
+end
+
 -- @fun {lua_only=true} Quaternion:data get the data of this quaternion, in (qx, qy, qz, qw) order
 -- @ret table.double data the quaternion data
 function simEigen.Quaternion:data()
@@ -1409,6 +1417,12 @@ function simEigen.Pose:initialize(t, q)
     assert(simEigen.Quaternion:isquaternion(q))
     self.t = t
     self.q = q
+end
+
+-- @fun {lua_only=true} Pose:copy create a copy of this pose
+-- @ret table m a new pose with same data (Pose)
+function simEigen.Pose:copy()
+    return simEigen.Pose(self.t:copy(), self.q:copy())
 end
 
 -- @fun {lua_only=true} Pose:data get the data of this pose, in (tx, ty, tz, qx, qy, qz, qw) order

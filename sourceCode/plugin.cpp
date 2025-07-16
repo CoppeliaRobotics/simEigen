@@ -637,6 +637,13 @@ public:
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
+    void quatCopy(quatCopy_in *in, quatCopy_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        auto q2 = new simEigen::Quaternion(*q);
+        out->handle = quatHandles.add(q2, in->_.scriptID);
+    }
+
     void quatDestroy(quatDestroy_in *in, quatDestroy_out *out)
     {
         auto q = quatHandles.get(in->handle);
