@@ -15,25 +15,11 @@ local Quaternion = require 'simEigen.Quaternion'
 function Pose:initialize(t, q)
     if q == nil then
         -- called with only 1 arg: construct from 7D vector or table
-
-        if not Matrix:ismatrix(t) then
-            assert(type(t) == 'table', 'invalid type')
-            assert(#t == 7, 'invalid table size')
-            t = Vector(t)
-        end
-
-        assert(Matrix:ismatrix(t), 'invalid type')
-        assert(t:isvector(7), 'invalid matrix shape')
+        t = Vector:tovector(t, 7)
         t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
     end
-
-    assert(Vector:isvector(t, 3), 'argument 1 must be a 3D vector')
-    if Matrix:ismatrix(q) then
-        q = Quaternion(q)
-    end
-    assert(Quaternion:isquaternion(q), 'argument 2 must be a Quaternion')
-    self.t = t
-    self.q = q
+    self.t = Vector:tovector(t, 3)
+    self.q = Quaternion:toquaternion(q)
 end
 
 -- @fun {lua_only=true} Pose:copy create a copy of this pose
@@ -53,7 +39,7 @@ end
 -- @ret table p a new pose with result (Pose)
 function Pose:fromtransform(m)
     assert(self == Pose, 'class method')
-    assert(Matrix:ismatrix(m, 4, 4), 'only works on 4x4 matrices')
+    m = Matrix:tomatrix(m, 4, 4)
     local R, t = m:block(1, 1, 3, 3), m:block(1, 4, 3, 1)
     return Pose(t, Quaternion:fromrotation(R))
 end
@@ -77,13 +63,22 @@ end
 -- @arg table o the other pose (Pose)
 -- @ret table p a new pose with result (Pose)
 function Pose:mul(o)
-    if Vector:isvector(o, 3) then
+    if Vector:isvector(o, 3) or #o == 3 then
+        o = Vector:tovector(o)
         return self.q * o + self.t
-    elseif Pose:ispose(o) then
+    elseif Pose:ispose(o) or #o == 7 then
+        o = Pose:topose(o)
         return Pose(self.q * o.t + self.t, o.q * self.q)
     else
         error 'invalid argument type'
     end
+end
+
+function Pose:topose(v)
+    assert(self == Pose, 'class method')
+    if Pose:ispose(v) then return v end
+    if type(v) == 'table' then return Pose(v) end
+    error 'invalid data'
 end
 
 -- @fun {lua_only=true} Pose:totransform convert pose to 4x4 transform matrix

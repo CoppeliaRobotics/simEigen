@@ -115,7 +115,7 @@ end
 -- @arg int q block columns
 -- @ret table self this matrix (Matrix)
 function Matrix:blockassign(m, i, j, p, q)
-    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
+    m = Matrix:tomatrix(m)
     i = i or 1
     j = j or 1
     p = p or -1
@@ -181,6 +181,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret table v the resulting vector (Matrix)
 function Matrix:cross(m)
+    m = Matrix:tomatrix(m)
     assert(Matrix:isvector(self, 3) and Matrix:isvector(m, 3), 'arguments must be 3D vectors')
     local r = simEigen.mtxCross(self.__handle, m.__handle)
     r = Matrix(r)
@@ -216,6 +217,7 @@ end
 -- @arg table v2 the other vector (Matrix)
 -- @ret float the result
 function Matrix:dot(m)
+    m = Matrix:tomatrix(m)
     assert(Matrix:isvector(self) and Matrix:isvector(m, self:rows()), 'arguments must be vectors of same length')
     return simEigen.mtxDot(self.__handle, m.__handle)
 end
@@ -251,9 +253,13 @@ function Matrix:fromtable(t)
         return Matrix(t.dims[1], t.dims[2], t.data)
     elseif type(t[1]) == 'table' then
         return Matrix(t)
-    elseif #t == 0 then
-        return Matrix(0, 0)
+    elseif type(t[1]) == 'number' then
+        if #t == 3 then return Matrix(3, 1, t) end
+        if #t == 9 then return Matrix(3, 3, t) end
+        if #t == 12 then return Matrix(4, 4, t) end
+        error 'only lengths 3, 9 and 12 are supported'
     end
+    error 'bad table'
 end
 
 function Matrix:get(i, j)
@@ -267,6 +273,7 @@ end
 function Matrix:horzcat(...)
     local ms = {...}
     if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    for i = 2, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
     local m = simEigen.mtxHorzCat(map(function(m) return m.__handle end, ms))
     m = Matrix(m)
     return m
@@ -394,7 +401,7 @@ function Matrix:imul(m)
         return self:op(simEigen.op.times, m, true)
     end
 
-    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
+    m = Matrix:tomatrix(m)
     simEigen.mtxIMul(self.__handle, m.__handle)
     return self
 end
@@ -517,7 +524,7 @@ end
 -- @arg table m2 the other matrix (Matrix)
 -- @ret table m a new matrix with result (Matrix)
 function Matrix:kron(m)
-    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
+    m = Matrix:tomatrix(m)
     local r = simEigen.mtxKron(self.__handle, m.__handle)
     r = Matrix(r)
     return r
@@ -603,7 +610,7 @@ function Matrix:mul(m)
         return self:op(simEigen.op.times, m, false)
     end
 
-    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
+    m = Matrix:tomatrix(m)
     local r = simEigen.mtxMul(self.__handle, m.__handle)
     r = Matrix(r)
     return r
@@ -634,10 +641,9 @@ function Matrix:op(op, x, inplace)
     local r
     if type(x) == 'number' then
         r = simEigen.mtxOpK(self.__handle, op, x, inplace)
-    elseif x == nil or Matrix:ismatrix(x) then
-        r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
     else
-        error('invalid operand type')
+        if x then x = Matrix:tomatrix(x) end
+        r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
     end
     r = inplace and self or Matrix(r)
     return r
@@ -649,7 +655,7 @@ end
 -- @ret table m a new matrix with result (Matrix)
 -- @ret table the solution to m*x=b, if b was passed (Matrix)
 function Matrix:pinv(b, damping)
-    assert(b == nil or Matrix:ismatrix(b), 'b must be a Matrix or nil')
+    if b then b = Matrix:tomatrix(b) end
     assert(damping == nil or type(damping) == 'number', 'damping must be numeric')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
@@ -827,7 +833,7 @@ function Matrix:svd(computeThinU, computeThinV, b)
     assert(computeThinV == nil or type(computeThinV) == 'boolean', 'computeThinV must be bool')
     computeThinU = computeThinU == true
     computeThinV = computeThinV == true
-    assert(b == nil or Matrix:ismatrix(b), 'b must be a Matrix or nil')
+    if b then b = Matrix:tomatrix(b) end
     local s, u, v, x = simEigen.mtxSVD(self.__handle, computeThinU, computeThinV, (b or {}).__handle)
     s = Matrix(s)
     u = Matrix(u)
@@ -855,6 +861,26 @@ end
 -- @ret table m a new matrix with result (Matrix)
 function Matrix:times(m)
     return self:op(simEigen.op.times, m, false)
+end
+
+function Matrix:tomatrix(v, rows, cols)
+    assert(self == Matrix, 'class method')
+    if Matrix:ismatrix(v) then
+        local expshape = (rows and rows or 'M') .. 'x' .. (cols and cols or 'N')
+        assert(rows == nil or rows == v:rows(), 'must be ' .. expshape)
+        assert(cols == nil or cols == v:cols(), 'must be ' .. expshape)
+        return v
+    end
+    if type(v) == 'table' then
+        if rows and cols then
+            return Matrix(rows, cols, v)
+        elseif rows == nil and cols == nil then
+            return Matrix:fromtable(v)
+        else
+            error 'invalid args'
+        end
+    end
+    error 'invalid data'
 end
 
 function Matrix:totable(format)
@@ -886,7 +912,7 @@ end
 -- @ret table m a new vector with result (Matrix)
 function Matrix:transform(v)
     assert(self:ismatrix(4, 4), 'only works on 4x4 transform matrices')
-    assert(Matrix:isvector(v, 3), 'only works on 3D vectors')
+    v = Matrix:tovector(v, 3)
     local Rt, t = self:block(1, 1, 3, 3), self:block(1, 4, 3, 1)
     Rt.transpose()
     return Rt:horzcat(-Rt * t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
@@ -913,6 +939,7 @@ end
 function Matrix:vertcat(...)
     local ms = {...}
     if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    for i = 2, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
     local m = simEigen.mtxVertCat(map(function(m) return m.__handle end, ms))
     m = Matrix(m)
     return m

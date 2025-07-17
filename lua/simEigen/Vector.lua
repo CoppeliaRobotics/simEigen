@@ -27,6 +27,11 @@ function Vector:isvector(...)
     return Matrix:isvector(...)
 end
 
+function Vector:tovector(v, rows)
+    assert(self == Vector, 'class method')
+    return Matrix:tomatrix(v, rows, 1)
+end
+
 return setmetatable(Vector, {
     __call = function(self, ...) return Vector:new(...) end,
     __tostring = function() return 'alias of simEigen.Matrix' end,

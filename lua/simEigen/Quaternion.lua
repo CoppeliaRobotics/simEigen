@@ -52,7 +52,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function Quaternion:fromaxisangle(axis, angle)
     assert(self == Quaternion, 'class method')
-    assert(Vector:isvector(axis, 3), 'argument must be a 3D vector')
+    axis = Vector:tovector(axis, 3)
     assert(type(angle) == 'number', 'angle must be a number')
     local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
     q = Quaternion(q)
@@ -64,10 +64,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function Quaternion:fromeuler(euler)
     assert(self == Quaternion, 'class method')
-    if type(euler) == 'table' and not Matrix:ismatrix(euler) then
-        euler = Vector(euler)
-    end
-    assert(Vector:isvector(euler, 3), 'argument must be a 3D vector')
+    euler = Vector:tovector(euler, 3)
     local q = simEigen.quatFromEuler(euler.__handle)
     q = Quaternion(q)
     return q
@@ -78,7 +75,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function Quaternion:fromrotation(r)
     assert(self == Quaternion, 'class method')
-    assert(Matrix:ismatrix(r, 3, 3), 'argument must be a 3x3 Matrix')
+    r = Matrix:tomatrix(r, 3, 3)
     local q = simEigen.quatFromRotation(r.__handle)
     q = Quaternion(q)
     return q
@@ -120,12 +117,11 @@ function Quaternion:mul(o)
         local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
         q = Quaternion(q)
         return q
-    elseif Vector:isvector(o, 3) then
+    else
+        o = Vector:tovector(o, 3)
         local v = simEigen.quatMulVec(self.__handle, o.__handle)
         v = Matrix(v)
         return v
-    else
-        error 'invalid type'
     end
 end
 
@@ -156,6 +152,16 @@ function Quaternion:toeuler()
     local euler = simEigen.quatToEuler(self.__handle)
     euler = Matrix(euler)
     return euler
+end
+
+function Quaternion:toquaternion(v)
+    assert(self == Quaternion, 'class method')
+    if Quaternion:isquaternion(v) then return v end
+    if type(v) == 'table' then
+        assert(#v == 4, 'invalid length (must have 4 values)')
+        return Quaternion(v)
+    end
+    error 'invalid data'
 end
 
 -- @fun {lua_only=true} Quaternion:torotation convert this quaternion to a rotation matrix
