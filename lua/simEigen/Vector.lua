@@ -16,4 +16,11 @@ local function Vector(v, fv)
     end
 end
 
+local Vector = setmetatable({}, {__call = function(self, ...) return Vector(...) end})
+
+function Vector:isvector(...)
+    assert(self == Vector, 'class method')
+    return Matrix:isvector(...)
+end
+
 return Vector
