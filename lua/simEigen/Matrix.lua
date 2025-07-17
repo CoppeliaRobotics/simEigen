@@ -654,8 +654,12 @@ function Matrix:pinv(b, damping)
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
     m = Matrix(m)
-    if x then x = Matrix(x) end
-    return m, x
+    if x then
+        x = Matrix(x)
+        return m, x
+    else
+        return m
+    end
 end
 
 -- @fun {lua_only=true} Matrix:print print the contents of this matrix
