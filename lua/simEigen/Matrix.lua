@@ -1,5 +1,4 @@
 local simEigen = loadPlugin 'simEigen';
-(require 'simEigen-typecheck')(simEigen)
 
 local function logDeprecated(what, repl)
     local sim = require('sim-2')

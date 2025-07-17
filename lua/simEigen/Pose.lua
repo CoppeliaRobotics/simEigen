@@ -1,11 +1,12 @@
 local simEigen = loadPlugin 'simEigen';
-(require 'simEigen-typecheck')(simEigen)
 
 local class = require 'middleclass'
 
 local Pose = class 'simEigen.Pose'
 
 local Matrix = require 'simEigen.Matrix'
+local Vector = require 'simEigen.Vector'
+local Quaternion = require 'simEigen.Quaternion'
 
 -- @fun {lua_only=true} Pose a combination of a rotation and a translation
 -- @arg table t the translation vector (Matrix)
@@ -18,7 +19,7 @@ function Pose:initialize(t, q)
         if not Matrix:ismatrix(t) then
             assert(type(t) == 'table', 'invalid type')
             assert(#t == 7, 'invalid table size')
-            t = simEigen.Vector(t)
+            t = Vector(t)
         end
 
         assert(Matrix:ismatrix(t), 'invalid type')

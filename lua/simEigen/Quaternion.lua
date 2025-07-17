@@ -1,11 +1,11 @@
 local simEigen = loadPlugin 'simEigen';
-(require 'simEigen-typecheck')(simEigen)
 
 local class = require 'middleclass'
 
 local Quaternion = class 'simEigen.Quaternion'
 
 local Matrix = require 'simEigen.Matrix'
+local Vector = require 'simEigen.Vector'
 
 -- @fun {lua_only=true} Quaternion construct a new quaternion
 -- @arg {type='table',item_type='float',default={0,0,0,1}} data initialization data, in (qx, qy, qz, qw) order
@@ -65,7 +65,7 @@ end
 function Quaternion:fromeuler(euler)
     assert(self == Quaternion, 'class method')
     if type(euler) == 'table' and not Matrix:ismatrix(euler) then
-        euler = simEigen.Vector(euler)
+        euler = Vector(euler)
     end
     assert(Vector:isvector(euler, 3), 'argument must be a 3D vector')
     local q = simEigen.quatFromEuler(euler.__handle)
