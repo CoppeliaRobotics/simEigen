@@ -8,14 +8,14 @@ end
 
 local class = require 'middleclass'
 
-simEigen.Matrix = class 'simEigen.Matrix'
+local Matrix = class 'simEigen.Matrix'
 
--- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: simEigen.Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
+-- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
 -- @arg int rows number of rows
 -- @arg int cols number of columns
 -- @arg table.float data initialization data (optional; can also be a single value)
 -- @ret table m the new matrix (Matrix)
-function simEigen.Matrix:initialize(rows, cols, data)
+function Matrix:initialize(rows, cols, data)
     -- construct from handle:
     if type(rows) == 'string' and cols == nil and data == nil then
         self.__handle = rows
@@ -59,32 +59,32 @@ end
 
 -- @fun {lua_only=true} Matrix:abs compute element-wise absolute value
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:abs()
+function Matrix:abs()
     return self:op(simEigen.op.abs, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:acos compute element-wise arccosine
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:acos()
+function Matrix:acos()
     return self:op(simEigen.op.acos, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:add compute element-wise addition with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:add(m)
+function Matrix:add(m)
     return self:op(simEigen.op.add, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:asin compute element-wise arcsine
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:asin()
+function Matrix:asin()
     return self:op(simEigen.op.asin, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:atan compute element-wise arctangent
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:atan()
+function Matrix:atan()
     return self:op(simEigen.op.atan, nil, false)
 end
 
@@ -94,7 +94,7 @@ end
 -- @arg int p block rows
 -- @arg int q block columns
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:block(i, j, p, q)
+function Matrix:block(i, j, p, q)
     i = i or 1
     j = j or 1
     p = p or -1
@@ -104,7 +104,7 @@ function simEigen.Matrix:block(i, j, p, q)
     assert(math.type(p) == 'integer', 'block sizes must be integer')
     assert(math.type(q) == 'integer', 'block sizes must be integer')
     local m = simEigen.mtxBlock(self.__handle, i - 1, j - 1, p, q)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
@@ -115,8 +115,8 @@ end
 -- @arg int p block rows
 -- @arg int q block columns
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:blockassign(m, i, j, p, q)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+function Matrix:blockassign(m, i, j, p, q)
+    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
     i = i or 1
     j = j or 1
     p = p or -1
@@ -131,49 +131,49 @@ end
 
 -- @fun {lua_only=true} Matrix:ceil compute element-wise ceiling
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:ceil()
+function Matrix:ceil()
     return self:op(simEigen.op.ceil, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:col return the j-th column as a new vector
 -- @arg int j column index
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:col(j)
+function Matrix:col(j)
     return self:block(1, j, -1, 1)
 end
 
 -- @fun {lua_only=true} Matrix:coldata get the data of the j-th column
 -- @arg int j column index
 -- @ret table.float a table of numbers
-function simEigen.Matrix:coldata(j)
+function Matrix:coldata(j)
     assert(math.type(j) == 'integer', 'indices must be integer')
     return simEigen.mtxGetColData(self.__handle, j - 1)
 end
 
 -- @fun {lua_only=true} Matrix:cols return the number of columns
 -- @ret int number of columns
-function simEigen.Matrix:cols()
+function Matrix:cols()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return cols
 end
 
 -- @fun {lua_only=true} Matrix:copy create a copy of this matrix
 -- @ret table m a new matrix with same dimensions and data (Matrix)
-function simEigen.Matrix:copy()
+function Matrix:copy()
     local m = simEigen.mtxCopy(self.__handle)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:cos compute element-wise cosine
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:cos()
+function Matrix:cos()
     return self:op(simEigen.op.cos, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:count return the number of data items
 -- @ret int number of data items
-function simEigen.Matrix:count()
+function Matrix:count()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return rows * cols
 end
@@ -181,83 +181,83 @@ end
 -- @fun {lua_only=true} Matrix:cross compute the vector cross product with 'v2'
 -- @arg table v2 the other vector (Matrix)
 -- @ret table v the resulting vector (Matrix)
-function simEigen.Matrix:cross(m)
-    assert(simEigen.Matrix:isvector(self, 3) and simEigen.Matrix:isvector(m, 3), 'arguments must be 3D vectors')
+function Matrix:cross(m)
+    assert(Matrix:isvector(self, 3) and Matrix:isvector(m, 3), 'arguments must be 3D vectors')
     local r = simEigen.mtxCross(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
+    r = Matrix(r)
     return r
 end
 
 -- @fun {lua_only=true} Matrix:data get the data of this matrix, in row-major order
 -- @ret table.float a table of numbers
-function simEigen.Matrix:data()
+function Matrix:data()
     return simEigen.mtxGetData(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:deg compute element-wise radians to degree conversion
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:deg()
+function Matrix:deg()
     return self:op(simEigen.op.deg, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:det compute matrix determinant
 -- @ret double d matrix determinant
-function simEigen.Matrix:det()
+function Matrix:det()
     return simEigen.mtxDeterminant(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:div compute element-wise division with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:div(m)
+function Matrix:div(m)
     return self:op(simEigen.op.div, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:dot compute the dot product with 'v2'
 -- @arg table v2 the other vector (Matrix)
 -- @ret float the result
-function simEigen.Matrix:dot(m)
-    assert(simEigen.Matrix:isvector(self) and simEigen.Matrix:isvector(m, self:rows()), 'arguments must be vectors of same length')
+function Matrix:dot(m)
+    assert(Matrix:isvector(self) and Matrix:isvector(m, self:rows()), 'arguments must be vectors of same length')
     return simEigen.mtxDot(self.__handle, m.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:exp compute element-wise exponential
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:exp()
+function Matrix:exp()
     return self:op(simEigen.op.exp, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:eye (class method) create a new identity matrix of given size
 -- @arg int n size
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:eye(size)
-    assert(self == simEigen.Matrix, 'class method')
+function Matrix:eye(size)
+    assert(self == Matrix, 'class method')
     assert(math.type(size) == 'integer', 'argument must be integer')
     local data = {}
     for i = 1, size do for j = 1, size do table.insert(data, i == j and 1 or 0) end end
-    return simEigen.Matrix(size, size, data)
+    return Matrix(size, size, data)
 end
 
 -- @fun {lua_only=true} Matrix:floor compute element-wise floor
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:floor()
+function Matrix:floor()
     return self:op(simEigen.op.floor, nil, false)
 end
 
-function simEigen.Matrix:fromtable(t)
-    assert(self == simEigen.Matrix, 'class method')
+function Matrix:fromtable(t)
+    assert(self == Matrix, 'class method')
     assert(type(t) == 'table', 'bad type')
     if t.dims ~= nil and t.data ~= nil then
         assert(#t.dims == 2, 'only 2d grids are supported by this class')
-        return simEigen.Matrix(t.dims[1], t.dims[2], t.data)
+        return Matrix(t.dims[1], t.dims[2], t.data)
     elseif type(t[1]) == 'table' then
-        return simEigen.Matrix(t)
+        return Matrix(t)
     elseif #t == 0 then
-        return simEigen.Matrix(0, 0)
+        return Matrix(0, 0)
     end
 end
 
-function simEigen.Matrix:get(i, j)
+function Matrix:get(i, j)
     logDeprecated('m:get(i, j)', 'm:item(i, j)')
     return self:item(i, g)
 end
@@ -265,137 +265,137 @@ end
 -- @fun {lua_only=true} Matrix:horzcat stack two or more matrices horizontally
 -- @arg table m2 matrix to stack (Matrix)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:horzcat(...)
+function Matrix:horzcat(...)
     local ms = {...}
-    if simEigen.Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
     local m = simEigen.mtxHorzCat(map(function(m) return m.__handle end, ms))
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:iabs compute element-wise absolute value, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iabs()
+function Matrix:iabs()
     return self:op(simEigen.op.abs, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iacos compute element-wise arccosine, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iacos()
+function Matrix:iacos()
     return self:op(simEigen.op.acos, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iadd compute element-wise addition with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iadd(m)
+function Matrix:iadd(m)
     return self:op(simEigen.op.add, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:iasin compute element-wise arcsine, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iasin()
+function Matrix:iasin()
     return self:op(simEigen.op.asin, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iatan compute element-wise arctangent, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iatan()
+function Matrix:iatan()
     return self:op(simEigen.op.atan, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iceil compute element-wise ceiling, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iceil()
+function Matrix:iceil()
     return self:op(simEigen.op.ceil, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:icos compute element-wise cosine, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:icos()
+function Matrix:icos()
     return self:op(simEigen.op.cos, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ideg compute element-wise radians to degrees conversion, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:ideg()
+function Matrix:ideg()
     return self:op(simEigen.op.deg, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:idiv compute element-wise division with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:idiv(m)
+function Matrix:idiv(m)
     return self:op(simEigen.op.div, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:iexp compute element-wise exponential, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iexp()
+function Matrix:iexp()
     return self:op(simEigen.op.exp, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ifloor compute element-wise floor, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:ifloor()
+function Matrix:ifloor()
     return self:op(simEigen.op.floor, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iintdiv compute element-wise integer division with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:iintdiv(m)
+function Matrix:iintdiv(m)
     return self:op(simEigen.op.intdiv, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog compute element-wise natural logarithm, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:ilog()
+function Matrix:ilog()
     return self:op(simEigen.op.log, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog2 compute element-wise base-2 logarithm, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:ilog2()
+function Matrix:ilog2()
     return self:op(simEigen.op.log2, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog10 compute element-wise base-10 logarithm, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:ilog10()
+function Matrix:ilog10()
     return self:op(simEigen.op.log10, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:imax compute element-wise maximum with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:imax(m)
+function Matrix:imax(m)
     return self:op(simEigen.op.max, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:imin compute element-wise minimum with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:imin(m)
+function Matrix:imin(m)
     return self:op(simEigen.op.min, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:imod compute element-wise modulo with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:imod(m)
+function Matrix:imod(m)
     return self:op(simEigen.op.mod, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:imul compute matrix multiplication with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:imul(m)
+function Matrix:imul(m)
     if type(m) == 'number' then
         return self:op(simEigen.op.times, m, true)
     end
 
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
     simEigen.mtxIMul(self.__handle, m.__handle)
     return self
 end
@@ -403,38 +403,38 @@ end
 -- @fun {lua_only=true} Matrix:intdiv compute element-wise integer division with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:intdiv(m)
+function Matrix:intdiv(m)
     return self:op(simEigen.op.intdiv, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:inversetransform compute the inverse of a 4x4 transform matrix, returns a new matrix
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:inversetransform()
+function Matrix:inversetransform()
     assert(self:ismatrix(4, 4), 'only works on 4x4 transform matrices')
     local R, t = self:block(1, 1, 3, 3), self:block(1, 4, 3, 1)
-    return R:t():horzcat(-R:t() * t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
+    return R:t():horzcat(-R:t() * t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
 end
 
 -- @fun {lua_only=true} Matrix:irad compute element-wise degrees to radians conversion, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:irad()
+function Matrix:irad()
     return self:op(simEigen.op.rad, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:isin compute element-wise sine, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:isin()
+function Matrix:isin()
     return self:op(simEigen.op.sin, nil, true)
 end
 
--- @fun {lua_only=true} Matrix:ismatrix (class method) check wether the argument is a simEigen.Matrix
+-- @fun {lua_only=true} Matrix:ismatrix (class method) check wether the argument is a Matrix
 -- @arg any m
--- @ret bool true if the argument is an instance of simEigen.Matrix
-function simEigen.Matrix:ismatrix(m, rowCount, colCount)
-    if rawequal(self, simEigen.Matrix) then
+-- @ret bool true if the argument is an instance of Matrix
+function Matrix:ismatrix(m, rowCount, colCount)
+    if rawequal(self, Matrix) then
         -- used as a class method:
         assert(m ~= nil, 'argument required')
-        if not simEigen.Matrix.isInstanceOf(m, simEigen.Matrix) then return false end
+        if not Matrix.isInstanceOf(m, Matrix) then return false end
         if rowCount ~= nil then
             assert(math.type(rowCount) == 'integer', 'row count must be integer')
             if m:rows() ~= rowCount then return false end
@@ -444,10 +444,10 @@ function simEigen.Matrix:ismatrix(m, rowCount, colCount)
             if m:cols() ~= colCount then return false end
         end
         return true
-    elseif simEigen.Matrix.isInstanceOf(self, simEigen.Matrix) then
+    elseif Matrix.isInstanceOf(self, Matrix) then
         -- used as object method:
         assert(colCount == nil, 'too many args')
-        return simEigen.Matrix:ismatrix(self, m, rowCount)
+        return Matrix:ismatrix(self, m, rowCount)
     else
         return false
     end
@@ -456,33 +456,33 @@ end
 -- @fun {lua_only=true} Matrix:isorthogonal check wether the matrix is orthogonal
 -- @arg {type='double',default='1e-6'} tol tolerance
 -- @ret bool true if the matrix is orthogonal
-function simEigen.Matrix:isorthogonal(tol)
+function Matrix:isorthogonal(tol)
     tol = tol or 1e-6
-    local z = self:t() * self - simEigen.Matrix:eye(self:rows())
+    local z = self:t() * self - Matrix:eye(self:rows())
     return all(function(x) return math.abs(x) < tol end, z:data())
 end
 
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:isqrt()
+function Matrix:isqrt()
     return self:op(simEigen.op.sqrt, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:isub compute element-wise subtraction with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:isub(m)
+function Matrix:isub(m)
     return self:op(simEigen.op.sub, m, true)
 end
 
--- @fun {lua_only=true} Matrix:isvector (class method) check wether the argument is a Nx1 simEigen.Matrix
+-- @fun {lua_only=true} Matrix:isvector (class method) check wether the argument is a Nx1 Matrix
 -- @arg any m
--- @ret bool true if the argument is an instance of simEigen.Matrix of size Nx1
-function simEigen.Matrix:isvector(m, elemCount)
-    if rawequal(self, simEigen.Matrix) then
+-- @ret bool true if the argument is an instance of Matrix of size Nx1
+function Matrix:isvector(m, elemCount)
+    if rawequal(self, Matrix) then
         -- used as a class method:
-        return simEigen.Matrix:ismatrix(m, elemCount, 1)
-    elseif simEigen.Matrix:ismatrix(self) then
+        return Matrix:ismatrix(m, elemCount, 1)
+    elseif Matrix:ismatrix(self) then
         -- used as object method:
         assert(elemCount == nil, 'too many arguments')
         m, elemCount = nil, m
@@ -494,14 +494,14 @@ end
 
 -- @fun {lua_only=true} Matrix:itan compute element-wise tangent, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:itan()
+function Matrix:itan()
     return self:op(simEigen.op.tan, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:itimes compute element-wise multiplication with another matrix or scalar, in place
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:itimes(m)
+function Matrix:itimes(m)
     return self:op(simEigen.op.times, m, true)
 end
 
@@ -509,7 +509,7 @@ end
 -- @arg int i row index
 -- @arg int j column index
 -- @ret float value
-function simEigen.Matrix:item(i, j)
+function Matrix:item(i, j)
     assert(math.type(i) == 'integer')
     assert(math.type(j) == 'integer')
     return simEigen.mtxGetItem(self.__handle, i - 1, j - 1)
@@ -518,10 +518,10 @@ end
 -- @fun {lua_only=true} Matrix:kron compute kronecker product with another matrix
 -- @arg table m2 the other matrix (Matrix)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:kron(m)
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+function Matrix:kron(m)
+    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxKron(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
+    r = Matrix(r)
     return r
 end
 
@@ -530,118 +530,118 @@ end
 -- @arg float high upper bound
 -- @arg int count number of elements
 -- @ret table m a new matrix (Matrix)
-function simEigen.Matrix:linspace(low, high, count)
-    assert(self == simEigen.Matrix, 'class method')
+function Matrix:linspace(low, high, count)
+    assert(self == Matrix, 'class method')
     if math.type(low) == 'integer' and high == nil and count == nil then
         low, high, count = 1, low, low
     end
     assert(math.type(count) == 'integer' and count > 1, 'invalid count')
     local m = simEigen.mtxLinSpaced(count, low, high)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:log compute element-wise natural logarithm
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:log()
+function Matrix:log()
     return self:op(simEigen.op.log, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:log2 compute element-wise base-2 logarithm
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:log2()
+function Matrix:log2()
     return self:op(simEigen.op.log2, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:log10 compute element-wise base-10 logarithm
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:log10()
+function Matrix:log10()
     return self:op(simEigen.op.log10, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:max compute element-wise maximum with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:max(m)
+function Matrix:max(m)
     return self:op(simEigen.op.max, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:maxcoeff compute the maximum value amongst all elements
 -- @ret float result
-function simEigen.Matrix:maxcoeff()
+function Matrix:maxcoeff()
     return simEigen.mtxMaxCoeff(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:maxcoeff compute the mean value amongst all elements
 -- @ret float result
-function simEigen.Matrix:mean()
+function Matrix:mean()
     return simEigen.mtxMean(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:min compute element-wise minimum with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:min(m)
+function Matrix:min(m)
     return self:op(simEigen.op.min, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:maxcoeff compute the minimum value amongst all elements
 -- @ret float result
-function simEigen.Matrix:mincoeff()
+function Matrix:mincoeff()
     return simEigen.mtxMinCoeff(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:mod compute element-wise modulo with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:mod(m)
+function Matrix:mod(m)
     return self:op(simEigen.op.mod, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:mul compute element-wise multiplication with another matrix or scalar
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:mul(m)
+function Matrix:mul(m)
     if type(m) == 'number' then
         return self:op(simEigen.op.times, m, false)
     end
 
-    assert(simEigen.Matrix:ismatrix(m), 'argument must be a Matrix')
+    assert(Matrix:ismatrix(m), 'argument must be a Matrix')
     local r = simEigen.mtxMul(self.__handle, m.__handle)
-    r = simEigen.Matrix(r)
+    r = Matrix(r)
     return r
 end
 
 -- @fun {lua_only=true} Matrix:norm compute the euclidean norm
 -- @ret float result
-function simEigen.Matrix:norm()
+function Matrix:norm()
     return simEigen.mtxNorm(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:normalize normalize the value of elements, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:normalize()
+function Matrix:normalize()
     simEigen.mtxNormalize(self.__handle)
     return self
 end
 
 -- @fun {lua_only=true} Matrix:normalized return a new matrix with element values normalized
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:normalized()
+function Matrix:normalized()
     local m = simEigen.mtxNormalized(self.__handle)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
-function simEigen.Matrix:op(op, x, inplace)
+function Matrix:op(op, x, inplace)
     local r
     if type(x) == 'number' then
         r = simEigen.mtxOpK(self.__handle, op, x, inplace)
-    elseif x == nil or simEigen.Matrix:ismatrix(x) then
+    elseif x == nil or Matrix:ismatrix(x) then
         r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
     else
         error('invalid operand type')
     end
-    r = inplace and self or simEigen.Matrix(r)
+    r = inplace and self or Matrix(r)
     return r
 end
 
@@ -650,38 +650,38 @@ end
 -- @arg float damping
 -- @ret table m a new matrix with result (Matrix)
 -- @ret table the solution to m*x=b, if b was passed (Matrix)
-function simEigen.Matrix:pinv(b, damping)
-    assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
+function Matrix:pinv(b, damping)
+    assert(b == nil or Matrix:ismatrix(b), 'b must be a Matrix or nil')
     assert(damping == nil or type(damping) == 'number', 'damping must be numeric')
     damping = damping or 0.0
     local m, x = simEigen.mtxPInv(self.__handle, (b or {}).__handle)
-    m = simEigen.Matrix(m)
-    if x then x = simEigen.Matrix(x) end
+    m = Matrix(m)
+    if x then x = Matrix(x) end
     return m, x
 end
 
 -- @fun {lua_only=true} Matrix:print print the contents of this matrix
-function simEigen.Matrix:print(opts)
+function Matrix:print(opts)
     print(self:__todisplay(opts))
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the product of all elements of this matrix
 -- @ret float damping
-function simEigen.Matrix:prod()
+function Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:random return a matrix of uniformly distributed random values in range [-1..1]
 -- @ret table m a new matrix of random values in range [-1..1] (Matrix)
-function simEigen.Matrix:random(rows, cols)
+function Matrix:random(rows, cols)
     local m = simEigen.mtxRandom(rows, cols)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:rad compute element-wise degrees to radians conversion
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:rad()
+function Matrix:rad()
     return self:op(simEigen.op.rad, nil, false)
 end
 
@@ -689,37 +689,37 @@ end
 -- @arg int rows new row count
 -- @arg int cols new column count
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:reshaped(rows, cols)
+function Matrix:reshaped(rows, cols)
     assert(math.type(rows) == 'integer', 'row count must be integer')
     assert(math.type(cols) == 'integer', 'col count must be integer')
     local m = simEigen.mtxReshaped(self.__handle, rows, cols)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:row return the i-th row as a new vector
 -- @arg int i row index
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:row(i)
+function Matrix:row(i)
     return self:block(i, 1, 1, -1)
 end
 
 -- @fun {lua_only=true} Matrix:rowdata get the data of the i-th row
 -- @arg int i row index
 -- @ret table.float a table of numbers
-function simEigen.Matrix:rowdata(i)
+function Matrix:rowdata(i)
     assert(math.type(i) == 'integer', 'indices must be integer')
     return simEigen.mtxGetRowData(self.__handle, i - 1)
 end
 
 -- @fun {lua_only=true} Matrix:rows return the number of rows
 -- @ret int number of rows
-function simEigen.Matrix:rows()
+function Matrix:rows()
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     return rows
 end
 
-function simEigen.Matrix:set(i, j, data)
+function Matrix:set(i, j, data)
     logDeprecated('m:set(i, j, val)', 'm:setitem(i, j, val)')
     return self:setitem(i, j, data)
 end
@@ -728,7 +728,7 @@ end
 -- @arg int j column index
 -- @arg table col a column vector
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:setcol(j, col)
+function Matrix:setcol(j, col)
     return self:blockassign(col, 1, j, -1, 1)
 end
 
@@ -736,7 +736,7 @@ end
 -- @arg int j column index
 -- @arg table.float data column data
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:setcoldata(j, data)
+function Matrix:setcoldata(j, data)
     assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetColData(self.__handle, j - 1, data)
     return self
@@ -745,7 +745,7 @@ end
 -- @fun {lua_only=true} Matrix:setdata assign data to the matrix, in row-major order
 -- @arg table.float data matrix data
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:setdata(data)
+function Matrix:setdata(data)
     assert(type(data) == 'table')
     simEigen.mtxSetData(self.__handle, data)
     return self
@@ -756,7 +756,7 @@ end
 -- @arg int j column index
 -- @arg table.float data element value
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:setitem(i, j, data)
+function Matrix:setitem(i, j, data)
     assert(math.type(i) == 'integer', 'indices must be integer')
     assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetItem(self.__handle, i - 1, j - 1, data)
@@ -767,7 +767,7 @@ end
 -- @arg int i row index
 -- @arg table row a row vector
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:setrow(i, row)
+function Matrix:setrow(i, row)
     return self:blockassign(row, i, 1, 1, -1)
 end
 
@@ -775,7 +775,7 @@ end
 -- @arg int i row index
 -- @arg table.float data row data
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:setrowdata(i, data)
+function Matrix:setrowdata(i, data)
     assert(math.type(i) == 'integer', 'indices must be integer')
     simEigen.mtxSetRowData(self.__handle, i - 1, data)
     return self
@@ -783,32 +783,32 @@ end
 
 -- @fun {lua_only=true} Matrix:sin compute element-wise sine
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:sin()
+function Matrix:sin()
     return self:op(simEigen.op.sin, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:sqrt compute element-wise square root
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:sqrt()
+function Matrix:sqrt()
     return self:op(simEigen.op.sqrt, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:norm compute the squared euclidean norm
 -- @ret float result
-function simEigen.Matrix:squarednorm()
+function Matrix:squarednorm()
     return simEigen.mtxSquaredNorm(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:sub compute element-wise subtraction with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:sub(m)
+function Matrix:sub(m)
     return self:op(simEigen.op.sub, m, false)
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the sum of all elements of this matrix
 -- @ret float damping
-function simEigen.Matrix:sum()
+function Matrix:sum()
     return simEigen.mtxSum(self.__handle)
 end
 
@@ -820,38 +820,38 @@ end
 -- @ret table u (Matrix)
 -- @ret table v (Matrix)
 -- @ret table x (Matrix)
-function simEigen.Matrix:svd(computeThinU, computeThinV, b)
+function Matrix:svd(computeThinU, computeThinV, b)
     assert(computeThinU == nil or type(computeThinU) == 'bool', 'computeThinU must be bool')
     assert(computeThinV == nil or type(computeThinV) == 'bool', 'computeThinV must be bool')
     computeThinU = computeThinU == true
     computeThinV = computeThinV == true
-    assert(b == nil or simEigen.Matrix:ismatrix(b), 'b must be a Matrix or nil')
+    assert(b == nil or Matrix:ismatrix(b), 'b must be a Matrix or nil')
     local s, u, v, x = simEigen.mtxSVD(self.__handle, computeThinU, computeThinV, (b or {}).__handle)
-    s = simEigen.Matrix(s)
-    u = simEigen.Matrix(u)
-    v = simEigen.Matrix(v)
-    if x then x = simEigen.Matrix(x) end
+    s = Matrix(s)
+    u = Matrix(u)
+    v = Matrix(v)
+    if x then x = Matrix(x) end
     return s, u, v, x
 end
 
-function simEigen.Matrix:t()
+function Matrix:t()
     return self:transposed()
 end
 
 -- @fun {lua_only=true} Matrix:tan compute element-wise tangent
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:tan()
+function Matrix:tan()
     return self:op(simEigen.op.tan, nil, false)
 end
 
 -- @fun {lua_only=true} Matrix:times compute element-wise multiplication with another matrix or scalar
 -- @arg table m2 the other matrix (Matrix) or a scalar (float)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:times(m)
+function Matrix:times(m)
     return self:op(simEigen.op.times, m, false)
 end
 
-function simEigen.Matrix:totable(format)
+function Matrix:totable(format)
     if type(format) == 'table' and #format == 0 then
         local d = {}
         for i = 1, self:rows() do
@@ -871,83 +871,83 @@ end
 
 -- @fun {lua_only=true} Matrix:trace compute the matrix trace
 -- @ret float trace
-function simEigen.Matrix:trace()
+function Matrix:trace()
     return simEigen.mtxTrace(self.__handle)
 end
 
 -- @fun {lua_only=true} Matrix:transform transform a 3D vector using this 4x4 transform matrix, returns a new vector
 -- @arg table v a 3D vector (Matrix)
 -- @ret table m a new vector with result (Matrix)
-function simEigen.Matrix:transform(v)
+function Matrix:transform(v)
     assert(self:ismatrix(4, 4), 'only works on 4x4 transform matrices')
-    assert(simEigen.Matrix:isvector(v, 3), 'only works on 3D vectors')
+    assert(Matrix:isvector(v, 3), 'only works on 3D vectors')
     local Rt, t = self:block(1, 1, 3, 3), self:block(1, 4, 3, 1)
     Rt.transpose()
-    return Rt:horzcat(-Rt * t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
+    return Rt:horzcat(-Rt * t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
 end
 
 -- @fun {lua_only=true} Matrix:transpose transpose the matrix, in place
 -- @ret table self this matrix (Matrix)
-function simEigen.Matrix:transpose()
+function Matrix:transpose()
     simEigen.mtxTranspose(self.__handle)
     return self
 end
 
 -- @fun {lua_only=true} Matrix:transposed return transposed matrix
 -- @ret table m a new matrix transposed (Matrix)
-function simEigen.Matrix:transposed()
+function Matrix:transposed()
     local m = simEigen.mtxTransposed(self.__handle)
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
 -- @fun {lua_only=true} Matrix:vertcat stack two or more matrices vertically
 -- @arg table m2 matrix to stack (Matrix)
 -- @ret table m a new matrix with result (Matrix)
-function simEigen.Matrix:vertcat(...)
+function Matrix:vertcat(...)
     local ms = {...}
-    if simEigen.Matrix:ismatrix(self) then table.insert(ms, 1, self) end
+    if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
     local m = simEigen.mtxVertCat(map(function(m) return m.__handle end, ms))
-    m = simEigen.Matrix(m)
+    m = Matrix(m)
     return m
 end
 
-function simEigen.Matrix:__add(m)
+function Matrix:__add(m)
     if type(self) == 'number' then self, m = m, self end
     return self:add(m)
 end
 
-function simEigen.Matrix:__concat(m)
+function Matrix:__concat(m)
     return self:dot(m)
 end
 
-function simEigen.Matrix:__copy()
+function Matrix:__copy()
     return self:copy()
 end
 
-function simEigen.Matrix:__deepcopy(m)
+function Matrix:__deepcopy(m)
     return self:copy()
 end
 
-function simEigen.Matrix:__div(k)
+function Matrix:__div(k)
     return self:div(k)
 end
 
-function simEigen.Matrix:__eq(m)
-    if simEigen.Matrix:ismatrix(m) then
+function Matrix:__eq(m)
+    if Matrix:ismatrix(m) then
         return self.__handle == m.__handle
     else
         return false
     end
 end
 
-function simEigen.Matrix:__gc()
+function Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
 
 if package.config:sub(1,1) == '\\' then
     -- TEMP fix for strange error on Windows related to garbage collection
-    function simEigen.Matrix:__gc()
+    function Matrix:__gc()
         if __simEigenCont == nil then __simEigenCont = {} end
         if __simEigenCont2 == nil then __simEigenCont2 = {} end
         __simEigenCont[#__simEigenCont + 1] = self.__handle
@@ -964,11 +964,11 @@ if package.config:sub(1,1) == '\\' then
     end
 end
 
-function simEigen.Matrix:__idiv(k)
+function Matrix:__idiv(k)
     return self:intdiv(k)
 end
 
-function simEigen.Matrix:__index(k)
+function Matrix:__index(k)
     if math.type(k) == 'integer' then
         if self:rows() == 1 then
             return self:item(1, k)
@@ -1000,15 +1000,15 @@ function simEigen.Matrix:__index(k)
     end
 end
 
-function simEigen.Matrix:__ismatrix()
-    return simEigen.Matrix:ismatrix(self)
+function Matrix:__ismatrix()
+    return Matrix:ismatrix(self)
 end
 
-function simEigen.Matrix:__isvector3()
-    return simEigen.Matrix:ismatrix(self, 3, 1)
+function Matrix:__isvector3()
+    return Matrix:ismatrix(self, 3, 1)
 end
 
-function simEigen.Matrix:__len()
+function Matrix:__len()
     if self:rows() == 1 then
         return self:cols()
     else
@@ -1016,16 +1016,16 @@ function simEigen.Matrix:__len()
     end
 end
 
-function simEigen.Matrix:__mod(k)
+function Matrix:__mod(k)
     return self:mod(k)
 end
 
-function simEigen.Matrix:__mul(m)
+function Matrix:__mul(m)
     if type(self) == 'number' then self, m = m, self end
     return self:mul(m)
 end
 
-function simEigen.Matrix:__newindex(k, v)
+function Matrix:__newindex(k, v)
     if math.type(k) == 'integer' then
         if self:rows() == 1 then
             return self:setitem(1, k, v)
@@ -1039,21 +1039,21 @@ function simEigen.Matrix:__newindex(k, v)
     end
 end
 
-function simEigen.Matrix:__pairs()
-    -- for completion, return methods of simEigen.Matrix
-    return pairs(simEigen.Matrix)
+function Matrix:__pairs()
+    -- for completion, return methods of Matrix
+    return pairs(Matrix)
 end
 
-function simEigen.Matrix:__pow(m)
+function Matrix:__pow(m)
     return self:cross(m)
 end
 
-function simEigen.Matrix:__sub(m)
+function Matrix:__sub(m)
     if type(self) == 'number' then return m * (-1) + self end
     return self:sub(m)
 end
 
-function simEigen.Matrix:__tocbor(sref, stref)
+function Matrix:__tocbor(sref, stref)
     local cbor = require 'simCBOR'
     local cbor_c = require 'org.conman.cbor_c'
     return cbor_c.encode(0xC0, 40) -- RFC8746 multi-dimensional array tag
@@ -1062,7 +1062,7 @@ function simEigen.Matrix:__tocbor(sref, stref)
             .. cbor.encode(self:data())
 end
 
-function simEigen.Matrix:__todisplay(opts)
+function Matrix:__todisplay(opts)
     opts = opts or {}
     local out = ''
 
@@ -1122,11 +1122,11 @@ function simEigen.Matrix:__todisplay(opts)
     return out
 end
 
-function simEigen.Matrix:__tomatrix()
+function Matrix:__tomatrix()
     return self:data()
 end
 
-function simEigen.Matrix:__tostring()
+function Matrix:__tostring()
     local out = ''
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     out = out .. 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
@@ -1140,601 +1140,13 @@ function simEigen.Matrix:__tostring()
     return out
 end
 
-function simEigen.Matrix:__tovector3()
-    assert(simEigen.Matrix:ismatrix(self, 3, 1), 'incorrect size for vector3')
+function Matrix:__tovector3()
+    assert(Matrix:ismatrix(self, 3, 1), 'incorrect size for vector3')
     return self:data()
 end
 
-function simEigen.Matrix:__unm()
+function Matrix:__unm()
     return self:op(simEigen.op.unm, nil, false)
 end
 
--- @fun {lua_only=true} Vector construct a new vector (that is: a one-column matrix); can also use the form: simEigen.Vector{1, 2, 3, 4} to construct directly from data, size will be determined automatically
--- @arg int size number of elements (matrix rows)
--- @arg table.float data initialization data (optional; can also be a single value)
--- @ret table v the new vector (Matrix)
-function simEigen.Vector(v, fv)
-    if type(v) == 'table' and fv == nil then
-        -- construct from vector data:
-        return simEigen.Matrix(-1, 1, v)
-    elseif math.type(v) == 'integer' then
-        -- construct from size, [fillValue]:
-        return simEigen.Matrix(v, 1, fv)
-    else
-        error('invalid arguments')
-    end
-end
-
-simEigen.Quaternion = class 'simEigen.Quaternion'
-
--- @fun {lua_only=true} Quaternion construct a new quaternion
--- @arg {type='table',item_type='float',default={0,0,0,1}} data initialization data, in (qx, qy, qz, qw) order
--- @ret table q the new quaternion (Quaternion)
-function simEigen.Quaternion:initialize(data)
-    -- construct from handle:
-    if type(data) == 'string' then
-        self.__handle = data
-        return
-    end
-
-    -- construct from Matrix
-    if simEigen.Matrix:ismatrix(data) then
-        assert(data:isvector(4), 'invalid matrix shape')
-        data = data:data()
-    end
-
-    assert((type(data) == 'table' and #data == 4) or data == nil, 'invalid data')
-
-    if data == nil then
-        self.__handle = simEigen.quatNew()
-    else
-        self.__handle = simEigen.quatNew(data)
-    end
-end
-
--- @fun {lua_only=true} Quaternion:copy create a copy of this quaternion
--- @ret table m a new quaternion with same data (Quaternion)
-function simEigen.Quaternion:copy()
-    local m = simEigen.quatCopy(self.__handle)
-    m = simEigen.Quaternion(m)
-    return m
-end
-
--- @fun {lua_only=true} Quaternion:data get the data of this quaternion, in (qx, qy, qz, qw) order
--- @ret table.double data the quaternion data
-function simEigen.Quaternion:data()
-    return simEigen.quatGetData(self.__handle)
-end
-
--- @fun {lua_only=true} Quaternion:fromaxisangle (class method) create a new quaternion from axis/angle
--- @arg table axis the rotation axis vector 3D (Matrix)
--- @arg double angle the rotation angle
--- @ret table q the quaternion (Quaternion)
-function simEigen.Quaternion:fromaxisangle(axis, angle)
-    assert(self == simEigen.Quaternion, 'class method')
-    assert(simEigen.Matrix:isvector(axis, 3), 'argument must be a 3D vector')
-    assert(type(angle) == 'number', 'angle must be a number')
-    local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
-    q = simEigen.Quaternion(q)
-    return q
-end
-
--- @fun {lua_only=true} Quaternion:fromeuler (class method) create a new quaternion from euler angles
--- @arg table euler the Euler angles as 3D vector (Matrix)
--- @ret table q the quaternion (Quaternion)
-function simEigen.Quaternion:fromeuler(euler)
-    assert(self == simEigen.Quaternion, 'class method')
-    if type(euler) == 'table' and not simEigen.Matrix:ismatrix(euler) then
-        euler = simEigen.Vector(euler)
-    end
-    assert(simEigen.Matrix:isvector(euler, 3), 'argument must be a 3D vector')
-    local q = simEigen.quatFromEuler(euler.__handle)
-    q = simEigen.Quaternion(q)
-    return q
-end
-
--- @fun {lua_only=true} Quaternion:fromrotation (class method) create a new quaternion from rotation matrix
--- @arg table r the rotation matrix (Matrix)
--- @ret table q the quaternion (Quaternion)
-function simEigen.Quaternion:fromrotation(r)
-    assert(self == simEigen.Quaternion, 'class method')
-    assert(simEigen.Matrix:ismatrix(r, 3, 3), 'argument must be a 3x3 Matrix')
-    local q = simEigen.quatFromRotation(r.__handle)
-    q = simEigen.Quaternion(q)
-    return q
-end
-
--- @fun {lua_only=true} Quaternion:imul multiply with another quaternion, in place
--- @arg table o the other quaternion (Quaternion)
--- @ret table self this quaternion (Quaternion)
-function simEigen.Quaternion:imul(o)
-    if simEigen.Quaternion:isquaternion(o) then
-        simEigen.quatMulQuat(self.__handle, o.__handle, true)
-        return self
-    else
-        error 'invalid type'
-    end
-end
-
--- @fun {lua_only=true} Quaternion:inv return a new quaternion inverse of this
--- @ret table result inverted quaternion (Quaternion)
-function simEigen.Quaternion:inv()
-    local q = simEigen.quatInv(self.__handle)
-    q = simEigen.Quaternion(q)
-    return q
-end
-
--- @fun {lua_only=true} Quaternion:isquaternion (class method) check wether the argument is a simEigen.Quaternion
--- @arg any m
--- @ret bool true if the argument is an instance of simEigen.Quaternion
-function simEigen.Quaternion:isquaternion(m)
-    assert(self == simEigen.Quaternion, 'class method')
-    assert(m ~= nil, 'argument required')
-    return simEigen.Quaternion.isInstanceOf(m, simEigen.Quaternion)
-end
-
--- @fun {lua_only=true} Quaternion:mul multiply with another quaternion/vector, returning new quaternion/vector
--- @arg table o the other quaternion (Quaternion)
--- @ret table q a new quaternion with result (Quaternion)
-function simEigen.Quaternion:mul(o)
-    if simEigen.Quaternion:isquaternion(o) then
-        local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
-        q = simEigen.Quaternion(q)
-        return q
-    elseif simEigen.Matrix:isvector(o, 3) then
-        local v = simEigen.quatMulVec(self.__handle, o.__handle)
-        v = simEigen.Matrix(v)
-        return v
-    else
-        error 'invalid type'
-    end
-end
-
--- @fun {lua_only=true} Quaternion:slerp interpolate quaternions
--- @arg double t interpolation factor 0..1
--- @arg table q2 the other quaternion (Quaternion)
--- @ret table q a new quaternion with result (Quaternion)
-function simEigen.Quaternion:slerp(t, q2)
-    assert(type(t) == 'number', 't must be a number')
-    assert(simEigen.Quaternion:isquaternion(q2), 'not a quaternion')
-    local q = simEigen.quatSLERP(self.__handle, q2.__handle, t)
-    q = simEigen.Quaternion(q)
-    return q
-end
-
--- @fun {lua_only=true} Quaternion:toaxisangle convert this quaternion to a axis/angle representation
--- @ret table axis a new vector 3D with rotation axis (Matrix)
--- @ret double angle the rotation angle
-function simEigen.Quaternion:toaxisangle()
-    local axis, angle = simEigen.quatToAxisAngle(self.__handle)
-    axis = simEigen.Matrix(axis)
-    return axis, angle
-end
-
--- @fun {lua_only=true} Quaternion:toeuler convert this quaternion to a Euler angles representation
--- @ret table euler a new vector 3D with euler angles (Matrix)
-function simEigen.Quaternion:toeuler()
-    local euler = simEigen.quatToEuler(self.__handle)
-    euler = simEigen.Matrix(euler)
-    return euler
-end
-
--- @fun {lua_only=true} Quaternion:torotation convert this quaternion to a rotation matrix
--- @ret table q a new matrix with result (Matrix)
-function simEigen.Quaternion:torotation()
-    local r = simEigen.quatToRotation(self.__handle)
-    r = simEigen.Matrix(r)
-    return r
-end
-
-function simEigen.Quaternion:__copy()
-    return self:copy()
-end
-
-function simEigen.Quaternion:__deepcopy(m)
-    return self:copy()
-end
-
-function simEigen.Quaternion:__eq(m)
-    if simEigen.Quaternion:isquaternion(m) then
-        return self.__handle == m.__handle
-    else
-        return false
-    end
-end
-
-function simEigen.Quaternion:__gc()
-    simEigen.quatDestroy(self.__handle)
-end
-
-function simEigen.Quaternion:__index(k)
-    if math.type(k) == 'integer' then
-        local data = simEigen.quatGetData(self.__handle)
-        return data[k]
-    else
-        return rawget(self, k)
-    end
-end
-
-function simEigen.Quaternion:__isquaternion()
-    return simEigen.Quaternion:isquaternion(self)
-end
-
-function simEigen.Quaternion:__len()
-    return 4
-end
-
-function simEigen.Quaternion:__mul(m)
-    return self:mul(m)
-end
-
-function simEigen.Quaternion:__newindex(k, v)
-    if math.type(k) == 'integer' then
-        local data = simEigen.quatGetData(self.__handle)
-        data[k] = v
-        simEigen.quatSetData(self.__handle, data)
-    else
-        rawset(self, k, v)
-    end
-end
-
-function simEigen.Quaternion:__pairs()
-    -- for completion, return methods of simEigen.Quaternion
-    return pairs(simEigen.Quaternion)
-end
-
-function simEigen.Quaternion:__tocbor(sref, stref)
-    local _cbor = cbor or require 'simCBOR'
-    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
-end
-
-function simEigen.Quaternion:__toquaternion()
-    return self:data()
-end
-
-function simEigen.Quaternion:__tostring()
-    local out = ''
-    local data = simEigen.quatGetData(self.__handle)
-    out = out .. 'simEigen.Quaternion({'
-    for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
-    out = out ..'})'
-    return out
-end
-
-function simEigen.Quaternion:__unm()
-    return self:inv()
-end
-
-simEigen.Pose = class 'simEigen.Pose'
-
--- @fun {lua_only=true} Pose a combination of a rotation and a translation
--- @arg table t the translation vector (Matrix)
--- @arg table q the rotation quaternion (Quaternion)
--- @ret table p the pose (Pose)
-function simEigen.Pose:initialize(t, q)
-    if q == nil then
-        -- called with only 1 arg: construct from 7D vector or table
-
-        if not simEigen.Matrix:ismatrix(t) then
-            assert(type(t) == 'table', 'invalid type')
-            assert(#t == 7, 'invalid table size')
-            t = simEigen.Vector(t)
-        end
-
-        assert(simEigen.Matrix:ismatrix(t), 'invalid type')
-        assert(t:isvector(7), 'invalid matrix shape')
-        t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
-    end
-
-    assert(simEigen.Matrix:isvector(t, 3), 'argument 1 must be a 3D vector')
-    if simEigen.Matrix:ismatrix(q) then
-        q = simEigen.Quaternion(q)
-    end
-    assert(simEigen.Quaternion:isquaternion(q), 'argument 2 must be a Quaternion')
-    self.t = t
-    self.q = q
-end
-
--- @fun {lua_only=true} Pose:copy create a copy of this pose
--- @ret table m a new pose with same data (Pose)
-function simEigen.Pose:copy()
-    return simEigen.Pose(self.t:copy(), self.q:copy())
-end
-
--- @fun {lua_only=true} Pose:data get the data of this pose, in (tx, ty, tz, qx, qy, qz, qw) order
--- @ret table.double data the pose data
-function simEigen.Pose:data()
-    return table.add(self.t:data(), self.q:data())
-end
-
--- @fun {lua_only=true} Pose:fromtransform (class method) convert 4x4 transform matrix to new pose
--- @arg table m a 4x4 transform matrix (Matrix)
--- @ret table p a new pose with result (Pose)
-function simEigen.Pose:fromtransform(m)
-    assert(self == simEigen.Pose, 'class method')
-    assert(simEigen.Matrix:ismatrix(m, 4, 4), 'only works on 4x4 matrices')
-    local R, t = m:block(1, 1, 3, 3), m:block(1, 4, 3, 1)
-    return simEigen.Pose(t, simEigen.Quaternion:fromrotation(R))
-end
-
--- @fun {lua_only=true} Pose:inv return a new pose inverse of this
--- @ret table result inverse pose (Pose)
-function simEigen.Pose:inv()
-    local invq = self.q:inv()
-    return simEigen.Pose(invq * (-self.t), invq)
-end
-
--- @fun {lua_only=true} Pose:ispose (class method) check wether the argument is a simEigen.Pose
--- @arg any m
--- @ret bool true if the argument is an instance of simEigen.Pose
-function simEigen.Pose:ispose(m)
-    assert(self == simEigen.Pose, 'class method')
-    assert(m ~= nil, 'argument required')
-    return simEigen.Pose.isInstanceOf(m, simEigen.Pose)
-end
-
--- @fun {lua_only=true} Pose:mul multiply with another pose/vector, returning new pose/vector
--- @arg table o the other pose (Pose)
--- @ret table p a new pose with result (Pose)
-function simEigen.Pose:mul(o)
-    if simEigen.Matrix:isvector(o, 3) then
-        return self.q * o + self.t
-    elseif simEigen.Pose:ispose(o) then
-        return simEigen.Pose(self.q * o.t + self.t, o.q * self.q)
-    else
-        error 'invalid argument type'
-    end
-end
-
--- @fun {lua_only=true} Pose:totransform convert pose to 4x4 transform matrix
--- @ret table m a new 4x4 transform matrix (Matrix)
-function simEigen.Pose:totransform()
-    return self.q:torotation():horzcat(self.t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
-end
-
-function simEigen.Pose:__copy()
-    return self:copy()
-end
-
-function simEigen.Pose:__deepcopy(m)
-    return self:copy()
-end
-
-function simEigen.Pose:__index(k)
-    if math.type(k) == 'integer' then
-        error 'not implemented'
-    else
-        return rawget(self, k)
-    end
-end
-
-function simEigen.Pose:__ispose()
-    return simEigen.Pose:ispose(self)
-end
-
-function simEigen.Pose:__len()
-    return 4
-end
-
-function simEigen.Pose:__mul(m)
-    return self:mul(m)
-end
-
-function simEigen.Pose:__newindex(k, v)
-    if math.type(k) == 'integer' then
-        error 'not implemented'
-    else
-        rawset(self, k, v)
-    end
-end
-
-function simEigen.Pose:__pairs()
-    -- for completion, return methods of simEigen.Pose
-    return pairs(simEigen.Pose)
-end
-
-function simEigen.Pose:__topose()
-    return self:data()
-end
-
-function simEigen.Pose:__tostring()
-    local out = ''
-    out = out .. 'simEigen.Pose({'
-    for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
-    out = out ..'})'
-    return out
-end
-
-function simEigen.Pose:__unm()
-    return self:inv()
-end
-
-simEigen.__all = {'Matrix', 'Vector', 'Quaternion', 'Pose'}
-
-function simEigen.unittest()
-    local Matrix = simEigen.Matrix
-    local Vector = simEigen.Vector
-    local Quaternion = simEigen.Quaternion
-    local Pose = simEigen.Pose
-
-    local function assertApproxEq(a, b, tol)
-        tol = tol or 1e-7
-        if type(a) == 'number' then
-            assert(type(b) == 'number', 'mismatching type')
-            assert(math.abs(a - b) < tol)
-        elseif Matrix:ismatrix(a) then
-            assert(Matrix:ismatrix(b), 'mismatching type')
-            assert(a:rows() == b:rows() and a:cols() == b:cols(), 'mismatching matrix size')
-            assertApproxEq(a:data(), b:data())
-        elseif Quaternion:isquaternion(a) then
-            assert(Quaternion:isquaternion(b), 'mismatching type')
-            assertApproxEq(a:data(), b:data())
-        elseif Pose:ispose(a) then
-            assert(Pose:ispose(b), 'mismatching type')
-            assertApproxEq(a.t, b.t)
-            assertApproxEq(a.q, b.q)
-        elseif type(a) == 'table' then
-            assert(type(b) == 'table')
-            assert(#a == #b, 'mismatching table size')
-            for i = 1, #a do assertApproxEq(a[i], b[i]) end
-        else
-            error('invalid types: ' .. type(a) .. ' and ' .. type(b))
-        end
-    end
-
-    local m = Matrix(3, 4, {11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34})
-
-    assertApproxEq(m, Matrix:fromtable{dims = {3, 4}, data = {11, 12, 13, 14, 21, 22, 23, 24, 31, 32, 33, 34}})
-    assertApproxEq(m, Matrix:fromtable{{11, 12, 13, 14}, {21, 22, 23, 24}, {31, 32, 33, 34}})
-    assert(m:rows() == 3)
-    assert(m:cols() == 4)
-    assert(m:count() == 12)
-    assert(m:totable{}.dims[1] == m:rows())
-    assert(m:totable{}.dims[2] == m:cols())
-    assertApproxEq(m:totable()[3][2], 32)
-    assertApproxEq(m:totable()[2][4], 24)
-    for i = 1, 3 do
-        assertApproxEq(m:row(i), Matrix(1, 4, {i * 10 + 1, i * 10 + 2, i * 10 + 3, i * 10 + 4}))
-    end
-    for j = 1, 4 do
-        assertApproxEq(m:col(j), Matrix(3, 1, {10 + j, 20 + j, 30 + j}))
-    end
-    for i = 1, 3 do
-        for j = 1, 4 do
-            assertApproxEq(m:item(i, j), i * 10 + j)
-        end
-    end
-    assertApproxEq(m:item(2, 3), m[2][3])
-    assertApproxEq(m[2][3], m:row(2)[3])
-    assertApproxEq(m.T:col(2).T, m:row(2))
-    assertApproxEq(m:t():col(2):t(), m:row(2))
-    assertApproxEq(m * Matrix(4, 1, {1, 0, 0, 1}), Matrix(3, 1, {25, 45, 65}))
-    assertApproxEq(2 * m, 2 * m)
-    assertApproxEq(m + m, 2 * m)
-    assertApproxEq(m - m, 0 * m)
-    assertApproxEq(m * m.T, Matrix(3, 3, {630, 1130, 1630, 1130, 2030, 2930, 1630, 2930, 4230}))
-    assertApproxEq(m * m:t(), Matrix(3, 3, {630, 1130, 1630, 1130, 2030, 2930, 1630, 2930, 4230}))
-    assertApproxEq(m * m:t() * m * m:t(), Matrix(3, 3, {
-        4330700, 7781700, 11232700,
-        7781700, 13982700, 20183700,
-        11232700, 20183700, 29134700,
-    }))
-    assertApproxEq(m * m.T * m * m.T, Matrix(3, 3, {
-        4330700, 7781700, 11232700,
-        7781700, 13982700, 20183700,
-        11232700, 20183700, 29134700,
-    }))
-    assertApproxEq(m.T * m, Matrix(4, 4, {
-        1523, 1586, 1649, 1712,
-        1586, 1652, 1718, 1784,
-        1649, 1718, 1787, 1856,
-        1712, 1784, 1856, 1928,
-    }))
-    assertApproxEq(Vector {2.1, 7, 8.2} // 2, Vector {1, 3, 4})
-    assertApproxEq(Matrix:fromtable{{1, 0, 0, 0}}.T:norm(), 1)
-    assertApproxEq(Matrix(3, 1, {3, 4, 0}):norm(), 5)
-    assertApproxEq(Matrix(3, 1, {3, 4, 0}):dot(Matrix(3, 1, {-4, 3, 5})), 0)
-    assertApproxEq(Matrix(3, 1, {3, 4, 0}):data()[1], 3)
-    assertApproxEq(Matrix(3, 1, {3, 4, 0}):data()[2], 4)
-    assertApproxEq(Matrix(1, 3, {3, 4, 0}):data()[1], 3)
-    assertApproxEq(Matrix(1, 3, {3, 4, 0}):data()[2], 4)
-    local x, y, z = Matrix(3, 1, {1, 0, 0}), Matrix(3, 1, {0, 1, 0}), Matrix(3, 1, {0, 0, 1})
-    --assertApproxNEq(x:dot(y:cross(z)), 0)
-    assertApproxEq(y:dot(y:cross(z)), 0)
-    assertApproxEq(z:dot(y:cross(z)), 0)
-    assertApproxEq(Matrix(2, 2, {2, -2, 4, -4}), -Matrix(2, 2, {-2, 2, -4, 4}))
-    local i = Matrix(3, 3)
-    i:setcol(1, Matrix(3, 1, {1, 0, 0}))
-    i:setcol(2, Matrix(3, 1, {0, 2, 0}))
-    i:setcol(3, Matrix(3, 1, {0, 0, 3}))
-    assertApproxEq(i, Matrix(3, 3, {1, 0, 0, 0, 2, 0, 0, 0, 3}))
-    i:setrow(1, Matrix(1, 3, {0, 1, 1}))
-    i:setrow(2, Matrix(1, 3, {2, 0, 2}))
-    i:setrow(3, Matrix(1, 3, {3, 3, 0}))
-    assertApproxEq(i, Matrix(3, 3, {0, 1, 1, 2, 0, 2, 3, 3, 0}))
-    i:setitem(1, 1, 9)
-    i:setitem(2, 2, 9)
-    i:setitem(3, 3, 9)
-    assertApproxEq(i, Matrix(3, 3, {9, 1, 1, 2, 9, 2, 3, 3, 9}))
-    local s = Matrix(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9})
-    local temp = s:row(1)
-    s:setrow(1, s:row(2))
-    s:setrow(2, temp)
-    assertApproxEq(s, Matrix(3, 3, {4, 5, 6, 1, 2, 3, 7, 8, 9}))
-    local m1 = Matrix(2, 2, {1, 0, 0, 1})
-    local m2 = m1
-    m2:setitem(1, 1, 6)
-    assertApproxEq(m1:item(1, 1), 6)
-    local m3 = m1:copy()
-    m3:setitem(1, 1, 9)
-    assertApproxEq(m3:item(1, 1), 9)
-    assertApproxEq(m1:item(1, 1), 6)
-    -- data should be copied, not referenced:
-    local d = {100, 200, 300}
-    m4 = Matrix(3, 1, d)
-    table.remove(d)
-    assert(pcall(function() tostring(m4) end))
-    m5 = Matrix:fromtable{{1, 20, 5, 3}, {10, 2, 28, 4}, {2, 5, 7, 9}}
-    assertApproxEq(m5:sum(), 96)
-    assertApproxEq(m5:prod(), 423360000)
-    assertApproxEq(m5:mean(), 8)
-    rot_e = Quaternion:fromeuler{0.7853982, 0.5235988, 1.5707963}
-    rot_m = Matrix(3, 3, {0.0000000, -0.8660254, 0.5000000, 0.7071068, -0.3535534, -0.6123725, 0.7071068, 0.3535534, 0.6123725})
-    rot_q = Quaternion{0.4304593, -0.092296, 0.7010574, 0.5609855}
-    assertApproxEq(rot_e, Quaternion:fromrotation(rot_m))
-    assertApproxEq(rot_e, rot_q)
-    assertApproxEq(Quaternion:fromrotation(rot_m), rot_q)
-    assertApproxEq(Pose{0, 0, 0, 0, 0, 0, 1}, Pose(Vector{0, 0, 0}, Quaternion{0, 0, 0, 1}))
-    assertApproxEq(Quaternion:fromrotation(Matrix(3, 3, {-1, 0, 0, 0, -1, 0, 0, 0, 1})), Quaternion{0, 0, 1, 0})
-    assertApproxEq(Matrix(2, 2, {1, 2, 3, 4}):kron(Matrix(2, 2, {0, 5, 6, 7})),
-            Matrix(4, 4, {0, 5, 0, 10, 6, 7, 12, 14, 0, 15, 0, 20, 18, 21, 24, 28}))
-    assertApproxEq(
-        Matrix(2, 3, {1, -4, 7, -2, 3, 3}):kron(
-            Matrix(4, 4, {8, -9, -6, 5, 1, -3, -4, 7, 2, 8, -8, -3, 1, 2, -5, -1})),
-            Matrix(8, 12, {
-                8, -9, -6, 5, -32, 36, 24, -20, 56, -63, -42, 35, 1, -3, -4, 7, -4, 12, 16, -28, 7,
-                -21, -28, 49, 2, 8, -8, -3, -8, -32, 32, 12, 14, 56, -56, -21, 1, 2, -5, -1, -4, -8,
-                20, 4, 7, 14, -35, -7, -16, 18, 12, -10, 24, -27, -18, 15, 24, -27, -18, 15, -2, 6,
-                8, -14, 3, -9, -12, 21, 3, -9, -12, 21, -4, -16, 16, 6, 6, 24, -24, -9, 6, 24, -24,
-                -9, -2, -4, 10, 2, 3, 6, -15, -3, 3, 6, -15, -3,
-            }
-        )
-    )
-    assertApproxEq(Matrix:linspace(0, 1, 5), Vector {0., 0.25, 0.5, 0.75, 1.})
-    i, j = Matrix(2, 2, {1, 1, 2, 2}), Matrix(2, 2, {1, 2, 3, 4})
-    assertApproxEq(Matrix:horzcat(Vector {1, 0, 0}, Vector {0, 1, 0}, Vector {0, 0, 1}), Matrix:eye(3))
-    assertApproxEq(Matrix:vertcat(Matrix(4, 3, 1), Matrix:eye(3)):col(2), Vector {1, 1, 1, 1, 0, 1, 0})
-    assertApproxEq(Vector {-1, 0, 90, -4}:abs(), Vector {1, 0, 90, 4})
-    assertApproxEq(Vector {-0.6, 0.3}:acos(), Vector {math.acos(-0.6), math.acos(0.3)})
-    assertApproxEq(-24, Matrix(4, 4, {1, 3, 0, 1, 0, 0, 3, 2, 2, 0, 3, 2, 1, 2, 1, 0}):det())
-    assertApproxEq(0, Matrix(4, 4, {0, 0, 0, 0, 1, 0, 3, 3, 1, 1, 1, 3, 1, 0, 3, 1}):det())
-    assertApproxEq(-22, Matrix(5, 5, {3, 2, 2, 1, 3, 0, 3, 0, 1, 3, 3, 0, 4, 3, 2, 2, 2, 1, 2, 2, 4, 3, 3, 1, 4}):det())
-    for i = 1, 1000 do
-        local p = Pose(Matrix:random(3, 1), Quaternion:fromeuler(Matrix:random(3, 1)))
-        local m = p:totransform()
-        local mi = m:pinv()
-        assertApproxEq(m * mi, Matrix:eye(4))
-        assertApproxEq(mi * m, Matrix:eye(4))
-    end
-    -- inference of row/col count (only 1 at a time):
-    assert(Matrix(3, -1, {1, 2, 3, 4, 5, 6}):cols() == 2)
-    assert(Matrix(-1, 2, {1, 2, 3, 4, 5, 6}):rows() == 3)
-    function asserterror(f, ...)
-        if pcall(f, ...) then error() end
-    end
-    asserterror(function() Matrix(-1, 3, {1, 2, 3, 4, 5, 6, 7}) end)
-    print(debug.getinfo(1, 'S').source, 'tests passed')
-    -- tests for bugs
-    local p = Pose{0, 0, 0, 0, 0, 0, 1}
-    assertApproxEq(p.t, Vector{0, 0, 0})
-    assertApproxEq(p.q, Quaternion{0, 0, 0, 1})
-    assertApproxEq(Matrix(2, 2, {1, 2, 3, 4}), Matrix{{1, 2}, {3, 4}})
-    local v = Vector{8, 3, 0.2}
-    assert(Matrix:isvector(v))
-    assert(Matrix:isvector(v, 3))
-    assert(v:isvector())
-    assert(v:isvector(3))
-    assert(not Matrix{{1, 2}, {8, 0.1}}:isvector())
-end
-
-return simEigen
+return Matrix
