@@ -433,7 +433,6 @@ end
 function Matrix:ismatrix(m, rowCount, colCount)
     if rawequal(self, Matrix) then
         -- used as a class method:
-        assert(m ~= nil, 'argument required')
         if not Matrix.isInstanceOf(m, Matrix) then return false end
         if rowCount ~= nil then
             assert(math.type(rowCount) == 'integer', 'row count must be integer')

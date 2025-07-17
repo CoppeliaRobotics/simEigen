@@ -109,7 +109,6 @@ end
 -- @ret bool true if the argument is an instance of Quaternion
 function Quaternion:isquaternion(m)
     assert(self == Quaternion, 'class method')
-    assert(m ~= nil, 'argument required')
     return Quaternion.isInstanceOf(m, Quaternion)
 end
 

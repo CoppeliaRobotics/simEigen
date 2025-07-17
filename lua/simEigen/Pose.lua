@@ -69,7 +69,6 @@ end
 -- @ret bool true if the argument is an instance of Pose
 function Pose:ispose(m)
     assert(self == Pose, 'class method')
-    assert(m ~= nil, 'argument required')
     return Pose.isInstanceOf(m, Pose)
 end
 
