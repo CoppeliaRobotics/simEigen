@@ -233,8 +233,8 @@ end
 
 function Quaternion:__tostring()
     local out = ''
-    local data = simEigen.quatGetData(self.__handle)
-    out = out .. 'simEigen.Quaternion({'
+    out = out .. (Quaternion == _G.Quaternion and '' or 'simEigen.') .. 'Quaternion'
+    out = out .. '({'
     for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
     out = out ..'})'
     return out

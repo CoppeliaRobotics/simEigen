@@ -1135,7 +1135,8 @@ end
 function Matrix:__tostring()
     local out = ''
     local rows, cols = simEigen.mtxGetSize(self.__handle)
-    out = out .. 'simEigen.Matrix(' .. rows .. ', ' .. cols .. ', {'
+    out = out .. (Matrix == _G.Matrix and '' or 'simEigen.') .. 'Matrix'
+    out = out .. '(' .. rows .. ', ' .. cols .. ', {'
     local data = self:data()
     for i = 0, rows - 1 do
         for j = 0, cols - 1 do

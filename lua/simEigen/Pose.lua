@@ -139,7 +139,8 @@ end
 
 function Pose:__tostring()
     local out = ''
-    out = out .. 'simEigen.Pose({'
+    out = out .. (Pose == _G.Pose and '' or 'simEigen.') .. 'Pose'
+    out = out .. '({'
     for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
     out = out ..'})'
     return out
