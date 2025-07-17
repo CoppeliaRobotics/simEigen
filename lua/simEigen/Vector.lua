@@ -7,10 +7,10 @@ local Matrix = require 'simEigen.Matrix'
 local function Vector(v, fv)
     if type(v) == 'table' and fv == nil then
         -- construct from vector data:
-        return simEigen.Matrix(-1, 1, v)
+        return Matrix(-1, 1, v)
     elseif math.type(v) == 'integer' then
         -- construct from size, [fillValue]:
-        return simEigen.Matrix(v, 1, fv)
+        return Matrix(v, 1, fv)
     else
         error('invalid arguments')
     end
