@@ -52,7 +52,7 @@ end
 -- @ret table q the quaternion (Quaternion)
 function Quaternion:fromaxisangle(axis, angle)
     assert(self == Quaternion, 'class method')
-    assert(Matrix:isvector(axis, 3), 'argument must be a 3D vector')
+    assert(Vector:isvector(axis, 3), 'argument must be a 3D vector')
     assert(type(angle) == 'number', 'angle must be a number')
     local q = simEigen.quatFromAxisAngle(axis.__handle, angle)
     q = Quaternion(q)
@@ -67,7 +67,7 @@ function Quaternion:fromeuler(euler)
     if type(euler) == 'table' and not Matrix:ismatrix(euler) then
         euler = simEigen.Vector(euler)
     end
-    assert(Matrix:isvector(euler, 3), 'argument must be a 3D vector')
+    assert(Vector:isvector(euler, 3), 'argument must be a 3D vector')
     local q = simEigen.quatFromEuler(euler.__handle)
     q = Quaternion(q)
     return q
@@ -120,7 +120,7 @@ function Quaternion:mul(o)
         local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
         q = Quaternion(q)
         return q
-    elseif Matrix:isvector(o, 3) then
+    elseif Vector:isvector(o, 3) then
         local v = simEigen.quatMulVec(self.__handle, o.__handle)
         v = Matrix(v)
         return v

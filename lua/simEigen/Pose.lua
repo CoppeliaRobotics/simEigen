@@ -26,7 +26,7 @@ function Pose:initialize(t, q)
         t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
     end
 
-    assert(Matrix:isvector(t, 3), 'argument 1 must be a 3D vector')
+    assert(Vector:isvector(t, 3), 'argument 1 must be a 3D vector')
     if Matrix:ismatrix(q) then
         q = Quaternion(q)
     end
@@ -76,7 +76,7 @@ end
 -- @arg table o the other pose (Pose)
 -- @ret table p a new pose with result (Pose)
 function Pose:mul(o)
-    if Matrix:isvector(o, 3) then
+    if Vector:isvector(o, 3) then
         return self.q * o + self.t
     elseif Pose:ispose(o) then
         return Pose(self.q * o.t + self.t, o.q * self.q)
