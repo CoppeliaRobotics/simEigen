@@ -921,6 +921,14 @@ function simEigen.Matrix:__concat(m)
     return self:dot(m)
 end
 
+function simEigen.Matrix:__copy()
+    return self:copy()
+end
+
+function simEigen.Matrix:__deepcopy(m)
+    return self:copy()
+end
+
 function simEigen.Matrix:__div(k)
     return self:div(k)
 end
@@ -1319,6 +1327,14 @@ function simEigen.Quaternion:torotation()
     return r
 end
 
+function simEigen.Quaternion:__copy()
+    return self:copy()
+end
+
+function simEigen.Quaternion:__deepcopy(m)
+    return self:copy()
+end
+
 function simEigen.Quaternion:__eq(m)
     if simEigen.Quaternion:isquaternion(m) then
         return self.__handle == m.__handle
@@ -1474,6 +1490,14 @@ end
 -- @ret table m a new 4x4 transform matrix (Matrix)
 function simEigen.Pose:totransform()
     return self.q:torotation():horzcat(self.t):vertcat(simEigen.Matrix(1, 4, {0, 0, 0, 1}))
+end
+
+function simEigen.Pose:__copy()
+    return self:copy()
+end
+
+function simEigen.Pose:__deepcopy(m)
+    return self:copy()
 end
 
 function simEigen.Pose:__index(k)
