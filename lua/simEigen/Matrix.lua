@@ -823,8 +823,8 @@ end
 -- @ret table v (Matrix)
 -- @ret table x (Matrix)
 function Matrix:svd(computeThinU, computeThinV, b)
-    assert(computeThinU == nil or type(computeThinU) == 'bool', 'computeThinU must be bool')
-    assert(computeThinV == nil or type(computeThinV) == 'bool', 'computeThinV must be bool')
+    assert(computeThinU == nil or type(computeThinU) == 'boolean', 'computeThinU must be bool')
+    assert(computeThinV == nil or type(computeThinV) == 'boolean', 'computeThinV must be bool')
     computeThinU = computeThinU == true
     computeThinV = computeThinV == true
     assert(b == nil or Matrix:ismatrix(b), 'b must be a Matrix or nil')
@@ -832,8 +832,12 @@ function Matrix:svd(computeThinU, computeThinV, b)
     s = Matrix(s)
     u = Matrix(u)
     v = Matrix(v)
-    if x then x = Matrix(x) end
-    return s, u, v, x
+    if x then
+        x = Matrix(x)
+        return s, u, v, x
+    else
+        return s, u, v
+    end
 end
 
 function Matrix:t()
