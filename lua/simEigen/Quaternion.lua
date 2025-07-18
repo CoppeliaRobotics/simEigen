@@ -81,6 +81,19 @@ function Quaternion:fromrotation(r)
     return q
 end
 
+-- @fun {lua_only=true} Quaternion:fromtwovectors (class method) create a new quaternion from rotation matrix
+-- @arg table m the first vector (Matrix)
+-- @arg table m2 the second vector (Matrix)
+-- @ret table q the quaternion (Quaternion)
+function Quaternion:fromtwovectors(v1, v2)
+    assert(self == Quaternion, 'class method')
+    v1 = Vector:tovector(v1, 3)
+    v2 = Vector:tovector(v2, 3)
+    local q = simEigen.quatFromTwoVectors(v1.__handle, v2.__handle)
+    q = Quaternion(q)
+    return q
+end
+
 -- @fun {lua_only=true} Quaternion:imul multiply with another quaternion, in place
 -- @arg table o the other quaternion (Quaternion)
 -- @ret table self this quaternion (Quaternion)

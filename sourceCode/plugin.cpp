@@ -685,6 +685,19 @@ public:
         out->handle = quatHandles.add(q, in->_.scriptID);
     }
 
+    void quatFromTwoVectors(quatFromTwoVectors_in *in, quatFromTwoVectors_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        auto m2 = mtxHandles.get(in->handle2);
+        if(m->rows() != 3 || m->cols() != 1)
+            throw std::runtime_error("not a vector 3D");
+        if(m2->rows() != 3 || m2->cols() != 1)
+            throw std::runtime_error("not a vector 3D");
+        auto q = new simEigen::Quaternion();
+        *q = simEigen::Quaternion::FromTwoVectors(m->col(0), m2->col(0));
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
     void quatGetData(quatGetData_in *in, quatGetData_out *out)
     {
         auto q = quatHandles.get(in->handle);

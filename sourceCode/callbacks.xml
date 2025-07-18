@@ -490,6 +490,16 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="quatFromTwoVectors" skip-documentation="true">
+        <description>Create a new quaternion from two vectors (sending the line of first direction to the line of second direction, both lines passing through the origin).</description>
+        <params>
+            <param name="handle" type="string"></param>
+            <param name="handle2" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="quatGetData" skip-documentation="true">
         <description>Return quaternion data.</description>
         <params>
