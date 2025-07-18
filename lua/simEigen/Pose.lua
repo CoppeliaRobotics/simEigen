@@ -64,7 +64,7 @@ end
 -- @ret table p a new pose with result (Pose)
 function Pose:mul(o)
     if Vector:isvector(o, 3) or #o == 3 then
-        o = Vector:tovector(o)
+        o = Vector:tovector(o, 3)
         return self.q * o + self.t
     elseif Pose:ispose(o) or #o == 7 then
         o = Pose:topose(o)
