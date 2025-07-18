@@ -254,10 +254,7 @@ function Matrix:fromtable(t)
     elseif type(t[1]) == 'table' then
         return Matrix(t)
     elseif type(t[1]) == 'number' then
-        if #t == 3 then return Matrix(3, 1, t) end
-        if #t == 9 then return Matrix(3, 3, t) end
-        if #t == 12 then return Matrix(4, 4, t) end
-        error 'only lengths 3, 9 and 12 are supported'
+        return Matrix(-1, 1, t)
     end
     error 'bad table'
 end
