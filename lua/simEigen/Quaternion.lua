@@ -172,6 +172,10 @@ function Quaternion:torotation()
     return r
 end
 
+function Quaternion:tovector()
+    return Vector(self:data())
+end
+
 function Quaternion:__copy()
     return self:copy()
 end
@@ -194,8 +198,7 @@ end
 
 function Quaternion:__index(k)
     if math.type(k) == 'integer' then
-        local data = simEigen.quatGetData(self.__handle)
-        return data[k]
+        error 'not implemented'
     else
         return rawget(self, k)
     end

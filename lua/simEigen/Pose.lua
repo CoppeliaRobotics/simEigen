@@ -87,6 +87,10 @@ function Pose:totransform()
     return self.q:torotation():horzcat(self.t):vertcat(Matrix(1, 4, {0, 0, 0, 1}))
 end
 
+function Pose:tovector()
+    return Vector(self:data())
+end
+
 function Pose:__copy()
     return self:copy()
 end
