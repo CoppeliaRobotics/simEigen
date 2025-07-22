@@ -29,7 +29,7 @@ end
 
 function Vector:tovector(v, rows)
     assert(self == Vector, 'class method')
-    return Matrix:tomatrix(v, rows, 1)
+    return Matrix:tomatrix(v, rows or -1, 1)
 end
 
 return setmetatable(Vector, {
