@@ -947,6 +947,17 @@ function Matrix:__add(m)
     return self:add(m)
 end
 
+function Matrix:__bor(m)
+    local Quaternion = require 'simEigen.Quaternion'
+    if Quaternion:isquaternion(m) then
+        local Pose = require 'simEigen.Pose'
+        return Pose(self, m)
+    end
+    m = Matrix:tomatrix(m)
+    assert(self:rows() == m:rows(), 'row count mismatch')
+    return Matrix:horzcat(self, m)
+end
+
 function Matrix:__concat(m)
     return self:dot(m)
 end
