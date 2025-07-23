@@ -685,6 +685,21 @@ public:
         out->handle = quatHandles.add(q, in->_.scriptID);
     }
 
+    void quatFromYPR(quatFromYPR_in *in, quatFromYPR_out *out)
+    {
+        auto ypr = mtxHandles.get(in->handle);
+        if(ypr->rows() != 3 || ypr->cols() != 1)
+            throw std::runtime_error("not a vector 3D");
+        double yaw = (*ypr)(0);
+        double pitch = (*ypr)(1);
+        double roll = (*ypr)(2);
+        Eigen::AngleAxisd yawRot(yaw, Eigen::Vector3d::UnitZ());
+        Eigen::AngleAxisd pitchRot(pitch, Eigen::Vector3d::UnitY());
+        Eigen::AngleAxisd rollRot(roll, Eigen::Vector3d::UnitX());
+        auto q = new simEigen::Quaternion(yawRot * pitchRot * rollRot);
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
     void quatFromTwoVectors(quatFromTwoVectors_in *in, quatFromTwoVectors_out *out)
     {
         auto m = mtxHandles.get(in->handle);
@@ -786,6 +801,20 @@ public:
         auto q = quatHandles.get(in->handle);
         simEigen::Matrix *mr = new simEigen::Matrix(3, 3);
         *mr = q->toRotationMatrix();
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void quatToYPR(quatToYPR_in *in, quatToYPR_out *out)
+    {
+        auto q = quatHandles.get(in->handle);
+        Eigen::Matrix3d R = q->toRotationMatrix();
+        simEigen::Matrix *mr = new simEigen::Matrix(3, 1);
+        double yaw   = std::atan2(R(1, 0), R(0, 0));
+        double pitch = std::asin(-R(2, 0));
+        double roll  = std::atan2(R(2, 1), R(2, 2));
+        (*mr)(0, 0) = yaw;
+        (*mr)(1, 0) = pitch;
+        (*mr)(2, 0) = roll;
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 

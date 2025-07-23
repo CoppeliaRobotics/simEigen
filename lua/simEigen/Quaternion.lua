@@ -94,6 +94,17 @@ function Quaternion:fromtwovectors(v1, v2)
     return q
 end
 
+-- @fun {lua_only=true} Quaternion:fromypr (class method) create a new quaternion from YPR angles
+-- @arg table ypr the YPR angles as 3D vector (Matrix)
+-- @ret table q the quaternion (Quaternion)
+function Quaternion:fromypr(ypr)
+    assert(self == Quaternion, 'class method')
+    ypr = Vector:tovector(ypr, 3)
+    local q = simEigen.quatFromYPR(ypr.__handle)
+    q = Quaternion(q)
+    return q
+end
+
 -- @fun {lua_only=true} Quaternion:imul multiply with another quaternion, in place
 -- @arg table o the other quaternion (Quaternion)
 -- @ret table self this quaternion (Quaternion)
@@ -187,6 +198,14 @@ end
 
 function Quaternion:tovector()
     return Vector(self:data())
+end
+
+-- @fun {lua_only=true} Quaternion:toypr convert this quaternion to a YPR angles representation
+-- @ret table ypr a new vector 3D with YPR angles (Matrix)
+function Quaternion:toypr()
+    local ypr = simEigen.quatToYPR(self.__handle)
+    ypr = Matrix(ypr)
+    return ypr
 end
 
 function Quaternion:__copy()

@@ -490,6 +490,15 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="quatFromYPR" skip-documentation="true">
+        <description>Create a new quaternion from Yaw-Pitch-Roll angles (as a 3D vector).</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="quatFromTwoVectors" skip-documentation="true">
         <description>Create a new quaternion from two vectors (sending the line of first direction to the line of second direction, both lines passing through the origin).</description>
         <params>
@@ -589,6 +598,15 @@
     </command>
     <command name="quatToRotation" skip-documentation="true">
         <description>Return a new 3x3 matrix corresponding to the rotation matrix of the given quaternion.</description>
+        <params>
+            <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="quatToYPR" skip-documentation="true">
+        <description>Return a Yaw-Pitch-Roll angles representation of the given quaternion.</description>
         <params>
             <param name="handle" type="string"></param>
         </params>
