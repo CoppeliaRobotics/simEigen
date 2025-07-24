@@ -79,8 +79,7 @@ end
 -- @arg table p the other pose (Pose)
 -- @ret table q a new quaternion with result (Quaternion)
 function Pose:interp(t, p)
-    t = t or 0.5
-    return Pose(0.5 * self.t + 0.5 * p.t, self.q:slerp(t, p.q))
+    return Pose(t * self.t + t * p.t, self.q:slerp(t, p.q))
 end
 
 function Pose:topose(v)
