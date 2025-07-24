@@ -77,7 +77,7 @@ end
 -- @fun {lua_only=true} Pose:interp interpolate poses
 -- @arg double t interpolation factor 0..1
 -- @arg table p the other pose (Pose)
--- @ret table q a new quaternion with result (Quaternion)
+-- @ret table q a new pose with result (Pose)
 function Pose:interp(t, p)
     return Pose((1 - t) * self.t + t * p.t, self.q:slerp(t, p.q))
 end
