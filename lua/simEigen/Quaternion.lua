@@ -32,6 +32,15 @@ function Quaternion:initialize(data)
     end
 end
 
+-- @fun {lua_only=true} Quaternion:axisangle compute the axis/angle to rotate from first quaternion to second
+-- @ret table axis a new vector 3D with rotation axis (Matrix)
+-- @ret double angle the rotation angle
+function Quaternion:axisangle(q2)
+    local axis, angle = self:inv():mul(q2):toaxisangle()
+    axis = self:mul(axis)
+    return axis, angle
+end
+
 -- @fun {lua_only=true} Quaternion:copy create a copy of this quaternion
 -- @ret table m a new quaternion with same data (Quaternion)
 function Quaternion:copy()
