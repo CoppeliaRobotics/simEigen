@@ -18,8 +18,8 @@ function Pose:initialize(t, q)
         t = Vector:tovector(t, 7)
         t, q = t:block(1,1,3,1), t:block(4,1,-1,1)
     end
-    self.t = Vector:tovector(t, 3)
-    self.q = Quaternion:toquaternion(q)
+    self.__t = Vector:tovector(t, 3)
+    self.__q = Quaternion:toquaternion(q)
 end
 
 -- @fun {lua_only=true} Pose:copy create a copy of this pose
@@ -110,6 +110,10 @@ end
 function Pose:__index(k)
     if math.type(k) == 'integer' then
         error 'not implemented'
+    elseif k == 't' or k == 'translation' then
+        return self.__t
+    elseif k == 'q' or k == 'rotation' then
+        return self.__q
     else
         return rawget(self, k)
     end
@@ -130,6 +134,10 @@ end
 function Pose:__newindex(k, v)
     if math.type(k) == 'integer' then
         error 'not implemented'
+    elseif k == 't' or k == 'translation' then
+        error 'readonly property'
+    elseif k == 'q' or k == 'rotation' then
+        error 'readonly property'
     else
         rawset(self, k, v)
     end
