@@ -557,6 +557,14 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="quatRandom" skip-documentation="true">
+        <description>Create a random quaternion sampled from uniform distribution over SO(3).</description>
+        <params>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="quatSetData" skip-documentation="true">
         <description>Set data of this quaternion.</description>
         <params>

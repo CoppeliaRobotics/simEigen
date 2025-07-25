@@ -158,6 +158,15 @@ function Quaternion:mul(o)
     end
 end
 
+-- @fun {lua_only=true} Quaternion:random (class method) create a new random quaternion with uniform distribution
+-- @ret table q the quaternion (Quaternion)
+function Quaternion:random()
+    assert(self == Quaternion, 'class method')
+    local q = simEigen.quatRandom()
+    q = Quaternion(q)
+    return q
+end
+
 -- @fun {lua_only=true} Quaternion:slerp interpolate quaternions
 -- @arg double t interpolation factor 0..1
 -- @arg table q2 the other quaternion (Quaternion)

@@ -1,6 +1,7 @@
 #include <stdexcept>
 #include <vector>
 #include <cmath>
+#include <random>
 #include <simPlusPlus/Plugin.h>
 #include <simPlusPlus/Handles.h>
 #include "plugin.h"
@@ -757,6 +758,24 @@ public:
         const auto &d = in->initialData;
         double qx = d[0], qy = d[1], qz = d[2], qw = d[3];
         auto q = new simEigen::Quaternion(qw, qx, qy, qz);
+        out->handle = quatHandles.add(q, in->_.scriptID);
+    }
+
+    void quatRandom(quatRandom_in *in, quatRandom_out *out)
+    {
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_real_distribution<double> dist(0.0, 1.0);
+        double u1 = dist(gen);
+        double u2 = dist(gen) * 2.0 * M_PI;
+        double u3 = dist(gen) * 2.0 * M_PI;
+        double sqrt1_minus_u1 = std::sqrt(1.0 - u1);
+        double sqrt_u1 = std::sqrt(u1);
+        double x = sqrt1_minus_u1 * std::sin(u2);
+        double y = sqrt1_minus_u1 * std::cos(u2);
+        double z = sqrt_u1 * std::sin(u3);
+        double w = sqrt_u1 * std::cos(u3);
+        auto q = new simEigen::Quaternion(w, x, y, z);
         out->handle = quatHandles.add(q, in->_.scriptID);
     }
 
