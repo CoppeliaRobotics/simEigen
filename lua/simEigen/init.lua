@@ -179,7 +179,7 @@ function simEigen.unittest()
         if pcall(f, ...) then error() end
     end
     asserterror(function() Matrix(-1, 3, {1, 2, 3, 4, 5, 6, 7}) end)
-    print(debug.getinfo(1, 'S').source, 'tests passed')
+
     -- tests for bugs
     local p = Pose{0, 0, 0, 0, 0, 0, 1}
     assertApproxEq(p.t, Vector{0, 0, 0})
@@ -191,6 +191,14 @@ function simEigen.unittest()
     assert(v:isvector())
     assert(v:isvector(3))
     assert(not Matrix{{1, 2}, {8, 0.1}}:isvector())
+
+    local pa = Pose(Matrix:random(3, 1), Quaternion:random())
+    local pb = Pose(Matrix:random(3, 1), Quaternion:random())
+    local pr = pa:inv()*pb
+    local ps = Pose:fromtransform(pa:totransform():pinv()*(pb:totransform()))
+    assert((pr.t - ps.t):norm() < 1e-5 and ({pr.q:axisangle(ps.q)})[2] < 1e-3)
+
+    print(debug.getinfo(1, 'S').source, 'tests passed')
 end
 
 return simEigen
