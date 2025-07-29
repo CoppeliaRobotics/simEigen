@@ -676,11 +676,21 @@ function Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
 
--- @fun {lua_only=true} Matrix:random return a matrix of uniformly distributed random values in range [-1..1]
--- @ret table m a new matrix of random values in range [-1..1] (Matrix)
-function Matrix:random(rows, cols)
+-- @fun {lua_only=true} Matrix:random (class method) return a matrix of uniformly distributed random values in the given range
+-- @arg int rows new row count
+-- @arg int cols new column count
+-- @arg table.float range {minValue, maxValue}, defaults to {-1, 1}
+-- @ret table m a new matrix of random values in the given range (Matrix)
+function Matrix:random(rows, cols, range)
+    assert(self == Matrix, 'class method')
     local m = simEigen.mtxRandom(rows, cols)
     m = Matrix(m)
+    if range then
+        assert(type(range) == 'table' and #range == 2 and type(range[1]) == 'number' and type(range[2]) == 'number', 'invalid range')
+        local k = 0.5 * (range[2] - range[1])
+        m:imul(k)
+        m:iadd(range[1] + k)
+    end
     return m
 end
 
