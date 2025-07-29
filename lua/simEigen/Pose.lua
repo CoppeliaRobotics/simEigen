@@ -68,7 +68,7 @@ function Pose:mul(o)
         return self.q * o + self.t
     elseif Pose:ispose(o) or #o == 7 then
         o = Pose:topose(o)
-        return Pose(self.q * o.t + self.t, o.q * self.q)
+        return Pose(self.q * o.t + self.t, self.q * o.q)
     else
         error 'invalid argument type'
     end
