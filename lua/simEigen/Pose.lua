@@ -82,6 +82,22 @@ function Pose:interp(t, p)
     return Pose((1 - t) * self.t + t * p.t, self.q:slerp(t, p.q))
 end
 
+-- @fun {lua_only=true} Pose:random return a random pose, with position in the given range
+-- @arg {type='table',default={-1,-1,-1}} minPos
+-- @arg {type='table',default={1,1,1}} maxPos
+-- @ret table p a new random pose
+function Pose:random(minPos, maxPos)
+    assert(self == Pose, 'class method')
+    minPos = minPos or {-1, -1, -1}
+    maxPos = maxPos or {1, 1, 1}
+    local t, q = {}, Quaternion:random()
+    for i = 1, 3 do
+        local r = math.random()
+        t[i] = r * minPos[i] + (1 - r) * maxPos[i]
+    end
+    return Pose(t, q)
+end
+
 function Pose:topose(v)
     assert(self == Pose, 'class method')
     if Pose:ispose(v) then return v end
