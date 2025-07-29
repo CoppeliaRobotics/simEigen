@@ -490,6 +490,12 @@ public:
         }
     }
 
+    void mtxProd(mtxProd_in *in, mtxProd_out *out)
+    {
+        auto m = mtxHandles.get(in->handle);
+        out->result = m->prod();
+    }
+
     void mtxRandom(mtxRandom_in *in, mtxRandom_out *out)
     {
         auto m = new simEigen::Matrix(in->rows, in->cols);
@@ -505,12 +511,6 @@ public:
         auto mr = new simEigen::Matrix;
         *mr = Eigen::Map<simEigen::Matrix>(m->data(), in->rows, in->cols);
         out->handle = mtxHandles.add(mr, in->_.scriptID);
-    }
-
-    void mtxProd(mtxProd_in *in, mtxProd_out *out)
-    {
-        auto m = mtxHandles.get(in->handle);
-        out->result = m->prod();
     }
 
     void mtxSetColData(mtxSetColData_in *in, mtxSetColData_out *out)
