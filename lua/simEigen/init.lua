@@ -179,6 +179,25 @@ function simEigen.unittest()
         if pcall(f, ...) then error() end
     end
     asserterror(function() Matrix(-1, 3, {1, 2, 3, 4, 5, 6, 7}) end)
+    -- quaternion/rotation-mtx & pose/transform-mtx tests:
+    local eye3 = Matrix:eye(3)
+    local eye4 = Matrix:eye(4)
+    for i = 1, 100 do
+        local p = Pose:random()
+        local t = p:totransform()
+        local it = p:inv():totransform()
+        assertApproxEq(it, t:pinv())
+        assertApproxEq(it, t:inversetransform())
+        assertApproxEq(t * it, eye4)
+        assertApproxEq(it * t, eye4)
+        local q = Quaternion:random()
+        local r = q:torotation()
+        local ir = q:inv():torotation()
+        assertApproxEq(ir, r:pinv())
+        assertApproxEq(ir, r:t())
+        assertApproxEq(r * ir, eye3)
+        assertApproxEq(ir * r, eye3)
+    end
 
     -- tests for bugs
     local p = Pose{0, 0, 0, 0, 0, 0, 1}
