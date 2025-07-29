@@ -27,6 +27,15 @@ function Vector:isvector(...)
     return Matrix:isvector(...)
 end
 
+-- @fun {lua_only=true} Vector:random return a vector of uniformly distributed random values in the given range
+-- @arg int size vector size
+-- @arg table.float range {minValue, maxValue}, defaults to {-1, 1}
+-- @ret table v a new vector of random values in the given range (Vector)
+function Vector:random(size, range)
+    assert(self == Vector, 'class method')
+    return Matrix:random(size, 1, range)
+end
+
 function Vector:tovector(v, rows)
     assert(self == Vector, 'class method')
     return Matrix:tomatrix(v, rows or -1, 1)
