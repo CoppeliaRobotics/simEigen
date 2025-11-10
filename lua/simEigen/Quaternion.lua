@@ -282,8 +282,10 @@ function Quaternion:__pairs()
 end
 
 function Quaternion:__tocbor(sref, stref)
-    local _cbor = cbor or require 'simCBOR'
-    return _cbor.TYPE.ARRAY(self:totable(), sref, stref)
+    local cbor = require 'simCBOR'
+    local cbor_c = require 'org.conman.cbor_c'
+    return cbor_c.encode(0xC0, 4294980000)
+        .. cbor.encode(self:data())
 end
 
 function Quaternion:__toquaternion()
