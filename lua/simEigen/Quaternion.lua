@@ -284,7 +284,7 @@ end
 function Quaternion:__tocbor(sref, stref)
     local cbor = require 'simCBOR'
     local cbor_c = require 'org.conman.cbor_c'
-    return cbor_c.encode(0xC0, 4294980000)
+    return cbor_c.encode(0xC0, cbor.Tags.Sim.Quaternion)
         .. cbor.encode(self:data())
 end
 
