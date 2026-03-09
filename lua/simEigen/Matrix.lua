@@ -269,8 +269,9 @@ end
 -- @ret table m a new matrix with result (Matrix)
 function Matrix:horzcat(...)
     local ms = {...}
+    if not Matrix:ismatrix(self) and #ms == 1 and type(ms[1]) == 'table' and not getmetatable(ms[1]) then ms = ms[1] end
     if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
-    for i = 2, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
+    for i = 1, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
     local m = simEigen.mtxHorzCat(map(function(m) return m.__handle end, ms))
     m = Matrix(m)
     return m
@@ -945,8 +946,9 @@ end
 -- @ret table m a new matrix with result (Matrix)
 function Matrix:vertcat(...)
     local ms = {...}
+    if not Matrix:ismatrix(self) and #ms == 1 and type(ms[1]) == 'table' and not getmetatable(ms[1]) then ms = ms[1] end
     if Matrix:ismatrix(self) then table.insert(ms, 1, self) end
-    for i = 2, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
+    for i = 1, #ms do ms[i] = Matrix:tomatrix(ms[i]) end
     local m = simEigen.mtxVertCat(map(function(m) return m.__handle end, ms))
     m = Matrix(m)
     return m
