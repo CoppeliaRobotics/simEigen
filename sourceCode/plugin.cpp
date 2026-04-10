@@ -2,8 +2,8 @@
 #include <vector>
 #include <cmath>
 #include <random>
-#include <simPlusPlus/Plugin.h>
-#include <simPlusPlus/Handles.h>
+#include <simPlusPlus-2/Plugin.h>
+#include <simPlusPlus-2/Handles.h>
 #include "plugin.h"
 #include "stubs.h"
 #include "config.h"
