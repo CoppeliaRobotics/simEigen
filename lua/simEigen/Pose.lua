@@ -127,9 +127,9 @@ function Pose:__index(k)
     if math.type(k) == 'integer' then
         error 'not implemented'
     elseif k == 't' or k == 'translation' then
-        return self.__t
+        return self.__t:freeze()
     elseif k == 'q' or k == 'rotation' then
-        return self.__q
+        return self.__q:freeze()
     else
         return rawget(self, k)
     end

@@ -115,6 +115,7 @@ end
 -- @arg int q block columns
 -- @ret table self this matrix (Matrix)
 function Matrix:blockassign(m, i, j, p, q)
+    assert(not self.__readOnly, 'read-only Matrix')
     m = Matrix:tomatrix(m)
     i = i or 1
     j = j or 1
@@ -245,6 +246,13 @@ function Matrix:floor()
     return self:op(simEigen.op.floor, nil, false)
 end
 
+-- @fun {lua_only=true} Matrix:freeze flag this matrix as read-only
+-- @ret table m the original matrix (Matrix)
+function Matrix:freeze()
+    self.__readOnly = true
+    return self
+end
+
 function Matrix:fromtable(t)
     assert(self == Matrix, 'class method')
     assert(type(t) == 'table', 'bad type')
@@ -280,12 +288,14 @@ end
 -- @fun {lua_only=true} Matrix:iabs compute element-wise absolute value, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iabs()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.abs, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iacos compute element-wise arccosine, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iacos()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.acos, nil, true)
 end
 
@@ -293,36 +303,42 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:iadd(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.add, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:iasin compute element-wise arcsine, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iasin()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.asin, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iatan compute element-wise arctangent, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iatan()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.atan, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:iceil compute element-wise ceiling, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iceil()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.ceil, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:icos compute element-wise cosine, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:icos()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.cos, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ideg compute element-wise radians to degrees conversion, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:ideg()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.deg, nil, true)
 end
 
@@ -330,18 +346,21 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:idiv(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.div, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:iexp compute element-wise exponential, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:iexp()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.exp, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ifloor compute element-wise floor, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:ifloor()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.floor, nil, true)
 end
 
@@ -349,24 +368,28 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:iintdiv(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.intdiv, m, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog compute element-wise natural logarithm, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:ilog()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.log, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog2 compute element-wise base-2 logarithm, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:ilog2()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.log2, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:ilog10 compute element-wise base-10 logarithm, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:ilog10()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.log10, nil, true)
 end
 
@@ -374,6 +397,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:imax(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.max, m, true)
 end
 
@@ -381,6 +405,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:imin(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.min, m, true)
 end
 
@@ -388,6 +413,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:imod(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.mod, m, true)
 end
 
@@ -395,6 +421,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:imul(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     if type(m) == 'number' then
         return self:op(simEigen.op.times, m, true)
     end
@@ -421,12 +448,14 @@ end
 -- @fun {lua_only=true} Matrix:irad compute element-wise degrees to radians conversion, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:irad()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.rad, nil, true)
 end
 
 -- @fun {lua_only=true} Matrix:isin compute element-wise sine, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:isin()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.sin, nil, true)
 end
 
@@ -467,6 +496,7 @@ end
 -- @fun {lua_only=true} Matrix:isqrt compute element-wise square root, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:isqrt()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.sqrt, nil, true)
 end
 
@@ -474,6 +504,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:isub(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.sub, m, true)
 end
 
@@ -497,6 +528,7 @@ end
 -- @fun {lua_only=true} Matrix:itan compute element-wise tangent, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:itan()
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.tan, nil, true)
 end
 
@@ -504,6 +536,7 @@ end
 -- @arg table m the other matrix (Matrix) or a scalar (float)
 -- @ret table self this matrix (Matrix)
 function Matrix:itimes(m)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:op(simEigen.op.times, m, true)
 end
 
@@ -621,6 +654,7 @@ end
 -- @fun {lua_only=true} Matrix:normalize normalize the value of elements, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:normalize()
+    assert(not self.__readOnly, 'read-only Matrix')
     simEigen.mtxNormalize(self.__handle)
     return self
 end
@@ -634,6 +668,7 @@ function Matrix:normalized()
 end
 
 function Matrix:op(op, x, inplace)
+    assert(not inplace or not self.__readOnly, 'read-only Matrix')
     local r
     if type(x) == 'number' then
         r = simEigen.mtxOpK(self.__handle, op, x, inplace)
@@ -734,6 +769,7 @@ function Matrix:rows()
 end
 
 function Matrix:set(i, j, data)
+    assert(not self.__readOnly, 'read-only Matrix')
     logDeprecated('m:set(i, j, val)', 'm:setitem(i, j, val)')
     return self:setitem(i, j, data)
 end
@@ -743,6 +779,7 @@ end
 -- @arg table col a column vector
 -- @ret table self this matrix (Matrix)
 function Matrix:setcol(j, col)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:blockassign(col, 1, j, -1, 1)
 end
 
@@ -751,6 +788,7 @@ end
 -- @arg table.float data column data
 -- @ret table self this matrix (Matrix)
 function Matrix:setcoldata(j, data)
+    assert(not self.__readOnly, 'read-only Matrix')
     assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetColData(self.__handle, j - 1, data)
     return self
@@ -760,6 +798,7 @@ end
 -- @arg table.float data matrix data
 -- @ret table self this matrix (Matrix)
 function Matrix:setdata(data)
+    assert(not self.__readOnly, 'read-only Matrix')
     assert(type(data) == 'table')
     simEigen.mtxSetData(self.__handle, data)
     return self
@@ -771,6 +810,7 @@ end
 -- @arg table.float data element value
 -- @ret table self this matrix (Matrix)
 function Matrix:setitem(i, j, data)
+    assert(not self.__readOnly, 'read-only Matrix')
     assert(math.type(i) == 'integer', 'indices must be integer')
     assert(math.type(j) == 'integer', 'indices must be integer')
     simEigen.mtxSetItem(self.__handle, i - 1, j - 1, data)
@@ -782,6 +822,7 @@ end
 -- @arg table row a row vector
 -- @ret table m a new matrix with result (Matrix)
 function Matrix:setrow(i, row)
+    assert(not self.__readOnly, 'read-only Matrix')
     return self:blockassign(row, i, 1, 1, -1)
 end
 
@@ -790,6 +831,7 @@ end
 -- @arg table.float data row data
 -- @ret table self this matrix (Matrix)
 function Matrix:setrowdata(i, data)
+    assert(not self.__readOnly, 'read-only Matrix')
     assert(math.type(i) == 'integer', 'indices must be integer')
     simEigen.mtxSetRowData(self.__handle, i - 1, data)
     return self
@@ -927,6 +969,7 @@ end
 -- @fun {lua_only=true} Matrix:transpose transpose the matrix, in place
 -- @ret table self this matrix (Matrix)
 function Matrix:transpose()
+    assert(not self.__readOnly, 'read-only Matrix')
     simEigen.mtxTranspose(self.__handle)
     return self
 end

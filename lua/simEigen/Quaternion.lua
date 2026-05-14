@@ -55,6 +55,13 @@ function Quaternion:data()
     return simEigen.quatGetData(self.__handle)
 end
 
+-- @fun {lua_only=true} Quaternion:freeze flag this quaternion as read-only
+-- @ret table m the original quaternion (Quaternion)
+function Quaternion:freeze()
+    self.__readOnly = true
+    return self
+end
+
 -- @fun {lua_only=true} Quaternion:fromaxisangle (class method) create a new quaternion from axis/angle
 -- @arg table axis the rotation axis vector 3D (Matrix)
 -- @arg double angle the rotation angle
@@ -118,6 +125,7 @@ end
 -- @arg table o the other quaternion (Quaternion)
 -- @ret table self this quaternion (Quaternion)
 function Quaternion:imul(o)
+    assert(not self.__readOnly, 'read-only Quaternion')
     if Quaternion:isquaternion(o) then
         simEigen.quatMulQuat(self.__handle, o.__handle, true)
         return self
