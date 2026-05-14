@@ -398,7 +398,6 @@ function Matrix:imul(m)
     if type(m) == 'number' then
         return self:op(simEigen.op.times, m, true)
     end
-
     m = Matrix:tomatrix(m)
     simEigen.mtxIMul(self.__handle, m.__handle)
     return self
@@ -607,7 +606,6 @@ function Matrix:mul(m)
     if type(m) == 'number' then
         return self:op(simEigen.op.times, m, false)
     end
-
     m = Matrix:tomatrix(m)
     local r = simEigen.mtxMul(self.__handle, m.__handle)
     r = Matrix(r)
@@ -672,7 +670,7 @@ function Matrix:print(opts)
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the product of all elements of this matrix
--- @ret float damping
+-- @ret float product
 function Matrix:prod()
     return simEigen.mtxProd(self.__handle)
 end
@@ -823,7 +821,7 @@ function Matrix:sub(m)
 end
 
 -- @fun {lua_only=true} Matrix:prod compute the sum of all elements of this matrix
--- @ret float damping
+-- @ret float sum
 function Matrix:sum()
     return simEigen.mtxSum(self.__handle)
 end
