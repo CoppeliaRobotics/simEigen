@@ -1039,6 +1039,7 @@ function Matrix:__gc()
     simEigen.mtxDestroy(self.__handle)
 end
 
+--[[
 if package.config:sub(1,1) == '\\' then
     -- TEMP fix for strange error on Windows related to garbage collection
     function Matrix:__gc()
@@ -1057,6 +1058,7 @@ if package.config:sub(1,1) == '\\' then
         end
     end
 end
+--]]
 
 function Matrix:__idiv(k)
     return self:intdiv(k)
