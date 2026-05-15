@@ -7,9 +7,17 @@
         <br />
         It also contains a Lua class for matrix operations:<br />
         <code>
-            a = simEigen.Matrix{{1, 2}, {3, 4}}
-            ainv = a:pinv()
-            a * ainv - simEigen.Matrix.eye(2)
+            import 'simEigen.*' -- imports simEigen.Matrix/Vector/etc into global scope
+
+            v = Vector{2, 0, 0}
+            print(v:norm()) -- 2.
+
+            v * 0.5 + {0, 0, 1} -- second operand is automatically upcasted from table to matrix/vector
+            v * 0.5 + Vector{0, 0, 1} -- same as above
+
+            M = Matrix{{1, 2}, {3, 4}}
+            Minv = M:pinv()
+            M * Minv - Matrix:eye(2)
         </code>
     </description>
     <command name="mtxBlock" skip-documentation="true">
