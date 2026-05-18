@@ -924,9 +924,12 @@ function Matrix:tomatrix(v, rows, cols)
             return Matrix(rows, cols, v)
         elseif rows == nil and cols == nil then
             return Matrix:fromtable(v)
-        else
-            error 'invalid args'
+        elseif rows and (#v % rows == 0) then
+            return Matrix(rows, #v / rows, v)
+        elseif cols and (#v % cols == 0) then
+            return Matrix(#v // cols, cols, v)
         end
+        error 'invalid args'
     end
     error 'invalid data'
 end
