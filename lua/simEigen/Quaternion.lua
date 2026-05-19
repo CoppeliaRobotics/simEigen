@@ -204,6 +204,9 @@ function Quaternion:toeuler()
     return euler
 end
 
+-- @fun {lua_only=true} Quaternion:toquaternion make sure the argument is a quaternion, converting it if necessary
+-- @ret table v either a plain table or a Quaternion
+-- @ret table q the quaternion (Quaternion)
 function Quaternion:toquaternion(v)
     assert(self == Quaternion, 'class method')
     if Quaternion:isquaternion(v) then return v end

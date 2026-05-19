@@ -911,6 +911,11 @@ function Matrix:times(m)
     return self:op(simEigen.op.times, m, false)
 end
 
+-- @fun {lua_only=true} Matrix:tomatrix make sure the argument is a matrix, converting it if necessary
+-- @ret table v either a plain table or a matrix
+-- @ret int rows the required number of rows (can be -1 if cols is not -1, in which case it will automatically be determined)
+-- @ret int cols the required number of columns (can be -1 if rows is not -1, in which case it will automatically be determined)
+-- @ret table q the matrix (Matrix)
 function Matrix:tomatrix(v, rows, cols)
     assert(self == Matrix, 'class method')
     if Matrix:ismatrix(v) then

@@ -98,6 +98,9 @@ function Pose:random(minPos, maxPos)
     return Pose(t, q)
 end
 
+-- @fun {lua_only=true} Pose:topose make sure the argument is a pose, converting it if necessary
+-- @ret table v either a plain table or a Pose
+-- @ret table q the pose (Pose)
 function Pose:topose(v)
     assert(self == Pose, 'class method')
     if Pose:ispose(v) then return v end
