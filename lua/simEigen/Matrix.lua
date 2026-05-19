@@ -918,17 +918,26 @@ end
 -- @ret table q the matrix (Matrix)
 function Matrix:tomatrix(v, rows, cols)
     assert(self == Matrix, 'class method')
+    local expshape = (rows and rows or 'M') .. 'x' .. (cols and cols or 'N')
     if Matrix:ismatrix(v) then
-        local expshape = (rows and rows or 'M') .. 'x' .. (cols and cols or 'N')
         assert(rows == nil or rows == -1 or rows == v:rows(), 'must be ' .. expshape)
         assert(cols == nil or cols == -1 or cols == v:cols(), 'must be ' .. expshape)
         return v
     end
     if type(v) == 'table' then
-        if rows and cols then
+        local tv1 = type(v[1])
+        if tv1 == 'nil' then
+            error 'empty or bad table'
+        elseif tv1 == 'number' then
+            -- flat table data:
+            assert(rows and cols)
             return Matrix(rows, cols, v)
-        elseif rows == nil and cols == nil then
-            return Matrix:fromtable(v)
+        elseif tv1 == 'table' and type(v[1][1]) == 'number' then
+            -- 2D table data:
+            local m = Matrix:fromtable(v)
+            assert(rows == nil or rows == -1 or rows == m:rows(), 'must be ' .. expshape)
+            assert(cols == nil or cols == -1 or cols == m:cols(), 'must be ' .. expshape)
+            return m
         else
             error 'invalid args'
         end
