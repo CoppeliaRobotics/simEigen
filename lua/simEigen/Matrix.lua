@@ -920,8 +920,8 @@ function Matrix:tomatrix(v, rows, cols)
     assert(self == Matrix, 'class method')
     if Matrix:ismatrix(v) then
         local expshape = (rows and rows or 'M') .. 'x' .. (cols and cols or 'N')
-        assert(rows == nil or rows == v:rows(), 'must be ' .. expshape)
-        assert(cols == nil or cols == v:cols(), 'must be ' .. expshape)
+        assert(rows == nil or rows == -1 or rows == v:rows(), 'must be ' .. expshape)
+        assert(cols == nil or cols == -1 or cols == v:cols(), 'must be ' .. expshape)
         return v
     end
     if type(v) == 'table' then
