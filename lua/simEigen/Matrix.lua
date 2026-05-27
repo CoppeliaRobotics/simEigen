@@ -1177,6 +1177,10 @@ function Matrix:__todisplay(opts)
     opts = opts or {}
     local out = ''
 
+    if self:rows() == 0 or self:cols() == 0 then
+        return string.format('∅ [%dx%d]', self:rows(), self:cols())
+    end
+
     opts.numToString = opts.numToString or function(x) return _S.numberToString(x) end
     local s = {}
     local colwi, colwd = {}, {}
