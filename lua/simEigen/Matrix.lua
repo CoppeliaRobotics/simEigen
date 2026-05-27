@@ -37,15 +37,15 @@ function Matrix:initialize(rows, cols, data)
     assert(math.type(rows) == 'integer', 'rows must be an integer')
     assert(math.type(cols) == 'integer', 'cols must be an integer')
     if data == nil then
-        assert(rows > 0, 'rows must be positive')
-        assert(cols > 0, 'cols must be positive')
+        assert(rows >= 0, 'rows must be non-negative')
+        assert(cols >= 0, 'cols must be non-negative')
         self.__handle = simEigen.mtxNew(rows, cols)
     else
-        assert(rows == -1 or rows > 0, 'rows must be positive')
-        assert(cols == -1 or cols > 0, 'cols must be positive')
+        assert(rows == -1 or rows >= 0, 'rows must be non-negative, or -1')
+        assert(cols == -1 or cols >= 0, 'cols must be non-negative, or -1')
         assert(not (rows == -1 and cols == -1), 'rows and cols cannot be both -1')
         if type(data) == 'number' then data = {data} end
-        assert(type(data) == 'table' and #data > 0, 'data must be a non-empty table')
+        assert(type(data) == 'table', 'data must be a table')
         if rows == -1 then
             rows = #data // cols
         elseif cols == -1 then
