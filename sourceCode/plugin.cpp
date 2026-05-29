@@ -270,6 +270,19 @@ public:
         out->handle = mtxHandles.add(m, in->_.scriptID);
     }
 
+    void mtxNewFromRawData(mtxNewFromRawData_in *in, mtxNewFromRawData_out *out)
+    {
+        if(in->initialData.size() != in->rows * in->cols * sizeof(double))
+            throw std::runtime_error("Invalid buffer size");
+
+        auto m = new simEigen::Matrix(in->rows, in->cols);
+        const double *buf = reinterpret_cast<const double*>(in->initialData.data());
+        for(int i = 0; i < m->rows(); ++i)
+            for(int j = 0; j < m->cols(); ++j)
+                (*m)(i, j) = *buf++;
+        out->handle = mtxHandles.add(m, in->_.scriptID);
+    }
+
     void mtxNorm(mtxNorm_in *in, mtxNorm_out *out)
     {
         auto m = mtxHandles.get(in->handle);

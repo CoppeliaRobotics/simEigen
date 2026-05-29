@@ -229,6 +229,17 @@
             <param name="handle" type="string"></param>
         </return>
     </command>
+    <command name="mtxNewFromRawData" skip-documentation="true">
+        <description>Create a new matrix from raw data (packed doubles).</description>
+        <params>
+            <param name="rows" type="int"></param>
+            <param name="cols" type="int"></param>
+            <param name="initialData" type="buffer"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
     <command name="mtxNorm" skip-documentation="true">
         <description>Compute norm of this matrix.</description>
         <params>
