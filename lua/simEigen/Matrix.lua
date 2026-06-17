@@ -673,7 +673,7 @@ function Matrix:op(op, x, inplace)
     if type(x) == 'number' then
         r = simEigen.mtxOpK(self.__handle, op, x, inplace)
     else
-        if x then x = Matrix:tomatrix(x) end
+        if x then x = Matrix:tomatrix(x, self:rows(), self:cols()) end
         r = simEigen.mtxOp(self.__handle, op, (x or {}).__handle, inplace)
     end
     r = inplace and self or Matrix(r)
