@@ -930,6 +930,11 @@ public:
         }
     }
 
+    simEigen::Matrix * getMatrixPtr(const std::string &handle)
+    {
+        return mtxHandles.get(handle);
+    }
+
 private:
     sim::Handles<simEigen::Matrix*> mtxHandles{"simEigen.Matrix"};
     sim::Handles<simEigen::Quaternion*> quatHandles{"simEigen.Quaternion"};
@@ -937,3 +942,8 @@ private:
 
 SIM_PLUGIN(Plugin)
 #include "stubsPlusPlus.cpp"
+
+SIM_DLLEXPORT int simEigen_getMatrixPtr(const char *handle, void **ptrMatrix)
+{
+    *ptrMatrix = sim::plugin->getMatrixPtr(std::string(handle));
+}
