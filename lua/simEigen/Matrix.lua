@@ -928,9 +928,7 @@ function Matrix:tomatrix(v, rows, cols)
     end
     if type(v) == 'table' then
         local tv1 = type(v[1])
-        if tv1 == 'nil' then
-            error 'empty or bad table'
-        elseif tv1 == 'number' then
+        if next(v) == nil or tv1 == 'number' then
             -- flat table data:
             return Matrix(rows, cols, v)
         elseif tv1 == 'table' and type(v[1][1]) == 'number' then
