@@ -223,7 +223,8 @@
         <params>
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
-            <param name="initialData" type="table" item-type="double" default="{}"></param>
+            <param name="initialData" type="table" item-type="double" nullable="true" default="nil"></param>
+            <param name="constData" type="double" nullable="true" default="nil"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
