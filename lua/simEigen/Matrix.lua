@@ -1090,10 +1090,18 @@ function Matrix:__index(k)
                 },
                 {
                     __index = function(t, j)
-                        return self:item(t.__row, j)
+                        if math.type(j) == 'integer' then
+                            return self:item(t.__row, j)
+                        else
+                            return rawget(t, j)
+                        end
                     end,
                     __newindex = function(t, j, v)
-                        self:setitem(t.__row, j, v)
+                        if math.type(j) == 'integer' then
+                            self:setitem(t.__row, j, v)
+                        else
+                            error 'bad type'
+                        end
                     end,
                     __tostring = function(t)
                         return string.format('<reference to %s row %d>', t.__handle, t.__row)
