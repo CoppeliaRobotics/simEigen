@@ -13,8 +13,9 @@ local Matrix = class 'simEigen.Matrix'
 -- @arg int rows number of rows
 -- @arg int cols number of columns
 -- @arg table.float data initialization data (optional; can also be a single value)
+-- @arg int order data order: simEigen.dataOrder.rowMajor (default) or simEigen.dataOrder.columnMajor
 -- @ret table m the new matrix (Matrix)
-function Matrix:initialize(rows, cols, data)
+function Matrix:initialize(rows, cols, data, order)
     -- construct from handle:
     if type(rows) == 'string' and cols == nil and data == nil then
         self.__handle = rows
@@ -39,7 +40,7 @@ function Matrix:initialize(rows, cols, data)
     if data == nil or type(data) == 'number' then
         assert(rows >= 0, 'rows must be non-negative')
         assert(cols >= 0, 'cols must be non-negative')
-        self.__handle = simEigen.mtxNew(rows, cols, nil, data)
+        self.__handle = simEigen.mtxNew(rows, cols, nil, nil, data)
     else
         assert(rows == -1 or rows >= 0, 'rows must be non-negative, or -1')
         assert(cols == -1 or cols >= 0, 'cols must be non-negative, or -1')
@@ -51,7 +52,7 @@ function Matrix:initialize(rows, cols, data)
             cols = #data // rows
         end
         assert(#data == rows * cols, 'invalid number of elements')
-        self.__handle = simEigen.mtxNew(rows, cols, data)
+        self.__handle = simEigen.mtxNew(rows, cols, data, order or simEigen.dataOrder.rowMajor)
     end
 end
 
@@ -189,9 +190,10 @@ function Matrix:cross(m)
 end
 
 -- @fun {lua_only=true} Matrix:data get the data of this matrix, in row-major order
+-- @arg int order data order: simEigen.dataOrder.rowMajor (default) or simEigen.dataOrder.columnMajor
 -- @ret table.float a table of numbers
-function Matrix:data()
-    return simEigen.mtxGetData(self.__handle)
+function Matrix:data(order)
+    return simEigen.mtxGetData(self.__handle, order or simEigen.dataOrder.rowMajor)
 end
 
 -- @fun {lua_only=true} Matrix:deg compute element-wise radians to degree conversion
@@ -795,11 +797,12 @@ end
 
 -- @fun {lua_only=true} Matrix:setdata assign data to the matrix, in row-major order
 -- @arg table.float data matrix data
+-- @arg int order data order: simEigen.dataOrder.rowMajor (default) or simEigen.dataOrder.columnMajor
 -- @ret table self this matrix (Matrix)
-function Matrix:setdata(data)
+function Matrix:setdata(data, order)
     assert(not self.__readOnly, 'read-only Matrix')
     assert(type(data) == 'table')
-    simEigen.mtxSetData(self.__handle, data)
+    simEigen.mtxSetData(self.__handle, data, order or simEigen.dataOrder.rowMajor)
     return self
 end
 

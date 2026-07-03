@@ -103,9 +103,10 @@
         </return>
     </command>
     <command name="mtxGetData" skip-documentation="true">
-        <description>Return matrix data, in row-major order.</description>
+        <description>Return matrix data, in the specified order, either row-major (default) or column-major.</description>
         <params>
             <param name="handle" type="string"></param>
+            <param name="dataOrder" type="int" default="0"></param>
         </params>
         <return>
             <param name="data" type="table" item-type="double"></param>
@@ -224,6 +225,7 @@
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
             <param name="initialData" type="table" item-type="double" nullable="true" default="nil"></param>
+            <param name="initialDataOrder" type="int" default="0"></param>
             <param name="constData" type="double" nullable="true" default="nil"></param>
         </params>
         <return>
@@ -236,6 +238,7 @@
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
             <param name="initialData" type="buffer"></param>
+            <param name="initialDataOrder" type="int" default="0"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
@@ -354,10 +357,11 @@
         </return>
     </command>
     <command name="mtxSetData" skip-documentation="true">
-        <description>Set data of this matrix.</description>
+        <description>Set data of this matrix, in the specified order, either row-major (default) or column-major.</description>
         <params>
             <param name="handle" type="string"></param>
             <param name="data" type="table" item-type="double"></param>
+            <param name="dataOrder" type="int" default="0"></param>
         </params>
         <return>
         </return>
@@ -725,4 +729,8 @@
             </param>
         </return>
     </command>
+    <enum name="dataOrder" item-prefix="dataorder_" base="0">
+        <item name="rowMajor" />
+        <item name="columnMajor" />
+    </enum>
 </plugin>

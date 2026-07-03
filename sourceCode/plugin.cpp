@@ -138,9 +138,21 @@ public:
     {
         auto m = mtxHandles.get(in->handle);
         out->data.resize(m->size());
-        for(int i = 0; i < m->rows(); ++i)
+        switch(in->dataOrder)
+        {
+        case simeigen_dataorder_rowMajor:
+            for(int i = 0; i < m->rows(); ++i)
+                for(int j = 0; j < m->cols(); ++j)
+                    out->data[i * m->cols() + j] = (*m)(i, j);
+            break;
+        case simeigen_dataorder_columnMajor:
             for(int j = 0; j < m->cols(); ++j)
-                out->data[i * m->cols() + j] = (*m)(i, j);
+                for(int i = 0; i < m->rows(); ++i)
+                    out->data[j * m->rows() + i] = (*m)(i, j);
+            break;
+        default:
+            throw std::runtime_error("Invalid \"order\" value");
+        }
     }
 
     void mtxGetItem(mtxGetItem_in *in, mtxGetItem_out *out)
@@ -255,12 +267,24 @@ public:
         auto m = new simEigen::Matrix(in->rows, in->cols);
         if(in->initialData)
         {
-            const auto &data = *in->initialData;
-            if(data.size() != m->rows() * m->cols())
+            const double *data = in->initialData->data();
+            if(in->initialData->size() != m->rows() * m->cols())
                 throw std::runtime_error("Size mismatch between data and matrix dimensions");
-            for(int i = 0; i < m->rows(); ++i)
+            switch(in->initialDataOrder)
+            {
+            case simeigen_dataorder_rowMajor:
+                for(int i = 0; i < m->rows(); ++i)
+                    for(int j = 0; j < m->cols(); ++j)
+                        (*m)(i, j) = *data++;
+                break;
+            case simeigen_dataorder_columnMajor:
                 for(int j = 0; j < m->cols(); ++j)
-                    (*m)(i, j) = data[i * m->cols() + j];
+                    for(int i = 0; i < m->rows(); ++i)
+                        (*m)(i, j) = *data++;
+                break;
+            default:
+                throw std::runtime_error("Invalid \"order\" value");
+            }
         }
         else if(in->constData)
         {
@@ -275,10 +299,22 @@ public:
             throw std::runtime_error("Invalid buffer size");
 
         auto m = new simEigen::Matrix(in->rows, in->cols);
-        const double *buf = reinterpret_cast<const double*>(in->initialData.data());
-        for(int i = 0; i < m->rows(); ++i)
+        const double *data = reinterpret_cast<const double*>(in->initialData.data());
+        switch(in->initialDataOrder)
+        {
+        case simeigen_dataorder_rowMajor:
+            for(int i = 0; i < m->rows(); ++i)
+                for(int j = 0; j < m->cols(); ++j)
+                    (*m)(i, j) = *data++;
+            break;
+        case simeigen_dataorder_columnMajor:
             for(int j = 0; j < m->cols(); ++j)
-                (*m)(i, j) = *buf++;
+                for(int i = 0; i < m->rows(); ++i)
+                    (*m)(i, j) = *data++;
+            break;
+        default:
+            throw std::runtime_error("Invalid \"order\" value");
+        }
         out->handle = mtxHandles.add(m, in->_.scriptID);
     }
 
@@ -541,9 +577,21 @@ public:
         auto m = mtxHandles.get(in->handle);
         if(in->data.size() != m->rows() * m->cols())
             throw std::runtime_error("Size mismatch between data and matrix dimensions");
-        for(int i = 0; i < m->rows(); ++i)
+        switch(in->dataOrder)
+        {
+        case simeigen_dataorder_rowMajor:
+            for(int i = 0; i < m->rows(); ++i)
+                for(int j = 0; j < m->cols(); ++j)
+                    (*m)(i, j) = in->data[i * m->cols() + j];
+            break;
+        case simeigen_dataorder_columnMajor:
             for(int j = 0; j < m->cols(); ++j)
-                (*m)(i, j) = in->data[i * m->cols() + j];
+                for(int i = 0; i < m->rows(); ++i)
+                    (*m)(i, j) = in->data[j * m->rows() + i];
+            break;
+        default:
+            throw std::runtime_error("Invalid \"order\" value");
+        }
     }
 
     void mtxSetItem(mtxSetItem_in *in, mtxSetItem_out *out)

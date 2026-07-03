@@ -1,7 +1,4 @@
---local simEigen = loadPlugin 'simEigen';
---(require 'simEigen-typecheck')(simEigen)
-
-local simEigen = {}
+local simEigen = {dataOrder = loadPlugin('simEigen').dataOrder}
 
 simEigen.__all = {'Matrix', 'Vector', 'Quaternion', 'Pose'}
 
