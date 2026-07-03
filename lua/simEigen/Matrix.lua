@@ -40,7 +40,7 @@ function Matrix:initialize(rows, cols, data, order)
     if data == nil or type(data) == 'number' then
         assert(rows >= 0, 'rows must be non-negative')
         assert(cols >= 0, 'cols must be non-negative')
-        self.__handle = simEigen.mtxNew(rows, cols, nil, nil, data)
+        self.__handle = simEigen.mtxNew(rows, cols, nil, 0, data)
     else
         assert(rows == -1 or rows >= 0, 'rows must be non-negative, or -1')
         assert(cols == -1 or cols >= 0, 'cols must be non-negative, or -1')
