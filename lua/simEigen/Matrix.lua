@@ -913,6 +913,12 @@ function Matrix:times(m)
     return self:op(simEigen.op.times, m, false)
 end
 
+-- @fun {lua_only=true} Matrix:togrid convert this matrix to the 'grid' interchange format
+-- @ret table g the matrix represented as a grid, e.g. {dims = {rows, cols}, data = <row-major data>}
+function Matrix:togrid(format)
+    return {dims = {self:rows(), self:cols()}, data = self:data()}
+end
+
 -- @fun {lua_only=true} Matrix:tomatrix make sure the argument is a matrix, converting it if necessary
 -- @ret table v either a plain table or a matrix
 -- @ret int rows the required number of rows (can be -1 if cols is not -1, in which case it will automatically be determined)
@@ -946,22 +952,23 @@ function Matrix:tomatrix(v, rows, cols)
     error 'invalid data'
 end
 
-function Matrix:totable(format)
-    if type(format) == 'table' and #format == 0 then
-        local d = {}
+-- @fun {lua_only=true} Matrix:totable convert this matrix a nested (i.e. 2D) table
+-- @ret table t the matrix represented as a 2D table
+function Matrix:totable(order)
+    order = order or simEigen.dataOrder.rowMajor
+    local t = {}
+    if order == simEigen.dataOrder.rowMajor then
         for i = 1, self:rows() do
-            for j = 1, self:cols() do table.insert(d, self:item(i, j)) end
+            table.insert(t, self:rowdata(i))
         end
-        return {dims = {self:rows(), self:cols()}, data = d}
-    elseif format == nil then
-        local t = {}
-        for i = 1, self:rows() do
-            local row = {}
-            for j = 1, self:cols() do table.insert(row, self:item(i, j)) end
-            table.insert(t, row)
+    elseif order == simEigen.dataOrder.columnMajor then
+        for j = 1, self:cols() do
+            table.insert(t, self:coldata(j))
         end
-        return t
+    else
+        error 'unsupported format'
     end
+    return t
 end
 
 -- @fun {lua_only=true} Matrix:trace compute the matrix trace
