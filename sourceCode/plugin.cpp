@@ -265,30 +265,23 @@ public:
     void mtxNew(mtxNew_in *in, mtxNew_out *out)
     {
         auto m = new simEigen::Matrix(in->rows, in->cols);
-        if(in->initialData)
+        const double *data = in->initialData.data();
+        if(in->initialData.size() != m->rows() * m->cols())
+            throw std::runtime_error("Size mismatch between data and matrix dimensions");
+        switch(in->initialDataOrder)
         {
-            const double *data = in->initialData->data();
-            if(in->initialData->size() != m->rows() * m->cols())
-                throw std::runtime_error("Size mismatch between data and matrix dimensions");
-            switch(in->initialDataOrder)
-            {
-            case simeigen_dataorder_rowMajor:
-                for(int i = 0; i < m->rows(); ++i)
-                    for(int j = 0; j < m->cols(); ++j)
-                        (*m)(i, j) = *data++;
-                break;
-            case simeigen_dataorder_columnMajor:
+        case simeigen_dataorder_rowMajor:
+            for(int i = 0; i < m->rows(); ++i)
                 for(int j = 0; j < m->cols(); ++j)
-                    for(int i = 0; i < m->rows(); ++i)
-                        (*m)(i, j) = *data++;
-                break;
-            default:
-                throw std::runtime_error("Invalid \"order\" value");
-            }
-        }
-        else if(in->constData)
-        {
-            m->setConstant(*in->constData);
+                    (*m)(i, j) = *data++;
+            break;
+        case simeigen_dataorder_columnMajor:
+            for(int j = 0; j < m->cols(); ++j)
+                for(int i = 0; i < m->rows(); ++i)
+                    (*m)(i, j) = *data++;
+            break;
+        default:
+            throw std::runtime_error("Invalid \"order\" value");
         }
         out->handle = mtxHandles.add(m, in->_.scriptID);
     }
@@ -315,6 +308,13 @@ public:
         default:
             throw std::runtime_error("Invalid \"order\" value");
         }
+        out->handle = mtxHandles.add(m, in->_.scriptID);
+    }
+
+    void mtxNewWithConstData(mtxNewWithConstData_in *in, mtxNewWithConstData_out *out)
+    {
+        auto m = new simEigen::Matrix(in->rows, in->cols);
+        m->setConstant(in->constData);
         out->handle = mtxHandles.add(m, in->_.scriptID);
     }
 

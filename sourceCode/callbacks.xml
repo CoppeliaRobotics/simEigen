@@ -220,13 +220,12 @@
         </return>
     </command>
     <command name="mtxNew" skip-documentation="true">
-        <description>Create a new matrix. If initialData is specified, fill the matrix with specified data.</description>
+        <description>Create a new matrix initialized with specified data.</description>
         <params>
             <param name="rows" type="int"></param>
             <param name="cols" type="int"></param>
-            <param name="initialData" type="table" item-type="double" nullable="true" default="nil"></param>
+            <param name="initialData" type="table" item-type="double"></param>
             <param name="initialDataOrder" type="int" default="0"></param>
-            <param name="constData" type="double" nullable="true" default="nil"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
@@ -239,6 +238,17 @@
             <param name="cols" type="int"></param>
             <param name="initialData" type="buffer"></param>
             <param name="initialDataOrder" type="int" default="0"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="mtxNewWithConstData" skip-documentation="true">
+        <description>Create a new matrix initialized with the given scalar.</description>
+        <params>
+            <param name="rows" type="int"></param>
+            <param name="cols" type="int"></param>
+            <param name="constData" type="double"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>
