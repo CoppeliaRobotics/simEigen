@@ -1097,6 +1097,9 @@ function Matrix:__index(k)
                 {
                     __handle = self.__handle,
                     __row = k,
+                    data = function(rowref)
+                        return simEigen.mtxGetRowData(rowref.__handle, rowref.__row - 1)
+                    end,
                 },
                 {
                     __index = function(t, j)
