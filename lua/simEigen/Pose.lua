@@ -63,12 +63,19 @@ end
 -- @arg table o the other pose (Pose)
 -- @ret table p a new pose with result (Pose)
 function Pose:mul(o)
-    if Vector:isvector(o, 3) or #o == 3 then
-        o = Vector:tovector(o, 3)
-        return self.q * o + self.t
-    elseif Pose:ispose(o) or #o == 7 then
+    if Pose:ispose(o) then
         o = Pose:topose(o)
         return Pose(self.q * o.t + self.t, self.q * o.q)
+    elseif Matrix:ismatrix(o) then
+        local v = simEigen.poseMulVec(self.t.__handle, self.q.__handle, o.__handle)
+        v = Matrix(v)
+        return v
+    elseif type(o) == 'table' then
+        if #o == 7 and type(o[1]) == 'number' then -- single pose upcast
+            return self:mul(Pose:topose(o))
+        else
+            return self:mul(Matrix:tomatrix(o))
+        end
     else
         error 'invalid argument type'
     end

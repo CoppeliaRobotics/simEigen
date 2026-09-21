@@ -573,10 +573,10 @@
         </return>
     </command>
     <command name="quatMulVec" skip-documentation="true">
-        <description>Rotate vector by this quaternion, returning a new vector.</description>
+        <description>Multiply (rotate) vector(s) by this quaternion, returning a new vector/matrix.</description>
         <params>
             <param name="handle" type="string"></param>
-            <param name="vectorHandle" type="string"></param>
+            <param name="vectorsHandle" type="string"></param>
         </params>
         <return>
             <param name="handle" type="string" nullable="true" default="nil"></param>
@@ -651,6 +651,17 @@
         <description>Return a Yaw-Pitch-Roll angles representation of the given quaternion.</description>
         <params>
             <param name="handle" type="string"></param>
+        </params>
+        <return>
+            <param name="handle" type="string"></param>
+        </return>
+    </command>
+    <command name="poseMulVec" skip-documentation="true">
+        <description>Multiply (transform) vector(s) by this pose, returning a new vector/matrix.</description>
+        <params>
+            <param name="posHandle" type="string"></param>
+            <param name="quatHandle" type="string"></param>
+            <param name="vectorsHandle" type="string"></param>
         </params>
         <return>
             <param name="handle" type="string"></param>

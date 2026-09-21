@@ -158,11 +158,14 @@ function Quaternion:mul(o)
         local q = simEigen.quatMulQuat(self.__handle, o.__handle, false)
         q = Quaternion(q)
         return q
-    else
-        o = Vector:tovector(o, 3)
+    elseif Matrix:ismatrix(o) then
         local v = simEigen.quatMulVec(self.__handle, o.__handle)
         v = Matrix(v)
         return v
+    elseif type(o) == 'table' then
+        return self:mul(Matrix:tomatrix(o))
+    else
+        error 'invalid type'
     end
 end
 

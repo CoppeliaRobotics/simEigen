@@ -805,7 +805,7 @@ public:
     void quatMulVec(quatMulVec_in *in, quatMulVec_out *out)
     {
         auto q = quatHandles.get(in->handle);
-        auto v = mtxHandles.get(in->vectorHandle);
+        auto v = mtxHandles.get(in->vectorsHandle);
         if(v->rows() != 3)
             throw std::runtime_error("invalid size");
         simEigen::Matrix *mr = new simEigen::Matrix(v->rows(), v->cols());
@@ -894,6 +894,21 @@ public:
         (*mr)(0, 0) = yaw;
         (*mr)(1, 0) = pitch;
         (*mr)(2, 0) = roll;
+        out->handle = mtxHandles.add(mr, in->_.scriptID);
+    }
+
+    void poseMulVec(poseMulVec_in *in, poseMulVec_out *out)
+    {
+        auto p = mtxHandles.get(in->posHandle);
+        if(p->rows() != 3 || p->cols() != 1)
+            throw std::runtime_error("invalid p size");
+        auto q = quatHandles.get(in->quatHandle);
+        auto v = mtxHandles.get(in->vectorsHandle);
+        if(v->rows() != 3)
+            throw std::runtime_error("invalid size");
+        std::cout << "poseMulVec: v has " << v->cols() << " cols" << std::endl;
+        simEigen::Matrix *mr = new simEigen::Matrix(v->rows(), v->cols());
+        *mr = (q->toRotationMatrix() * (*v)).colwise() + p->col(0) /* col(0) is Vector3, so colwise() is happy */;
         out->handle = mtxHandles.add(mr, in->_.scriptID);
     }
 
