@@ -906,7 +906,6 @@ public:
         auto v = mtxHandles.get(in->vectorsHandle);
         if(v->rows() != 3)
             throw std::runtime_error("invalid size");
-        std::cout << "poseMulVec: v has " << v->cols() << " cols" << std::endl;
         simEigen::Matrix *mr = new simEigen::Matrix(v->rows(), v->cols());
         *mr = (q->toRotationMatrix() * (*v)).colwise() + p->col(0) /* col(0) is Vector3, so colwise() is happy */;
         out->handle = mtxHandles.add(mr, in->_.scriptID);
