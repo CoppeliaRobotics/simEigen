@@ -13,6 +13,14 @@ local Matrix = class 'simEigen.Matrix'
 Matrix.static.maxDisplayRows = 40
 Matrix.static.maxDisplayCols = 20
 
+local function isLargeForDisplay(m, opts)
+    opts = opts or {}
+    local rows, cols = simEigen.mtxGetSize(m.__handle)
+    local maxDisplayRows = opts.maxDisplayRows or Matrix.static.maxDisplayRows or -1
+    local maxDisplayCols = opts.maxDisplayCols or Matrix.static.maxDisplayCols or -1
+    return (maxDisplayRows >= 0 and rows > maxDisplayRows) or (maxDisplayCols >= 0 and cols > maxDisplayCols)
+end
+
 -- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
 -- @arg int rows number of rows
 -- @arg int cols number of columns
@@ -706,6 +714,10 @@ end
 
 -- @fun {lua_only=true} Matrix:print print the contents of this matrix
 function Matrix:print(opts)
+    opts = table.update({}, opts or {}, {
+        maxDisplayRows = -1,
+        maxDisplayCols = -1,
+    })
     print(self:__todisplay(opts))
 end
 
@@ -1205,10 +1217,7 @@ function Matrix:__todisplay(opts)
         return string.format('∅ [%dx%d]', rows, cols)
     end
 
-    local maxDisplayRows = opts.maxDisplayRows or Matrix.static.maxDisplayRows or -1
-    local maxDisplayCols = opts.maxDisplayCols or Matrix.static.maxDisplayCols or -1
-    if (maxDisplayRows >= 0 and rows > maxDisplayRows)
-    or (maxDisplayCols >= 0 and cols > maxDisplayCols) then
+    if isLargeForDisplay(self, opts) then
         return self:__tostring{noData = true}
     end
 
@@ -1279,7 +1288,7 @@ function Matrix:__tostring(opts)
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     out = out .. (Matrix == _G.Matrix and '' or 'simEigen.') .. 'Matrix'
     out = out .. '(' .. rows .. ', ' .. cols .. ', {'
-    if opts.noData then
+    if opts.noData or isLargeForDisplay(self, opts) then
         out = out .. '...'
     else
         local data = self:data()
