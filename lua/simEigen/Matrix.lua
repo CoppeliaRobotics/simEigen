@@ -9,6 +9,10 @@ local class = require 'middleclass'
 
 local Matrix = class 'simEigen.Matrix'
 
+-- limits for displaying a matrix data:
+Matrix.static.maxDisplayRows = 40
+Matrix.static.maxDisplayCols = 20
+
 -- @fun {lua_only=true} Matrix construct a new matrix; can also use the form: Matrix{{1, 2}, {3, 4}} to construct directly from data, size will be determined automatically
 -- @arg int rows number of rows
 -- @arg int cols number of columns
@@ -1195,14 +1199,23 @@ function Matrix:__todisplay(opts)
     opts = opts or {}
     local out = ''
 
-    if self:rows() == 0 or self:cols() == 0 then
-        return string.format('∅ [%dx%d]', self:rows(), self:cols())
+    local rows, cols = simEigen.mtxGetSize(self.__handle)
+
+    if rows == 0 or cols == 0 then
+        return string.format('∅ [%dx%d]', rows, cols)
+    end
+
+    local maxDisplayRows = opts.maxDisplayRows or Matrix.static.maxDisplayRows or -1
+    local maxDisplayCols = opts.maxDisplayCols or Matrix.static.maxDisplayCols or -1
+    if (maxDisplayRows >= 0 and rows > maxDisplayRows)
+    or (maxDisplayCols >= 0 and cols > maxDisplayCols) then
+        return self:__tostring{noData = true}
     end
 
     opts.numToString = opts.numToString or function(x) return _S.numberToString(x) end
     local s = {}
     local colwi, colwd = {}, {}
-    for i = 1, self:rows() do
+    for i = 1, rows do
         s[i] = self:rowdata(i)
         for j = 1, #s[i] do
             local ns = opts.numToString(s[i][j])
@@ -1231,14 +1244,14 @@ function Matrix:__todisplay(opts)
     }
     parenthesesRenderStyle = parenthesesRenderStyle or parenthesesRenderStyles.round
 
-    for i = 1, self:rows() do
+    for i = 1, rows do
         out = out .. (i > 1 and '\n' or '')
         local tmb
-        if self:rows() == 1 then
+        if rows == 1 then
             tmb = 'single'
         elseif i == 1 then
             tmb = 'top'
-        elseif i == self:rows() then
+        elseif i == rows then
             tmb = 'btm'
         else
             tmb = 'mid'
@@ -1259,15 +1272,21 @@ function Matrix:__tomatrix()
     return self:data()
 end
 
-function Matrix:__tostring()
+function Matrix:__tostring(opts)
+    opts = opts or {}
+
     local out = ''
     local rows, cols = simEigen.mtxGetSize(self.__handle)
     out = out .. (Matrix == _G.Matrix and '' or 'simEigen.') .. 'Matrix'
     out = out .. '(' .. rows .. ', ' .. cols .. ', {'
-    local data = self:data()
-    for i = 0, rows - 1 do
-        for j = 0, cols - 1 do
-            out = out .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
+    if opts.noData then
+        out = out .. '...'
+    else
+        local data = self:data()
+        for i = 0, rows - 1 do
+            for j = 0, cols - 1 do
+                out = out .. (i == 0 and j == 0 and '' or ', ') .. tostring(data[1 + cols * i + j])
+            end
         end
     end
     out = out .. '})'
