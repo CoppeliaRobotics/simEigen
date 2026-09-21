@@ -73,6 +73,8 @@ function Pose:mul(o)
     elseif type(o) == 'table' then
         if #o == 7 and type(o[1]) == 'number' then -- single pose upcast
             return self:mul(Pose:topose(o))
+        elseif #o == 3 and type(o[1]) == 'number' then -- single vector upcast
+            return self:mul(Vector:tovector(o))
         else
             return self:mul(Matrix:tomatrix(o))
         end
