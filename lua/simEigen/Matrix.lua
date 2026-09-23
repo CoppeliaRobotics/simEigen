@@ -1221,7 +1221,7 @@ function Matrix:__todisplay(opts)
         return self:__tostring{noData = true}
     end
 
-    opts.numToString = opts.numToString or function(x) return _S.numberToString(x) end
+    opts.numToString = opts.numToString or string.numbertostring
     local s = {}
     local colwi, colwd = {}, {}
     for i = 1, rows do
