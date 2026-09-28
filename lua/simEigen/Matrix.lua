@@ -13,6 +13,9 @@ local Matrix = class 'simEigen.Matrix'
 Matrix.static.maxDisplayRows = 40
 Matrix.static.maxDisplayCols = 20
 
+-- repeat relevant enums for convenience with star imports
+Matrix.static.dataOrder = simEigen.dataOrder
+
 local function isLargeForDisplay(m, opts)
     opts = opts or {}
     local rows, cols = simEigen.mtxGetSize(m.__handle)
