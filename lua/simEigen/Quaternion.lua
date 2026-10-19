@@ -2,7 +2,7 @@ local simEigen = loadPlugin 'simEigen';
 
 local class = require 'middleclass'
 
-local Quaternion = class 'simEigen.Quaternion'
+local Quaternion = class 'sim.Quaternion'
 
 local Matrix = require 'simEigen.Matrix'
 local Vector = require 'simEigen.Vector'
@@ -308,7 +308,7 @@ end
 
 function Quaternion:__tostring()
     local out = ''
-    out = out .. (Quaternion == _G.Quaternion and '' or 'simEigen.') .. 'Quaternion'
+    out = out .. self.class.name
     out = out .. '({'
     for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
     out = out ..'})'

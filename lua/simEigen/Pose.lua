@@ -2,7 +2,7 @@ local simEigen = loadPlugin 'simEigen';
 
 local class = require 'middleclass'
 
-local Pose = class 'simEigen.Pose'
+local Pose = class 'sim.Pose'
 
 local Matrix = require 'simEigen.Matrix'
 local Vector = require 'simEigen.Vector'
@@ -189,7 +189,7 @@ end
 
 function Pose:__tostring()
     local out = ''
-    out = out .. (Pose == _G.Pose and '' or 'simEigen.') .. 'Pose'
+    out = out .. self.class.name
     out = out .. '({'
     for i, x in ipairs(self:data()) do out = out .. (i > 1 and ', ' or '') .. tostring(x) end
     out = out ..'})'

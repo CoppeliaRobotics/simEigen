@@ -7,7 +7,7 @@ end
 
 local class = require 'middleclass'
 
-local Matrix = class 'simEigen.Matrix'
+local Matrix = class 'sim.Matrix'
 
 -- limits for displaying a matrix data:
 Matrix.static.maxDisplayRows = 40
@@ -1289,7 +1289,7 @@ function Matrix:__tostring(opts)
 
     local out = ''
     local rows, cols = simEigen.mtxGetSize(self.__handle)
-    out = out .. (Matrix == _G.Matrix and '' or 'simEigen.') .. 'Matrix'
+    out = out .. self.class.name
     out = out .. '(' .. rows .. ', ' .. cols .. ', {'
     if opts.noData or isLargeForDisplay(self, opts) then
         out = out .. '...'
